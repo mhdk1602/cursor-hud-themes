@@ -1,0 +1,27 @@
+{
+  "name": "Neon Dragon v7 — Dark Magenta (Low-Brightness Friendly)",
+  "description": "Dark magenta backgrounds with neon cyan/pink/orange/purple accents. Optimized for 10% screen brightness + reading glasses. DBZ neon art aesthetic.",
+  "workbench.colorCustomizations": {
+    "editor.background": "#1C0E2C",
+    "editor.foreground": "#F8F2FF",
+    "sideBar.background": "#180C26",
+    "activityBar.background": "#140822",
+    "titleBar.activeBackground": "#140822",
+    "statusBar.background": "#140822",
+    "tab.activeBackground": "#261438",
+    "tab.inactiveBackground": "#180C26",
+    "panel.background": "#160A24",
+    "input.background": "#22123A",
+    "sideBarSectionHeader.background": "#22123A"
+  },
+  "editor.tokenColorCustomizations": {
+    "comments": "#8899CC",
+    "keywords": "#FF55CC",
+    "strings": "#FFCC22",
+    "numbers": "#FFFF55",
+    "types": "#FF9933",
+    "functions": "#55FFFF",
+    "variables": "#EEAAFF"
+  },
+  "css_file": "Current active CSS: tron-neon-glow.css"
+}

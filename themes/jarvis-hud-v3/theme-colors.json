@@ -1,0 +1,35 @@
+{
+  "name": "J.A.R.V.I.S. HUD v3 — Arc Reactor Edition",
+  "description": "Deep blue visor backgrounds, arc reactor blue (#4FC3F7) dominant, holographic teal strings, amber gauges, suit red errors. Rotating arc reactor watermark, hover glow animations, icon glow effects, Power Mode particles, VSCode Animations.",
+  "workbench.colorCustomizations": {
+    "editor.background": "#0C1A2E",
+    "editor.foreground": "#B3E5FC",
+    "sideBar.background": "#0A1628",
+    "activityBar.background": "#081220",
+    "titleBar.activeBackground": "#081220",
+    "statusBar.background": "#081220",
+    "tab.activeBackground": "#122440",
+    "tab.inactiveBackground": "#0A1628",
+    "panel.background": "#0A1628",
+    "input.background": "#10203A",
+    "sideBarSectionHeader.background": "#10203A"
+  },
+  "editor.tokenColorCustomizations": {
+    "comments": "#546E7A",
+    "keywords": "#4FC3F7",
+    "strings": "#64FFDA",
+    "numbers": "#FFD54F",
+    "types": "#B388FF",
+    "functions": "#E1F5FE",
+    "variables": "#B3E5FC"
+  },
+  "extensions": [
+    "be5invis.vscode-custom-css",
+    "BrandonKirbyson.vscode-animations",
+    "hoovercj.vscode-power-mode",
+    "usernamehw.errorlens",
+    "PKief.material-icon-theme"
+  ],
+  "css_file": "tron-neon-glow.css",
+  "svg_file": "arc-reactor.svg"
+}

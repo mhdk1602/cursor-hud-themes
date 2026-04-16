@@ -1,0 +1,615 @@
+/* ============================================================
+   J.A.R.V.I.S. TECHNO HUD v5.1 — FULL HOLOGRAPHIC
+   "Every panel. Every border. Everything glows."
+
+   Electric Cyan:  #00D4FF  rgb(0, 212, 255)
+   Pure Cyan:      #00FFFF  rgb(0, 255, 255)
+   Neon Green:     #00FF88  rgb(0, 255, 136)
+   Vivid Purple:   #DA70FF  rgb(218, 112, 255)
+   Gold:           #FFD700  rgb(255, 215, 0)
+   Hot Pink:       #FF4488  rgb(255, 68, 136)
+   Alert Red:      #FF3355  rgb(255, 51, 85)
+   ============================================================ */
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes glow-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 80px rgba(0, 212, 255, 0.08),
+      inset 0 0 200px rgba(0, 212, 255, 0.04);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 120px rgba(0, 212, 255, 0.15),
+      inset 0 0 280px rgba(0, 212, 255, 0.07);
+  }
+}
+
+@keyframes border-travel {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 300%; }
+}
+
+@keyframes border-pulse {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 4px rgba(0, 255, 255, 0.3); }
+  50% { opacity: 1; box-shadow: 0 0 10px rgba(0, 255, 255, 0.7); }
+}
+
+@keyframes hud-flicker {
+  0%, 100% { opacity: 1; }
+  88% { opacity: 1; }
+  89% { opacity: 0.3; }
+  90% { opacity: 1; }
+  93% { opacity: 0.5; }
+  94% { opacity: 1; }
+}
+
+@keyframes reactor-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-ring-out {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(0, 212, 255, 0.5),
+      0 0 0 0 rgba(0, 255, 255, 0.25);
+    opacity: 1;
+  }
+  80% {
+    box-shadow:
+      0 0 0 35px rgba(0, 212, 255, 0),
+      0 0 0 70px rgba(0, 255, 255, 0);
+    opacity: 0;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent;
+    opacity: 0;
+  }
+}
+
+@keyframes grid-pulse {
+  0%, 100% { background-size: 28px 28px; }
+  50%      { background-size: 30px 30px; }
+}
+
+@keyframes energy-sweep {
+  0%   { left: -40%; }
+  100% { left: 140%; }
+}
+
+@keyframes arc-reactor-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.9)); }
+  50%      { opacity: 0.55; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.4)); }
+}
+
+/* ============================================================
+   HEX DOT-GRID — holographic projection surface on ALL panels
+   Applied via background on the workbench root
+   ============================================================ */
+/* Wireframe grid — visible holographic surface like the reference images */
+.monaco-workbench {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px) !important;
+  background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px !important;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px !important;
+}
+
+/* ============================================================
+   GLOBAL — every major panel gets a bright glowing border edge
+   ============================================================ */
+
+/* --- SIDEBAR ------------------------------------------------ */
+.monaco-workbench .part.sidebar {
+  box-shadow:
+    inset -2px 0 0 rgba(0, 255, 255, 0.75),
+    inset 0 0 100px rgba(0, 212, 255, 0.09),
+    -8px 0 35px rgba(0, 212, 255, 0.22),
+    -16px 0 70px rgba(0, 212, 255, 0.08) !important;
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border-right: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+
+.monaco-workbench .part.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(0, 255, 255, 0.8);
+  border-right: 3px solid rgba(0, 255, 255, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite;
+}
+
+.monaco-workbench .part.sidebar::after {
+  content: "";
+  position: absolute;
+  bottom: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(0, 255, 255, 0.8);
+  border-right: 3px solid rgba(0, 255, 255, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1s;
+}
+
+.monaco-workbench .part.sidebar .monaco-list-row {
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.sidebar .monaco-list-row:hover {
+  background: rgba(0, 212, 255, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(0, 212, 255, 0.08), inset -3px 0 0 rgba(0, 255, 255, 0.4);
+  transform: translateX(3px);
+}
+.monaco-workbench .part.sidebar .monaco-list-row.selected,
+.monaco-workbench .part.sidebar .monaco-list-row.focused {
+  background: rgba(0, 212, 255, 0.18) !important;
+  box-shadow: inset 0 0 50px rgba(0, 212, 255, 0.1), inset -3px 0 0 rgba(0, 255, 255, 0.55);
+}
+
+/* --- ACTIVITY BAR ------------------------------------------- */
+.monaco-workbench .part.activitybar {
+  box-shadow:
+    inset -2px 0 0 rgba(0, 255, 255, 0.7),
+    inset 0 0 70px rgba(0, 212, 255, 0.12),
+    -6px 0 25px rgba(0, 212, 255, 0.15) !important;
+  border-right: 1px solid rgba(0, 255, 255, 0.4) !important;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover {
+  box-shadow: inset 0 0 50px rgba(0, 212, 255, 0.25);
+  transform: scale(1.1);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover .codicon {
+  filter: drop-shadow(0 0 12px rgba(0, 255, 255, 1)) drop-shadow(0 0 25px rgba(0, 212, 255, 0.6));
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked {
+  box-shadow: inset 0 0 60px rgba(0, 212, 255, 0.28);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked .codicon {
+  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.95)) drop-shadow(0 0 22px rgba(0, 212, 255, 0.5));
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0; left: 0; width: 3px;
+  background: linear-gradient(180deg, #00FFFF, #00D4FF, #DA70FF, #00FF88, #00FFFF);
+  background-size: 100% 300%;
+  animation: border-travel 3s linear infinite;
+  box-shadow: 0 0 12px #00FFFF, 0 0 30px rgba(0, 255, 255, 0.7), 0 0 60px rgba(0, 212, 255, 0.35);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 0;
+  transition: opacity 0.5s; opacity: 0;
+}
+
+.monaco-workbench .activitybar .badge .badge-content {
+  box-shadow: 0 0 12px #FF3355, 0 0 30px rgba(255, 51, 85, 0.7), 0 0 60px rgba(255, 51, 85, 0.35);
+  animation: hud-flicker 2.5s ease infinite;
+}
+
+/* --- EDITOR ------------------------------------------------- */
+.monaco-workbench .part.editor {
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border: 1px solid rgba(0, 255, 255, 0.35) !important;
+}
+
+/* HUD corners on editor */
+.monaco-workbench .part.editor::before {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(0, 255, 255, 0.7);
+  border-right: 3px solid rgba(0, 255, 255, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.25s;
+}
+.monaco-workbench .part.editor::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(0, 255, 255, 0.7);
+  border-left: 3px solid rgba(0, 255, 255, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.25s;
+}
+
+/* --- TITLE BAR ---------------------------------------------- */
+.monaco-workbench .part.titlebar {
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 255, 255, 0.8),
+    inset 0 0 60px rgba(0, 212, 255, 0.08),
+    0 4px 25px rgba(0, 212, 255, 0.2),
+    0 8px 60px rgba(0, 212, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+
+/* --- TABS --------------------------------------------------- */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  box-shadow: inset 0 -1px 0 rgba(0, 255, 255, 0.45);
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  box-shadow: inset 0 -14px 45px rgba(0, 212, 255, 0.12);
+  position: relative;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active .codicon {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.8));
+}
+
+/* Animated energy bar under active tab */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #00FFFF, #00D4FF, #DA70FF, #FF4488, #00FF88, #00FFFF, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #00FFFF, 0 0 25px rgba(0, 255, 255, 0.6), 0 0 60px rgba(0, 212, 255, 0.2);
+  z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 0;
+  transition: opacity 0.5s; opacity: 0; z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+  box-shadow: inset 0 -12px 35px rgba(0, 212, 255, 0.08), inset 0 0 30px rgba(0, 212, 255, 0.05);
+  background: rgba(0, 212, 255, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* --- STATUS BAR --------------------------------------------- */
+.monaco-workbench .part.statusbar {
+  box-shadow:
+    inset 0 2px 0 rgba(0, 255, 255, 0.8),
+    inset 0 0 60px rgba(0, 212, 255, 0.08),
+    0 -4px 25px rgba(0, 212, 255, 0.2),
+    0 -8px 60px rgba(0, 212, 255, 0.08) !important;
+  border-top: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+.monaco-workbench .part.statusbar .statusbar-item a {
+  transition: box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+  box-shadow: inset 0 0 35px rgba(0, 212, 255, 0.25);
+  background: rgba(0, 212, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* --- TERMINAL / PANEL --------------------------------------- */
+.monaco-workbench .part.panel {
+  box-shadow:
+    inset 0 2px 0 rgba(0, 255, 255, 0.7),
+    inset 0 0 80px rgba(0, 212, 255, 0.07),
+    0 -5px 30px rgba(0, 212, 255, 0.15) !important;
+  border-top: 1px solid rgba(0, 255, 255, 0.5) !important;
+  position: relative;
+}
+
+.monaco-workbench .part.panel::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(0, 255, 255, 0.7);
+  border-left: 3px solid rgba(0, 255, 255, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.5s;
+}
+.monaco-workbench .part.panel::after {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(0, 255, 255, 0.7);
+  border-right: 3px solid rgba(0, 255, 255, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.5s;
+}
+
+/* --- AGENT / CHAT / COMPOSER (AUXILIARY BAR) ---------------- */
+.monaco-workbench .part.auxiliarybar {
+  background: #06122A !important;
+  box-shadow:
+    inset 3px 0 0 rgba(0, 255, 255, 0.75),
+    inset 0 0 120px rgba(0, 212, 255, 0.09),
+    8px 0 35px rgba(0, 212, 255, 0.22),
+    16px 0 70px rgba(0, 212, 255, 0.08) !important;
+  animation: glow-breathe 5s ease infinite 2.5s;
+  position: relative;
+  border-left: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+
+.monaco-workbench .part.auxiliarybar::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(0, 255, 136, 0.8);
+  border-left: 3px solid rgba(0, 255, 136, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.75s;
+}
+.monaco-workbench .part.auxiliarybar::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(0, 255, 136, 0.8);
+  border-left: 3px solid rgba(0, 255, 136, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.75s;
+}
+
+.monaco-workbench .part.auxiliarybar > .content {
+  background: #06122A !important;
+}
+.monaco-workbench .part.auxiliarybar .title {
+  background: #081830 !important;
+  box-shadow: inset 0 -2px 0 rgba(0, 255, 255, 0.6), 0 5px 25px rgba(0, 212, 255, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab:hover:not(.active) {
+  background: rgba(0, 212, 255, 0.1) !important;
+  box-shadow: inset 0 -10px 30px rgba(0, 212, 255, 0.06);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active {
+  background: #0C1E3C !important;
+  box-shadow: inset 0 -12px 35px rgba(0, 212, 255, 0.14);
+  position: relative;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #00FF88, #00FFFF, #DA70FF, #00FF88, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #00FF88, 0 0 25px rgba(0, 255, 136, 0.6), 0 0 60px rgba(0, 255, 136, 0.2);
+  z-index: 6;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row {
+  color: #E0F4FF !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-name { color: #E0F4FF !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-description { color: #5599BB !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row:hover {
+  background: rgba(0, 212, 255, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(0, 212, 255, 0.06), inset 3px 0 0 rgba(0, 255, 255, 0.3);
+  transform: translateX(-3px);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row.selected,
+.monaco-workbench .part.auxiliarybar .monaco-list-row.focused {
+  background: rgba(0, 212, 255, 0.16) !important;
+  box-shadow: inset 0 0 50px rgba(0, 212, 255, 0.08), inset 3px 0 0 rgba(0, 255, 255, 0.45);
+}
+
+.monaco-workbench .part.auxiliarybar .interactive-input-part,
+.monaco-workbench .part.auxiliarybar textarea,
+.monaco-workbench .part.auxiliarybar .chat-input-toolbars,
+.monaco-workbench .part.auxiliarybar .interactive-session {
+  border-color: rgba(0, 212, 255, 0.45) !important;
+}
+.monaco-workbench .part.auxiliarybar textarea {
+  background: #081830 !important;
+  color: #FFFFFF !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox {
+  background: #081830 !important;
+  border-color: rgba(0, 212, 255, 0.45) !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox.synthetic-focus,
+.monaco-workbench .part.auxiliarybar textarea:focus {
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.25), 0 0 70px rgba(0, 212, 255, 0.08) !important;
+  border-color: rgba(0, 255, 255, 0.8) !important;
+}
+.monaco-workbench .part.auxiliarybar pre,
+.monaco-workbench .part.auxiliarybar code {
+  background: #040E20 !important;
+  border: 1px solid rgba(0, 212, 255, 0.35) !important;
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.08), inset 0 0 4px rgba(0, 212, 255, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .monaco-button {
+  background: rgba(0, 212, 255, 0.2) !important;
+  color: #00D4FF !important;
+  border: 1px solid rgba(0, 255, 255, 0.5) !important;
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.35), 0 0 35px rgba(0, 212, 255, 0.15) !important;
+}
+.monaco-workbench .part.auxiliarybar .monaco-button:hover {
+  background: rgba(0, 212, 255, 0.32) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.55), 0 0 50px rgba(0, 212, 255, 0.25) !important;
+}
+.monaco-workbench .part.auxiliarybar .codicon { color: #00D4FF !important; }
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(0, 212, 255, 0.25) !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(0, 212, 255, 0.45) !important;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list .separator {
+  border-color: rgba(0, 212, 255, 0.22) !important;
+}
+
+/* ============================================================
+   ARC REACTOR WATERMARK — spinning, glowing
+   ============================================================ */
+.monaco-workbench .part.editor > .content::after {
+  content: "";
+  position: fixed;
+  bottom: 30px; right: 20px;
+  width: 400px; height: 400px;
+  background-image: url("file:///Users/haridines/Library/Application%20Support/Cursor/User/themes/arc-reactor.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+  animation: reactor-spin 35s linear infinite;
+}
+
+/* Pulse ring from reactor center */
+.monaco-workbench .part.editor > .content::before {
+  content: "";
+  position: fixed;
+  bottom: 180px; right: 170px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: pulse-ring-out 3s ease-out infinite;
+}
+
+/* ============================================================
+   GLOBAL ICON GLOW
+   ============================================================ */
+.codicon {
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
+  transition: filter 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+.codicon:hover {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 18px rgba(0, 212, 255, 0.5));
+  transform: scale(1.12);
+}
+.monaco-workbench .monaco-list-row:hover .codicon {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 16px rgba(0, 212, 255, 0.4));
+}
+.monaco-workbench .codicon-error  { filter: drop-shadow(0 0 6px rgba(255, 51, 85, 0.8)); }
+.monaco-workbench .codicon-warning { filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8)); }
+.monaco-workbench .codicon-info    { filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.8)); }
+
+/* ============================================================
+   EDITOR CURSOR — big neon pulse
+   ============================================================ */
+.monaco-editor .cursor {
+  box-shadow:
+    0 0 14px #00FFFF,
+    0 0 30px rgba(0, 255, 255, 0.7),
+    0 0 60px rgba(0, 212, 255, 0.35),
+    0 0 100px rgba(0, 212, 255, 0.15) !important;
+}
+.monaco-editor .margin .line-numbers.active-line-number {
+  background: rgba(0, 212, 255, 0.12);
+  border-radius: 2px;
+}
+.monaco-editor .bracket-match {
+  box-shadow: 0 0 14px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 212, 255, 0.3);
+}
+
+/* ============================================================
+   WIDGETS — holographic popups
+   ============================================================ */
+.monaco-editor .find-widget {
+  box-shadow:
+    0 10px 40px rgba(0, 212, 255, 0.35),
+    0 0 4px rgba(0, 255, 255, 0.8),
+    0 0 80px rgba(0, 212, 255, 0.15) !important;
+  border: 1px solid rgba(0, 255, 255, 0.6) !important;
+  animation: hud-flicker 5s ease infinite;
+}
+.monaco-editor .suggest-widget {
+  box-shadow:
+    0 10px 40px rgba(0, 212, 255, 0.35),
+    0 0 4px rgba(0, 255, 255, 0.8),
+    0 0 80px rgba(0, 212, 255, 0.15) !important;
+  border: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+.monaco-editor .suggest-widget .monaco-list-row {
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+.monaco-editor .suggest-widget .monaco-list-row:hover {
+  box-shadow: inset 0 0 30px rgba(0, 212, 255, 0.12);
+  transform: translateX(3px);
+}
+.monaco-editor .suggest-widget .monaco-list-row.focused {
+  box-shadow: inset 0 0 35px rgba(0, 212, 255, 0.15), inset -3px 0 0 rgba(0, 255, 255, 0.6);
+}
+
+/* ============================================================
+   INPUTS + BUTTONS
+   ============================================================ */
+.monaco-inputbox { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+.monaco-inputbox.synthetic-focus {
+  box-shadow: 0 0 14px rgba(0, 255, 255, 0.6), 0 0 35px rgba(0, 212, 255, 0.25), 0 0 60px rgba(0, 212, 255, 0.1) !important;
+}
+.monaco-button {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.35), 0 0 30px rgba(0, 212, 255, 0.15) !important;
+}
+.monaco-button:hover {
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.6), 0 0 45px rgba(0, 212, 255, 0.28), 0 0 80px rgba(0, 212, 255, 0.1) !important;
+  transform: translateY(-2px);
+}
+.monaco-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 212, 255, 0.4) !important;
+}
+
+/* ============================================================
+   COMMAND PALETTE — glow only, no pseudo-elements (breaks Cmd+Shift+P)
+   ============================================================ */
+.quick-input-widget {
+  box-shadow:
+    0 12px 60px rgba(0, 212, 255, 0.35),
+    0 0 5px rgba(0, 255, 255, 0.8),
+    0 0 100px rgba(0, 212, 255, 0.15) !important;
+  border: 1px solid rgba(0, 255, 255, 0.5) !important;
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+.monaco-workbench .notifications-list-container .notification-list-item {
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.15), inset 0 0 4px rgba(0, 255, 255, 0.4);
+  border: 1px solid rgba(0, 255, 255, 0.35) !important;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.monaco-workbench .notifications-list-container .notification-list-item:hover {
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.28), inset 0 0 6px rgba(0, 255, 255, 0.5);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+.monaco-scrollable-element > .scrollbar > .slider {
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.3);
+}
+.monaco-scrollable-element > .scrollbar > .slider.active {
+  box-shadow: 0 0 22px rgba(0, 255, 255, 0.5);
+}
+
+/* ============================================================
+   EDITOR GROUP + MISCELLANEOUS
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container {
+  box-shadow: inset 0 0 3px rgba(0, 212, 255, 0.2);
+}
+
+.monaco-workbench .contentWidgets .codicon-lightbulb,
+.monaco-workbench .markers-panel-container .codicon-lightbulb {
+  animation: arc-reactor-glow 1.5s ease infinite;
+}
+
+.monaco-editor .minimap-slider .minimap-slider-horizontal {
+  box-shadow: 0 0 18px rgba(0, 212, 255, 0.3);
+}
