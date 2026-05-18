@@ -62,7 +62,7 @@
     "breadcrumbs.showFunctions": true,
     "breadcrumbs.showClasses": true,
     "window.titleBarStyle": "custom",
-    "window.title": "${activeEditorShort}${separator}${rootName}${separator}${dirty}  ─  ▶ RB21  ┃  LAP 57",
+    "window.title": "${activeEditorShort}${separator}${rootName}${separator}${dirty}",
     "terminal.integrated.fontFamily": "'Fira Code', Menlo, Monaco, monospace",
     "terminal.integrated.fontSize": 13,
     "terminal.integrated.lineHeight": 1.4,

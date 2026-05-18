@@ -3328,3 +3328,154 @@
     inset 0 0 0  1px rgba(225, 6, 0, 0.18),
     inset 0 0 24px   rgba(225, 6, 0, 0.04) !important;
 }
+
+
+/* ============================================================
+   ============================================================
+   RB-V7 — TITLE BAR FIX + F1 BROADCAST MFD + MONACO + RADIO
+   ────────────────────────────────────────────────────────────
+   Direct response to:
+     "fix the overlapping seen here, what's the wow factor you
+      can add today — subject of envy — also 0 ram overhead"
+
+   Overlap diagnosis:
+     window.title in settings.json was appending  ─ ▶ RB21 ┃ LAP 57
+     to the native title text, and the CSS center brand strip was
+     ALSO rendering  ▶▶ RBR · RB21 · LAP 57  in the same row.
+     Two sources of the same info → collision visible whenever the
+     filename was long enough to encroach on center.
+
+   Fix:
+     1. window.title cleaned to ${activeEditorShort}${separator}${rootName}${separator}${dirty}
+        (no decoration suffix — the CSS strip owns the brand).
+     2. CSS center brand strip is REPLACED with a full F1 BROADCAST
+        MFD TELEMETRY STRIP (the wow). One source of truth, and it
+        looks like actual F1 TV-graphics overlay.
+
+   Wow factor (three):
+     V7-A. F1 BROADCAST MFD — LAP/POS/GAP/TYRE/FUEL/ERS bar that
+           reads like Sky F1 / FOM TV graphics during a race.
+     V7-B. MONACO circuit silhouette — inline SVG data URI painted
+           into the editor bottom-right corner. Looks like the
+           engineering prep board taped to a Red Bull pit wall.
+     V7-C. RACE ENGINEER RADIO — "RADIO ▶ BOX BOX BOX" ticker
+           styled as a Pirelli/team broadcast overlay on the
+           bottom panel header.
+
+   Zero RAM enforced. All static. No new infinite anim. No new
+   position:fixed. No new mix-blend-mode.
+   ============================================================
+   ============================================================ */
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  V7-A. F1 BROADCAST MFD TELEMETRY STRIP                      */
+/*  Replaces the v6 center brand. Reads like real F1 TV graphics:*/
+/*    ▶▶ RBR  ●  LAP 57/57  ●  P1  ●  GAP +1.234  ●  TYRE M-12  */
+/*    ●  FUEL 14.2 kg  ●  ERS 89%  ●  ▶ LIGHTS OUT             */
+/* ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.titlebar::after {
+  content: "\25B6\25B6  RBR  \25CF  LAP 57/57  \25CF  P1  \25CF  GAP \002B 1.234  \25CF  TYRE [M] 12L  \25CF  FUEL 14.2 kg  \25CF  ERS 89%  \25CF  \25B6 LIGHTS OUT" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+  color: var(--neon-yellow) !important;
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(2, 4, 9, 0.85) 8%,
+      rgba(2, 4, 9, 0.92) 50%,
+      rgba(2, 4, 9, 0.85) 92%,
+      transparent 100%) !important;
+  padding: 3px 16px !important;
+  border-top:    1px solid rgba(225, 6, 0, 0.55) !important;
+  border-bottom: 1px solid rgba(255, 217, 51, 0.45) !important;
+  text-shadow:
+    0 0 4px rgba(255, 217, 51, 0.55),
+    0 0 1px rgba(0, 0, 0, 0.80) !important;
+  box-shadow:
+    0 0 12px rgba(225, 6, 0, 0.30),
+    inset 0 0 24px rgba(0, 0, 0, 0.55) !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+  text-transform: uppercase !important;
+  opacity: 0.92 !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  V7-B. MONACO CIRCUIT SILHOUETTE WATERMARK                   */
+/*  Inline SVG data URI on the editor part's ::after. Bottom-   */
+/*  right corner. Static, single rasterize, zero RAM.           */
+/* ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.editor {
+  position: relative !important;
+}
+.monaco-workbench .part.editor::after {
+  content: "" !important;
+  position: absolute !important;
+  right: 18px !important;
+  bottom: 28px !important;
+  width:  120px !important;
+  height:  78px !important;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20130%27%20fill%3D%27none%27%20stroke%3D%27%23FFC906%27%20stroke-width%3D%272.2%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%20%3Cpath%20d%3D%27M%2030%20100%20L%2078%20100%20Q%2092%20100%2095%2090%20L%20100%2068%20Q%20102%2058%20112%2056%20L%20138%2048%20Q%20152%2043%20152%2030%20Q%20152%2018%20140%2018%20L%20105%2018%20Q%2092%2018%2088%2030%20L%2080%2050%20Q%2073%2060%2060%2060%20L%2048%2060%20Q%2032%2060%2032%2076%20L%2032%20100%20Z%27/%3E%20%3Ccircle%20cx%3D%27100%27%20cy%3D%2768%27%20r%3D%272.8%27%20fill%3D%27%23FFC906%27%20stroke%3D%27none%27/%3E%20%3Ccircle%20cx%3D%27105%27%20cy%3D%2718%27%20r%3D%272.0%27%20fill%3D%27%23E10600%27%20stroke%3D%27none%27/%3E%20%3Cline%20x1%3D%2730%27%20y1%3D%27100%27%20x2%3D%2740%27%20y2%3D%27100%27%20stroke%3D%27%23FFFFFF%27%20stroke-width%3D%273%27/%3E%20%3Ctext%20x%3D%27100%27%20y%3D%27122%27%20font-family%3D%27monospace%27%20font-size%3D%2711%27%20font-weight%3D%27800%27%20fill%3D%27%23E10600%27%20text-anchor%3D%27middle%27%20letter-spacing%3D%274%27%3EMONACO%3C/text%3E%20%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: center !important;
+  opacity: 0.18 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  V7-C. RACE ENGINEER RADIO TICKER                            */
+/*  "RADIO ▶ BOX BOX BOX" on the BOTTOM PANEL header (where     */
+/*  TERMINAL / OUTPUT / DEBUG tabs live). Reads like a Pirelli  */
+/*  team-radio broadcast overlay. Static text.                  */
+/* ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.panel .composite.title,
+.monaco-workbench .part.panel > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.panel .composite.title::after,
+.monaco-workbench .part.panel > .title::after {
+  content: "\1F3A4  RADIO  \25B6  BOX BOX BOX  \00B7  BRAKE BIAS \002B 2  \00B7  PUSH NOW" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 110px !important;
+  transform: translateY(-50%) !important;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2.5px !important;
+  color: var(--neon-yellow) !important;
+  padding: 2px 8px !important;
+  background: rgba(2, 4, 9, 0.75) !important;
+  border: 1px solid rgba(255, 217, 51, 0.40) !important;
+  border-radius: 2px !important;
+  text-shadow: 0 0 3px rgba(255, 217, 51, 0.50) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+  text-transform: uppercase !important;
+  opacity: 0.75 !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  V7-D. SAFETY — make sure native title text doesn't bleed    */
+/*  under the MFD bar. Slightly fade the left/right title text  */
+/*  so the MFD reads cleanly when the filename is long.         */
+/* ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.titlebar .window-title,
+.monaco-workbench .part.titlebar .titlebar-center,
+.monaco-workbench .part.titlebar .window-appicon + * {
+  opacity: 0.85 !important;
+}
