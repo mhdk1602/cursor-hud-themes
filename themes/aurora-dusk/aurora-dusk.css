@@ -1,0 +1,1555 @@
+/* ============================================================
+   AURORA TERMINAL — Cursor IDE polish layer (v3 / hacker mode)
+   Companion stylesheet for the Aurora Dusk theme defined in
+   settings.json.
+
+   PHILOSOPHY:
+   - Idle = a CRT scanline-textured console with neon trim. Static.
+   - Interactive = electric. Hover/focus events trigger glitch,
+     chromatic aberration, gradient sweeps. Single-fire only.
+   - All visuals are baked from CSS primitives. Zero SVG, zero JS,
+     zero infinite animations, zero fixed overlays.
+
+   STRICT ZERO-RAM RULES:
+   - No `position: fixed` overlays
+   - No `filter: blur` / `drop-shadow` on elements > 16px
+   - No `mix-blend-mode` on elements > 16px
+   - No infinite `animation:` (single-fire on hover/focus OK)
+   - `backdrop-filter: blur` ALLOWED only on small popups (suggest,
+     hover, quick-input, notifications) — computed once, cached
+   - `repeating-linear-gradient` as background-image is allowed
+     anywhere — rasterized once into a tile texture, infinitely cheap
+   - `text-shadow` allowed on small label elements (tabs, badges,
+     status items) — never on the code editor itself
+   ============================================================ */
+
+@property --aurora-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  /* --- Default palette (legible, used for code / UI text) --- */
+  --aurora-magenta:    #C792EA;
+  --aurora-rose:       #FF6E8E;
+  --aurora-blue:       #82AAFF;
+  --aurora-cyan:       #89DDFF;
+  --aurora-gold:       #FFCC66;
+  --aurora-green:      #B5E890;
+  --aurora-orange:     #FFB387;
+  --aurora-teal:       #7AECD9;
+
+  /* --- Neon tier (used for cursor, glows, hover/focus, decoration) --- */
+  --neon-magenta:      #FF7BFF;
+  --neon-cyan:         #50FFFF;
+  --neon-rose:         #FF4488;
+  --neon-gold:         #FFE066;
+  --neon-green:        #88FF99;
+  --neon-blue:         #5AB5FF;
+
+  /* --- Surfaces --- */
+  --aurora-bg:         #22273B;
+  --aurora-surface:    #0A0A14;   /* near-black chrome for max contrast */
+  --aurora-surface-2:  #06060C;
+  --aurora-elevated:   #1F2335;
+  --aurora-border:     #414868;
+  --aurora-border-soft:#2A2E45;
+  --aurora-muted:      #7280B0;
+
+  /* --- Alpha helpers --- */
+  --magenta-faint:     rgba(199, 146, 234, 0.16);
+  --neon-magenta-soft: rgba(255, 123, 255, 0.55);
+  --neon-cyan-soft:    rgba(80, 255, 255, 0.50);
+  --neon-rose-soft:    rgba(255, 68, 136, 0.45);
+
+  /* --- Easing --- */
+  --ease:              cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:          cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================================
+   1. CRT SCANLINES on chrome (sidebar, aux panel, bottom panel,
+   status bar, title bar). Sub-pixel repeating-linear-gradient,
+   ~3% opacity. Rasterized once into a tile texture by the
+   compositor → infinitely cheap.
+
+   Editor area is INTENTIONALLY excluded — code stays clean.
+   ============================================================ */
+.monaco-workbench .part.sidebar,
+.monaco-workbench .part.auxiliarybar,
+.monaco-workbench .part.panel,
+.monaco-workbench .part.statusbar,
+.monaco-workbench .part.titlebar {
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.020) 2px,
+      rgba(80, 255, 255, 0.020) 3px),
+    repeating-linear-gradient(90deg,
+      transparent 0px,
+      transparent 200px,
+      rgba(255, 123, 255, 0.012) 200px,
+      rgba(255, 123, 255, 0.012) 201px) !important;
+}
+
+/* ============================================================
+   2. ACTIVE EDITOR LINE — neon gradient bar on left edge
+   ============================================================ */
+.monaco-editor .view-overlays .current-line {
+  border-left: 2px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    100%) 1 !important;
+  box-shadow:
+    inset 4px 0 16px rgba(255, 123, 255, 0.06),
+    inset 0 0 0 1px rgba(255, 123, 255, 0.04) !important;
+}
+
+/* ============================================================
+   3. ACTIVE TAB — neon top border + solid neon title with glow
+   (gradient text muddied at small sizes — going for clarity now)
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  border-top: 2px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    45%,
+    var(--neon-rose)    100%) 1 !important;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 123, 255, 0.14) 0%,
+      rgba(80, 255, 255, 0.04) 30%,
+      transparent 70%),
+    var(--aurora-bg) !important;
+  box-shadow:
+    inset 0 -1px 0 var(--neon-magenta),
+    0 -2px 24px rgba(255, 123, 255, 0.22),
+    0 -2px 48px rgba(80, 255, 255, 0.10) !important;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active .tab-label .label-name {
+  color: var(--neon-magenta) !important;
+  text-shadow:
+    0 0 6px rgba(255, 123, 255, 0.70),
+    0 0 14px rgba(255, 123, 255, 0.35),
+    0 0 24px rgba(80, 255, 255, 0.15) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Tab hover transitions */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  transition:
+    background-color 0.18s var(--ease),
+    color 0.18s var(--ease),
+    box-shadow 0.18s var(--ease) !important;
+}
+
+/* ============================================================
+   4. TAB HOVER GLITCH — chromatic aberration via text-shadow RGB
+   shift on the label only. Single tab title (~10-30 glyphs) →
+   text-shadow cost is negligible.
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:not(.active):hover {
+  box-shadow: inset 0 -2px 0 var(--neon-magenta) !important;
+  background: linear-gradient(180deg,
+    rgba(255, 123, 255, 0.06) 0%,
+    transparent 100%) !important;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:not(.active) .tab-label .label-name {
+  transition: text-shadow 0.12s var(--ease), color 0.12s var(--ease) !important;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:not(.active):hover .tab-label .label-name {
+  color: #FFFFFF !important;
+  text-shadow:
+    -1px 0 0 rgba(255, 68, 136, 0.85),
+    1px 0 0 rgba(80, 255, 255, 0.85) !important;
+}
+
+/* ============================================================
+   5. CURSOR CARET — gradient column + 4-tier neon halo
+   ============================================================ */
+.monaco-editor .cursors-layer > .cursor {
+  background: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    100%) !important;
+  border-radius: 1px !important;
+  box-shadow:
+    0 0 4px rgba(255, 123, 255, 0.95),
+    0 0 12px rgba(255, 123, 255, 0.55),
+    0 0 24px rgba(80, 255, 255, 0.30),
+    0 0 48px rgba(255, 68, 136, 0.15) !important;
+}
+
+/* ============================================================
+   6. ACTIVITY BAR — bigger hexagonal selection + brighter glow
+   ============================================================ */
+.monaco-workbench .activitybar .monaco-action-bar .action-item.checked {
+  position: relative !important;
+}
+.monaco-workbench .activitybar .monaco-action-bar .action-item.checked::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 2px !important;
+  background:
+    linear-gradient(135deg,
+      rgba(255, 123, 255, 0.32) 0%,
+      rgba(80, 255, 255, 0.20) 50%,
+      rgba(255, 68, 136, 0.18) 100%) !important;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  box-shadow:
+    0 0 18px rgba(255, 123, 255, 0.55),
+    0 0 36px rgba(80, 255, 255, 0.25) !important;
+  border: 1px solid rgba(255, 123, 255, 0.45) !important;
+}
+.monaco-workbench .activitybar .monaco-action-bar .action-item .action-label {
+  position: relative !important;
+  z-index: 1 !important;
+  transition: color 0.2s var(--ease), transform 0.2s var(--ease), text-shadow 0.2s var(--ease) !important;
+}
+.monaco-workbench .activitybar .monaco-action-bar .action-item:hover .action-label {
+  color: var(--neon-magenta) !important;
+  transform: scale(1.12) !important;
+  text-shadow: 0 0 8px var(--neon-magenta-soft), 0 0 16px rgba(255, 123, 255, 0.30) !important;
+}
+
+/* Activity bar active border = vertical neon strip with glow */
+.monaco-workbench .activitybar .monaco-action-bar .action-item.checked .active-item-indicator::before {
+  border-left: 2px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    100%) 1 !important;
+  box-shadow: 0 0 12px var(--neon-magenta-soft) !important;
+}
+
+/* ============================================================
+   7. STATUS BAR — segmented LED + heavy neon top border
+   ============================================================ */
+.monaco-workbench .part.statusbar {
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 123, 255, 0.030) 3px,
+      rgba(255, 123, 255, 0.030) 4px),
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.025) 2px,
+      rgba(80, 255, 255, 0.025) 3px),
+    linear-gradient(180deg, var(--aurora-surface) 0%, var(--aurora-surface-2) 100%) !important;
+  border-top: 1px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    100%) 1 !important;
+  box-shadow:
+    0 -2px 12px rgba(255, 123, 255, 0.18),
+    0 -2px 28px rgba(80, 255, 255, 0.08) !important;
+}
+
+.monaco-workbench .part.statusbar .statusbar-item {
+  transition:
+    background-color 0.15s var(--ease),
+    color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease),
+    text-shadow 0.15s var(--ease) !important;
+  border-radius: 3px !important;
+}
+.monaco-workbench .part.statusbar .statusbar-item.hasCommand:hover {
+  background: rgba(255, 123, 255, 0.10) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--neon-magenta),
+    0 0 14px var(--neon-magenta-soft) !important;
+  color: var(--neon-magenta) !important;
+  text-shadow: 0 0 8px var(--neon-magenta-soft) !important;
+}
+
+/* ============================================================
+   8. SIDEBAR + AUX PANEL — left/right gradient column accents
+   ============================================================ */
+.monaco-workbench .part.sidebar {
+  border-right: 1px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    transparent 0%,
+    var(--neon-magenta) 20%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    80%,
+    transparent 100%) 1 !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 123, 255, 0.12),
+    2px 0 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.monaco-workbench .part.auxiliarybar {
+  border-left: 1px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    transparent 0%,
+    var(--neon-rose)    20%,
+    var(--neon-cyan)    50%,
+    var(--neon-magenta) 80%,
+    transparent 100%) 1 !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 123, 255, 0.12),
+    -2px 0 16px rgba(0, 0, 0, 0.4) !important;
+  background:
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.020) 2px,
+      rgba(80, 255, 255, 0.020) 3px),
+    linear-gradient(180deg, var(--aurora-surface) 0%, var(--aurora-surface-2) 100%) !important;
+}
+
+/* Sidebar / aux panel section headers — uppercase + neon underline */
+.monaco-workbench .part.sidebar .pane > .pane-header,
+.monaco-workbench .part.auxiliarybar .pane > .pane-header {
+  position: relative !important;
+  background: linear-gradient(180deg, var(--aurora-surface) 0%, var(--aurora-surface-2) 100%) !important;
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    35%,
+    transparent 100%) 1 !important;
+}
+.monaco-workbench .part.sidebar .composite.title h2,
+.monaco-workbench .part.sidebar .pane-header h3,
+.monaco-workbench .part.auxiliarybar .composite.title h2,
+.monaco-workbench .part.auxiliarybar .pane-header h3 {
+  letter-spacing: 0.6px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  text-shadow: 0 0 6px rgba(255, 123, 255, 0.25) !important;
+}
+
+/* ============================================================
+   9. STICKY SCROLL — bigger gradient separator + ambient shadow
+   ============================================================ */
+.monaco-editor .sticky-widget {
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    var(--aurora-border) 15%,
+    var(--neon-magenta) 50%,
+    var(--aurora-border) 85%,
+    transparent 100%) 1 !important;
+  background: linear-gradient(180deg, var(--aurora-elevated) 0%, var(--aurora-bg) 100%) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ============================================================
+   10. FIND WIDGET — 8 sci-fi corner brackets (12px) + rich glow
+   ============================================================ */
+.monaco-editor .find-widget {
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background-color: var(--aurora-elevated) !important;
+  background-image:
+    linear-gradient(90deg,  var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(180deg, var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(90deg,  var(--neon-rose),    var(--neon-rose)),
+    linear-gradient(180deg, var(--neon-rose),    var(--neon-rose)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)) !important;
+  background-repeat: no-repeat !important;
+  background-size:
+    14px 1.5px, 1.5px 14px,
+    14px 1.5px, 1.5px 14px,
+    14px 1.5px, 1.5px 14px,
+    14px 1.5px, 1.5px 14px !important;
+  background-position:
+    0 0,           0 0,
+    100% 0,        100% 0,
+    100% 100%,     100% 100%,
+    0 100%,        0 100% !important;
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--aurora-border-soft),
+    0 0 32px rgba(255, 123, 255, 0.18),
+    0 0 64px rgba(80, 255, 255, 0.08) !important;
+}
+
+/* ============================================================
+   11. QUICK INPUT / COMMAND PALETTE — heavy glassmorphism
+   ============================================================ */
+.quick-input-widget {
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  background-color: rgba(31, 35, 53, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  background-image:
+    linear-gradient(90deg,  var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(180deg, var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(90deg,  var(--neon-rose),    var(--neon-rose)),
+    linear-gradient(180deg, var(--neon-rose),    var(--neon-rose)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)) !important;
+  background-repeat: no-repeat !important;
+  background-size:
+    16px 2px, 2px 16px,
+    16px 2px, 2px 16px,
+    16px 2px, 2px 16px,
+    16px 2px, 2px 16px !important;
+  background-position:
+    0 0,           0 0,
+    100% 0,        100% 0,
+    100% 100%,     100% 100%,
+    0 100%,        0 100% !important;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--aurora-border-soft),
+    0 0 48px rgba(255, 123, 255, 0.20),
+    0 0 96px rgba(80, 255, 255, 0.08) !important;
+}
+
+.quick-input-list .monaco-list-row.focused {
+  background: linear-gradient(90deg,
+    rgba(255, 123, 255, 0.22) 0%,
+    rgba(80, 255, 255, 0.10) 50%,
+    transparent 100%) !important;
+  box-shadow:
+    inset 3px 0 0 var(--neon-magenta),
+    inset 0 0 0 1px rgba(255, 123, 255, 0.12) !important;
+}
+
+/* ============================================================
+   12. SUGGEST WIDGET — holographic glass
+   ============================================================ */
+.monaco-editor .suggest-widget {
+  border: 1px solid var(--aurora-border) !important;
+  border-radius: 6px !important;
+  background-color: rgba(31, 35, 53, 0.88) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--aurora-border-soft),
+    0 0 32px rgba(255, 123, 255, 0.10),
+    0 0 64px rgba(80, 255, 255, 0.06) !important;
+}
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused {
+  background: linear-gradient(90deg,
+    rgba(255, 123, 255, 0.28) 0%,
+    rgba(80, 255, 255, 0.12) 100%) !important;
+  box-shadow:
+    inset 2px 0 0 var(--neon-magenta),
+    0 0 12px rgba(255, 123, 255, 0.20) !important;
+}
+
+/* ============================================================
+   13. HOVER WIDGET — glass tooltips
+   ============================================================ */
+.monaco-editor .monaco-hover,
+.monaco-workbench .monaco-hover {
+  border: 1px solid var(--aurora-border) !important;
+  border-radius: 6px !important;
+  background-color: rgba(31, 35, 53, 0.92) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 123, 255, 0.06) !important;
+}
+
+/* ============================================================
+   14. INLINE CHAT / COMPOSER — rotating conic-gradient on focus
+   ============================================================ */
+.aichat-input-container,
+.composer-input-container,
+.cursor-inline-chat,
+.inline-chat,
+.interactive-input-part,
+.interactive-input-and-execute-toolbar {
+  position: relative !important;
+  border: 1px solid var(--aurora-border) !important;
+  border-radius: 10px !important;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 123, 255, 0.06) 0%,
+      rgba(80, 255, 255, 0.03) 100%),
+    var(--aurora-elevated) !important;
+  transition:
+    border-color 0.25s var(--ease),
+    box-shadow 0.25s var(--ease) !important;
+}
+
+@keyframes aurora-sweep {
+  to { --aurora-angle: 360deg; }
+}
+
+.aichat-input-container:focus-within,
+.composer-input-container:focus-within,
+.cursor-inline-chat:focus-within,
+.inline-chat:focus-within,
+.interactive-input-part:focus-within,
+.interactive-input-and-execute-toolbar:focus-within {
+  border-color: transparent !important;
+  background:
+    linear-gradient(var(--aurora-elevated), var(--aurora-elevated)) padding-box,
+    conic-gradient(from var(--aurora-angle),
+      var(--neon-magenta) 0deg,
+      var(--neon-cyan)    120deg,
+      var(--neon-rose)    240deg,
+      var(--neon-magenta) 360deg) border-box !important;
+  border: 2px solid transparent !important;
+  box-shadow:
+    0 0 0 4px rgba(255, 123, 255, 0.14),
+    0 0 32px rgba(255, 123, 255, 0.28),
+    0 0 64px rgba(80, 255, 255, 0.12) !important;
+  animation: aurora-sweep 1.4s var(--ease-out) forwards !important;
+}
+
+/* ============================================================
+   15. BUTTONS — 4-tier neon hover with chromatic glow stack
+   ============================================================ */
+.monaco-button {
+  border-radius: 5px !important;
+  transition:
+    background-color 0.15s var(--ease),
+    box-shadow 0.2s var(--ease),
+    transform 0.1s var(--ease),
+    text-shadow 0.15s var(--ease) !important;
+}
+.monaco-button:hover:not(.disabled) {
+  box-shadow:
+    0 0 0 1px var(--neon-magenta),
+    0 0 12px var(--neon-magenta-soft),
+    0 0 28px rgba(80, 255, 255, 0.25),
+    0 0 56px rgba(255, 68, 136, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.4) !important;
+}
+.monaco-button:active:not(.disabled) {
+  transform: translateY(1px) !important;
+}
+
+.monaco-button.monaco-text-button {
+  background: linear-gradient(135deg,
+    var(--neon-magenta) 0%,
+    var(--aurora-magenta) 100%) !important;
+  color: #0A0A14 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+}
+.monaco-button.monaco-text-button:hover {
+  background: linear-gradient(135deg,
+    #FFC0FF 0%,
+    var(--neon-magenta) 100%) !important;
+}
+
+/* ============================================================
+   16. DIFF EDITOR — gradient scan beams
+   ============================================================ */
+.monaco-editor .line-insert,
+.monaco-editor .char-insert {
+  background: linear-gradient(90deg,
+    rgba(136, 255, 153, 0.26) 0%,
+    rgba(136, 255, 153, 0.10) 35%,
+    transparent 100%) !important;
+}
+.monaco-editor .line-delete,
+.monaco-editor .char-delete {
+  background: linear-gradient(90deg,
+    rgba(255, 68, 136, 0.26) 0%,
+    rgba(255, 68, 136, 0.10) 35%,
+    transparent 100%) !important;
+}
+.monaco-editor .margin-view-overlays .line-insert {
+  border-left: 2px solid var(--neon-green) !important;
+  box-shadow: inset 1px 0 0 rgba(136, 255, 153, 0.7) !important;
+}
+.monaco-editor .margin-view-overlays .line-delete {
+  border-left: 2px solid var(--neon-rose) !important;
+  box-shadow: inset 1px 0 0 rgba(255, 68, 136, 0.7) !important;
+}
+
+/* ============================================================
+   17. NOTIFICATIONS — gradient left accent + glassmorphism
+   ============================================================ */
+.monaco-workbench .notifications-toasts .notification-toast {
+  border-radius: 8px !important;
+  border-left: 4px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    100%) 1 !important;
+  background-color: rgba(31, 35, 53, 0.92) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 123, 255, 0.12) !important;
+}
+
+/* ============================================================
+   18. WINDOW CONTROLS — neon hover halo
+   ============================================================ */
+.monaco-workbench .part.titlebar .window-controls-container .window-icon {
+  transition: background-color 0.15s var(--ease), box-shadow 0.15s var(--ease) !important;
+}
+.monaco-workbench .part.titlebar .window-controls-container .window-icon:hover {
+  box-shadow:
+    0 0 16px var(--neon-magenta-soft),
+    inset 0 0 0 1px var(--neon-magenta),
+    0 0 32px rgba(80, 255, 255, 0.15) !important;
+}
+
+/* ============================================================
+   19. EDITOR GROUP HEADER — bigger gradient bottom rule
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    var(--neon-magenta) 20%,
+    var(--aurora-border) 50%,
+    var(--neon-cyan) 80%,
+    transparent 100%) 1 !important;
+  background: linear-gradient(180deg, var(--aurora-surface) 0%, var(--aurora-surface-2) 100%) !important;
+  box-shadow: 0 1px 12px rgba(255, 123, 255, 0.08) !important;
+}
+
+/* ============================================================
+   20. MINIMAP — ALWAYS gradient slider (not just on hover)
+   ============================================================ */
+.monaco-editor .minimap .minimap-slider {
+  background: linear-gradient(180deg,
+    rgba(255, 123, 255, 0.18) 0%,
+    rgba(80, 255, 255, 0.12) 100%) !important;
+  border-radius: 2px !important;
+  border-left: 1px solid rgba(255, 123, 255, 0.30) !important;
+  transition: background 0.2s var(--ease), box-shadow 0.2s var(--ease) !important;
+}
+.monaco-editor .minimap .minimap-slider:hover {
+  background: linear-gradient(180deg,
+    rgba(255, 123, 255, 0.38) 0%,
+    rgba(80, 255, 255, 0.28) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--neon-magenta),
+    0 0 12px var(--neon-magenta-soft) !important;
+}
+
+/* ============================================================
+   21. BREADCRUMBS — gradient text on tail segment
+   ============================================================ */
+.monaco-breadcrumbs .monaco-breadcrumb-item .codicon-chevron-right {
+  opacity: 0.5 !important;
+  color: var(--neon-cyan) !important;
+}
+.monaco-breadcrumbs .monaco-breadcrumb-item:last-child .label {
+  background: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   22. LIST HOVER — neon gradient sweep
+   ============================================================ */
+.monaco-list .monaco-list-row {
+  transition:
+    background-color 0.12s var(--ease),
+    color 0.12s var(--ease) !important;
+}
+.monaco-list .monaco-list-row:hover {
+  background: linear-gradient(90deg,
+    rgba(255, 123, 255, 0.16) 0%,
+    rgba(80, 255, 255, 0.04) 60%,
+    transparent 100%) !important;
+}
+.monaco-list .monaco-list-row.focused.selected {
+  background: linear-gradient(90deg,
+    rgba(255, 123, 255, 0.22) 0%,
+    rgba(80, 255, 255, 0.08) 70%,
+    transparent 100%) !important;
+  box-shadow:
+    inset 3px 0 0 var(--neon-magenta),
+    inset 0 0 0 1px rgba(255, 123, 255, 0.14) !important;
+}
+
+/* ============================================================
+   23. SCROLLBAR — ALWAYS gradient slider with neon when active
+   ============================================================ */
+.monaco-scrollable-element > .scrollbar > .slider {
+  background: linear-gradient(180deg,
+    rgba(255, 123, 255, 0.22) 0%,
+    rgba(80, 255, 255, 0.16) 100%) !important;
+  border-radius: 5px !important;
+  transition: background 0.2s var(--ease), box-shadow 0.2s var(--ease) !important;
+}
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    100%) !important;
+  box-shadow: 0 0 12px var(--neon-magenta-soft) !important;
+}
+.monaco-scrollable-element > .scrollbar > .slider.active {
+  background: linear-gradient(180deg, var(--neon-magenta) 0%, var(--neon-cyan) 100%) !important;
+  box-shadow: 0 0 16px var(--neon-magenta-soft), 0 0 32px var(--neon-cyan-soft) !important;
+}
+
+/* ============================================================
+   24. BADGES — gradient pill with neon glow
+   ============================================================ */
+.monaco-workbench .badge,
+.monaco-workbench .activitybar .badge .badge-content,
+.monaco-workbench .activity .badge .badge-content {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.4px !important;
+  background: linear-gradient(135deg,
+    var(--neon-magenta) 0%,
+    var(--neon-rose)    100%) !important;
+  color: #0A0A14 !important;
+  box-shadow:
+    0 0 10px rgba(255, 123, 255, 0.65),
+    0 0 20px rgba(255, 68, 136, 0.30) !important;
+  text-shadow: none !important;
+}
+
+/* ============================================================
+   25. INPUT FIELDS — neon focus ring
+   ============================================================ */
+.monaco-inputbox,
+.monaco-editor .find-widget input.input,
+.monaco-editor .find-widget .monaco-inputbox {
+  border-radius: 4px !important;
+  transition: box-shadow 0.2s var(--ease), border-color 0.2s var(--ease) !important;
+}
+.monaco-inputbox.synthetic-focus,
+.monaco-inputbox:focus-within {
+  box-shadow:
+    0 0 0 1px var(--neon-magenta),
+    0 0 16px var(--neon-magenta-soft),
+    0 0 32px rgba(80, 255, 255, 0.18) !important;
+}
+
+/* ============================================================
+   26. PROGRESS BAR — full neon rainbow
+   ============================================================ */
+.monaco-progress-container .progress-bit {
+  background: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    35%,
+    var(--neon-gold)    65%,
+    var(--neon-rose)    100%) !important;
+  box-shadow: 0 0 10px var(--neon-magenta-soft), 0 0 20px rgba(80, 255, 255, 0.25) !important;
+}
+
+/* ============================================================
+   27. TITLE BAR — gradient bg + bottom hairline
+   ============================================================ */
+.monaco-workbench .part.titlebar {
+  background:
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.018) 2px,
+      rgba(80, 255, 255, 0.018) 3px),
+    linear-gradient(180deg, #0E0E18 0%, var(--aurora-surface) 100%) !important;
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    var(--neon-magenta) 25%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    75%,
+    transparent 100%) 1 !important;
+  box-shadow: 0 2px 12px rgba(255, 123, 255, 0.06) !important;
+}
+
+/* ============================================================
+   28. PEEK VIEW — gradient title bar
+   ============================================================ */
+.monaco-editor .peekview-widget .head {
+  background: linear-gradient(180deg, var(--aurora-elevated) 0%, var(--aurora-bg) 100%) !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    50%,
+    var(--neon-rose)    100%) 1 !important;
+  box-shadow: 0 4px 18px rgba(255, 123, 255, 0.12) !important;
+}
+
+/* ============================================================
+   29. PANEL (bottom) — neon top border
+   ============================================================ */
+.monaco-workbench .part.panel {
+  border-top: 1px solid transparent !important;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    var(--neon-cyan)    25%,
+    var(--neon-magenta) 50%,
+    var(--neon-rose)    75%,
+    transparent 100%) 1 !important;
+}
+.monaco-workbench .part.panel .composite.title {
+  border-bottom: 1px solid var(--aurora-border-soft) !important;
+}
+
+/* ============================================================
+   30. BRACKET-PAIR GUIDE — active guide brighter
+   ============================================================ */
+.monaco-editor .bracket-indent-guide.activeBracket {
+  background-color: var(--neon-magenta) !important;
+  box-shadow: 0 0 6px var(--neon-magenta-soft) !important;
+}
+
+/* ============================================================================
+   v4 ADDITIONS — Aurora Pulse
+   Daily iteration. Adds:
+   - Hover-only conic-gradient rotations via CSS @property (single revolution)
+   - Single-fire glitch keyframe on :active (RGB displacement, ~220ms)
+   - Cursor chat panel deep treatment (messages, tool calls, context pills)
+   - Code lens, parameter hints, inlay hints, lightbulb, breakpoint polish
+   - Tab close button + dirty indicator + breadcrumb hover underline
+   - Subtle 1px neon inset on workbench
+   - Hex dot grid overlay on the chat panel
+   - Hover widget corner brackets
+   All still strict zero-RAM: every animation is single-fire on hover/active,
+   every backdrop-filter is a small popup, every ::before is on a stable
+   element with isolation.
+   ============================================================================ */
+
+/* @property declarations for hover-only gradient rotations */
+@property --btn-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --hex-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ============================================================
+   31. BUTTONS — rotating conic-gradient border on hover (single-fire)
+   ============================================================ */
+.monaco-button {
+  position: relative !important;
+  isolation: isolate !important;
+}
+.monaco-button::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -2px !important;
+  z-index: -1 !important;
+  border-radius: 7px !important;
+  background: conic-gradient(from var(--btn-angle),
+    var(--neon-magenta) 0deg,
+    var(--neon-cyan)    90deg,
+    var(--neon-gold)    180deg,
+    var(--neon-rose)    270deg,
+    var(--neon-magenta) 360deg) !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s var(--ease) !important;
+  pointer-events: none !important;
+}
+@keyframes btn-sweep {
+  to { --btn-angle: 360deg; }
+}
+.monaco-button:hover:not(.disabled)::before {
+  opacity: 1 !important;
+  animation: btn-sweep 1.2s var(--ease-out) forwards !important;
+}
+
+/* ============================================================
+   32. BUTTONS — glitch RGB displacement on press (single-fire ~220ms)
+   ============================================================ */
+@keyframes glitch-press {
+  0%   { filter: none; }
+  20%  { filter: hue-rotate(-30deg) saturate(1.4) brightness(1.1); transform: translate(-1px, 1px); }
+  40%  { filter: hue-rotate(30deg)  saturate(1.4) brightness(1.1); transform: translate(1px, 1px); }
+  60%  { filter: hue-rotate(-15deg) saturate(1.2);                  transform: translate(0, 1px); }
+  80%  { filter: hue-rotate(10deg)  saturate(1.1);                  transform: translate(0, 1px); }
+  100% { filter: none;                                              transform: translateY(1px); }
+}
+.monaco-button:active:not(.disabled) {
+  animation: glitch-press 0.22s var(--ease) forwards !important;
+}
+
+/* ============================================================
+   33. ACTIVITY BAR — rotating conic on inactive icon hover (single-fire)
+   ============================================================ */
+.monaco-workbench .activitybar .monaco-action-bar .action-item:not(.checked)::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 6px !important;
+  z-index: -1 !important;
+  background: conic-gradient(from var(--hex-angle),
+    var(--neon-magenta) 0deg,
+    var(--neon-cyan)    120deg,
+    var(--neon-rose)    240deg,
+    var(--neon-magenta) 360deg) !important;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.25s var(--ease) !important;
+  pointer-events: none !important;
+}
+.monaco-workbench .activitybar .monaco-action-bar .action-item {
+  isolation: isolate !important;
+}
+@keyframes hex-sweep {
+  to { --hex-angle: 360deg; }
+}
+.monaco-workbench .activitybar .monaco-action-bar .action-item:not(.checked):hover::after {
+  opacity: 0.45 !important;
+  animation: hex-sweep 1.5s var(--ease-out) forwards !important;
+}
+
+/* ============================================================
+   34. TAB DIRTY INDICATOR — neon magenta with halo
+   ============================================================ */
+.monaco-workbench .part.editor .tab.dirty .tab-actions .codicon-close,
+.monaco-workbench .part.editor .tab.dirty .tab-actions .action-label.codicon-close::before {
+  color: var(--neon-magenta) !important;
+  text-shadow:
+    0 0 6px var(--neon-magenta-soft),
+    0 0 14px rgba(255, 123, 255, 0.40) !important;
+}
+
+/* ============================================================
+   35. TAB CLOSE BUTTON — neon rose hover with rotation
+   ============================================================ */
+.monaco-workbench .part.editor .tab .tab-actions .action-label {
+  transition:
+    color 0.2s var(--ease),
+    transform 0.3s var(--ease-out),
+    text-shadow 0.2s var(--ease) !important;
+}
+.monaco-workbench .part.editor .tab .tab-actions .action-label.codicon-close:hover {
+  color: var(--neon-rose) !important;
+  text-shadow:
+    0 0 8px var(--neon-rose-soft),
+    0 0 16px rgba(255, 68, 136, 0.40) !important;
+  transform: rotate(90deg) scale(1.18) !important;
+}
+
+/* ============================================================
+   36. WORKBENCH — subtle 1px neon inset outline
+   ============================================================ */
+.monaco-workbench {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 123, 255, 0.05),
+    inset 0 0 48px rgba(255, 123, 255, 0.012),
+    inset 0 0 96px rgba(80, 255, 255, 0.008) !important;
+}
+
+/* ============================================================
+   37. AUX PANEL (chat) — hex dot grid overlay on top of scanlines
+   ============================================================ */
+.monaco-workbench .part.auxiliarybar {
+  background-image:
+    radial-gradient(circle at center, rgba(255, 123, 255, 0.022) 1px, transparent 1.4px),
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.020) 2px,
+      rgba(80, 255, 255, 0.020) 3px),
+    linear-gradient(180deg, var(--aurora-surface) 0%, var(--aurora-surface-2) 100%) !important;
+  background-size: 24px 24px, auto, auto !important;
+  background-position: center, 0 0, 0 0 !important;
+}
+
+/* ============================================================
+   38. CURSOR CHAT — message bubbles, tool calls, context pills
+   Selectors are educated guesses across Cursor's class-name patterns.
+   Rules that don't match any DOM are silently dropped — zero cost.
+   ============================================================ */
+
+/* Message containers */
+.aichat-message,
+.composer-message,
+.cursor-chat-message,
+.message-container,
+.aichat-conversation .turn,
+.interactive-item-container {
+  border-left: 2px solid transparent !important;
+  border-image: linear-gradient(180deg,
+    var(--neon-magenta) 0%,
+    var(--neon-cyan)    100%) 1 !important;
+  padding-left: 12px !important;
+  margin: 6px 0 !important;
+  transition: background-color 0.2s var(--ease) !important;
+}
+.aichat-message:hover,
+.composer-message:hover,
+.cursor-chat-message:hover,
+.interactive-item-container:hover {
+  background: linear-gradient(90deg,
+    rgba(255, 123, 255, 0.05) 0%,
+    transparent 80%) !important;
+}
+
+/* Tool call boxes — corner brackets (smaller version of find widget) */
+.aichat-tool-call,
+.cursor-tool-call,
+.tool-invocation-block,
+.composer-tool-call,
+.interactive-result-code-block {
+  position: relative !important;
+  border: 1px solid var(--aurora-border-soft) !important;
+  border-radius: 4px !important;
+  background-color: rgba(31, 35, 53, 0.55) !important;
+  background-image:
+    linear-gradient(90deg,  var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(180deg, var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)) !important;
+  background-repeat: no-repeat !important;
+  background-size: 8px 1.2px, 1.2px 8px, 8px 1.2px, 1.2px 8px !important;
+  background-position: 0 0, 0 0, 100% 100%, 100% 100% !important;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.3),
+    0 0 16px rgba(255, 123, 255, 0.06) !important;
+}
+
+/* Context pills (file/code attachments) */
+.aichat-context-pill,
+.composer-context-pill,
+.context-pill,
+.cursor-context-pill,
+.composer-context-attachment,
+.context-list-item {
+  border: 1px solid rgba(255, 123, 255, 0.30) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg,
+    rgba(255, 123, 255, 0.10) 0%,
+    rgba(80, 255, 255, 0.05)  100%) !important;
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    background 0.2s var(--ease) !important;
+}
+.aichat-context-pill:hover,
+.composer-context-pill:hover,
+.context-pill:hover,
+.cursor-context-pill:hover,
+.composer-context-attachment:hover,
+.context-list-item:hover {
+  border-color: var(--neon-magenta) !important;
+  background: linear-gradient(135deg,
+    rgba(255, 123, 255, 0.20) 0%,
+    rgba(80, 255, 255, 0.10)  100%) !important;
+  box-shadow:
+    0 0 12px var(--neon-magenta-soft),
+    0 0 24px rgba(255, 123, 255, 0.18) !important;
+}
+
+/* ============================================================
+   39. CODE LENS — magenta italic with subtle hover glow
+   ============================================================ */
+.monaco-editor .codelens-decoration {
+  color: var(--aurora-magenta) !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  opacity: 0.85 !important;
+  transition: opacity 0.2s var(--ease), text-shadow 0.2s var(--ease), color 0.2s var(--ease) !important;
+}
+.monaco-editor .codelens-decoration:hover,
+.monaco-editor .codelens-decoration > a:hover {
+  color: var(--neon-magenta) !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 6px rgba(255, 123, 255, 0.45) !important;
+}
+
+/* ============================================================
+   40. PARAMETER HINT WIDGET — glassmorphism + corner brackets
+   ============================================================ */
+.monaco-editor .parameter-hints-widget {
+  border: 1px solid var(--aurora-border) !important;
+  border-radius: 6px !important;
+  background-color: rgba(31, 35, 53, 0.92) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  background-image:
+    linear-gradient(90deg,  var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(180deg, var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)) !important;
+  background-repeat: no-repeat !important;
+  background-size: 10px 1.2px, 1.2px 10px, 10px 1.2px, 1.2px 10px !important;
+  background-position: 0 0, 0 0, 100% 100%, 100% 100% !important;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 123, 255, 0.10) !important;
+}
+.monaco-editor .parameter-hints-widget .signature .parameter.active {
+  color: var(--neon-magenta) !important;
+  text-shadow: 0 0 6px var(--neon-magenta-soft) !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   41. INLAY HINTS — subtle gradient pill
+   ============================================================ */
+.monaco-editor .ihl,
+.monaco-editor .inlay-hint-decoration,
+.monaco-editor .inlay-hint-label {
+  border-radius: 4px !important;
+  border: 1px solid rgba(80, 255, 255, 0.12) !important;
+  background: linear-gradient(135deg,
+    rgba(80, 255, 255, 0.06) 0%,
+    rgba(255, 123, 255, 0.04) 100%) !important;
+  padding: 0 4px !important;
+}
+
+/* ============================================================
+   42. HOVER WIDGET — corner brackets (matches find widget)
+   ============================================================ */
+.monaco-editor .monaco-hover,
+.monaco-workbench .monaco-hover {
+  background-image:
+    linear-gradient(90deg,  var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(180deg, var(--neon-magenta), var(--neon-magenta)),
+    linear-gradient(90deg,  var(--neon-cyan),    var(--neon-cyan)),
+    linear-gradient(180deg, var(--neon-cyan),    var(--neon-cyan)) !important;
+  background-repeat: no-repeat !important;
+  background-size: 12px 1.5px, 1.5px 12px, 12px 1.5px, 1.5px 12px !important;
+  background-position: 0 0, 0 0, 100% 100%, 100% 100% !important;
+}
+
+/* ============================================================
+   43. BREADCRUMB HOVER — underline grows from left via scaleX
+   ============================================================ */
+.monaco-breadcrumbs .monaco-breadcrumb-item {
+  position: relative !important;
+}
+.monaco-breadcrumbs .monaco-breadcrumb-item::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 4px !important;
+  bottom: 1px !important;
+  height: 1px !important;
+  width: calc(100% - 8px) !important;
+  background: linear-gradient(90deg, var(--neon-magenta), var(--neon-cyan)) !important;
+  transform: scaleX(0) !important;
+  transform-origin: left center !important;
+  transition: transform 0.25s var(--ease-out) !important;
+  pointer-events: none !important;
+  box-shadow: 0 0 6px var(--neon-magenta-soft) !important;
+}
+.monaco-breadcrumbs .monaco-breadcrumb-item:hover::after {
+  transform: scaleX(1) !important;
+}
+
+/* ============================================================
+   44. NOTIFICATION CLOSE — neon rose hover with rotation
+   ============================================================ */
+.monaco-workbench .notifications-toasts .notification-toast .codicon-close,
+.monaco-workbench .notification-list-item .codicon-close {
+  transition:
+    color 0.2s var(--ease),
+    transform 0.3s var(--ease-out),
+    text-shadow 0.2s var(--ease) !important;
+}
+.monaco-workbench .notifications-toasts .notification-toast .codicon-close:hover,
+.monaco-workbench .notification-list-item .codicon-close:hover {
+  color: var(--neon-rose) !important;
+  text-shadow: 0 0 8px var(--neon-rose-soft) !important;
+  transform: rotate(90deg) scale(1.15) !important;
+}
+
+/* ============================================================
+   45. EDITOR SCROLLBAR SHADOW — colored neon tint
+   ============================================================ */
+.monaco-editor .scrollbar > .shadow,
+.monaco-editor .scrollbar.vertical > .shadow,
+.monaco-editor .scrollbar.horizontal > .shadow {
+  box-shadow: 0 0 14px rgba(255, 123, 255, 0.20) inset !important;
+}
+
+/* ============================================================
+   46. BREAKPOINT GLYPH — neon rose hover glow
+   ============================================================ */
+.monaco-editor .glyph-margin .codicon-debug-breakpoint,
+.monaco-editor .codicon-debug-breakpoint-conditional,
+.monaco-editor .codicon-debug-breakpoint-log,
+.monaco-editor .codicon-debug-hint {
+  transition: text-shadow 0.2s var(--ease), transform 0.2s var(--ease-out) !important;
+}
+.monaco-editor .codicon-debug-breakpoint:hover,
+.monaco-editor .codicon-debug-hint:hover {
+  text-shadow:
+    0 0 8px var(--neon-rose-soft),
+    0 0 16px rgba(255, 68, 136, 0.40) !important;
+  transform: scale(1.18) !important;
+}
+
+/* ============================================================
+   47. LIGHTBULB / QUICK-FIX — gold neon hover glow
+   ============================================================ */
+.monaco-editor .codicon-lightbulb,
+.monaco-editor .codicon-lightbulb-autofix,
+.monaco-editor .codicon-lightbulb-sparkle {
+  color: var(--neon-gold) !important;
+  transition: text-shadow 0.2s var(--ease), transform 0.2s var(--ease-out) !important;
+}
+.monaco-editor .codicon-lightbulb:hover,
+.monaco-editor .codicon-lightbulb-autofix:hover,
+.monaco-editor .codicon-lightbulb-sparkle:hover {
+  text-shadow:
+    0 0 8px var(--neon-gold),
+    0 0 18px rgba(255, 224, 102, 0.45) !important;
+  transform: scale(1.15) !important;
+}
+
+/* ============================================================
+   48. EXTENSION VIEW + WALKTHROUGHS — gradient title accents
+   ============================================================ */
+.extension-list-item .header .name,
+.extension-editor .header .name {
+  background: linear-gradient(90deg, var(--neon-magenta), var(--neon-cyan)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   49. SUGGEST WIDGET — type icon glow on focused row
+   ============================================================ */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused .suggest-icon::before {
+  text-shadow: 0 0 8px var(--neon-magenta-soft) !important;
+}
+
+
+/* ============================================================
+   ============================================================
+   V5 LAYER — "AURORA AXIS"
+   ────────────────────────────────────────────────────────────
+   THESIS:  Calm at rest.  Fireworks on touch.
+
+   Drawing inspiration from:
+     • Linear UI refresh (Mar 2026) — "structure should be felt
+       not seen"; sidebars dimmer so main content pops
+     • Raycast design system — accent on ~5% of views only;
+       light-catcher borders simulate glass edges catching light
+     • Glassmorphism 2.0 — multi-layer transparency,
+       backdrop-filter saturate(180%) for color "lensing"
+     • visionOS — 8-layer spatial shadow stacks
+     • Synthwave '84 — sunset horizon, neon afterglow
+     • Cyberdeck "Night City" — atmospheric color washes
+
+   STRATEGY:
+     • SUBTRACT noise from idle chrome (Linear discipline)
+     • ADD ambient depth to the editor (Synthwave / HUD)
+     • AMPLIFY widgets when summoned (Raycast / visionOS)
+     • Keep v4 hover fireworks intact
+
+   ZERO-RAM REAFFIRMED:
+     • Static gradients (rasterized once, cached)
+     • backdrop-filter only on small popups
+     • Single-fire animations only (boot prompt + button tilt)
+     • No fixed overlays, no infinite animations
+   ============================================================
+   ============================================================ */
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-A. CHROME RESTRAINT — soften idle-state decorations
+   Scanlines drop ~50%, rainbow columns drop ~70%.
+   The chrome should disappear so the editor becomes the hero.
+   ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.sidebar,
+.monaco-workbench .part.auxiliarybar,
+.monaco-workbench .part.panel,
+.monaco-workbench .part.statusbar,
+.monaco-workbench .part.titlebar {
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(80, 255, 255, 0.010) 2px,
+      rgba(80, 255, 255, 0.010) 3px),
+    repeating-linear-gradient(90deg,
+      transparent 0px,
+      transparent 240px,
+      rgba(255, 123, 255, 0.005) 240px,
+      rgba(255, 123, 255, 0.005) 241px) !important;
+}
+
+.monaco-workbench .part.sidebar {
+  border-image: linear-gradient(180deg,
+    transparent 0%,
+    rgba(255, 123, 255, 0.30) 22%,
+    rgba(80, 255, 255, 0.22)  50%,
+    rgba(255, 68, 136, 0.30)  78%,
+    transparent 100%) 1 !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 123, 255, 0.06),
+    2px 0 16px rgba(0, 0, 0, 0.4) !important;
+}
+.monaco-workbench .part.auxiliarybar {
+  border-image: linear-gradient(180deg,
+    transparent 0%,
+    rgba(255, 68, 136, 0.30)  22%,
+    rgba(80, 255, 255, 0.22)  50%,
+    rgba(255, 123, 255, 0.30) 78%,
+    transparent 100%) 1 !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 123, 255, 0.06),
+    -2px 0 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-B + C + D. EDITOR AMBIENT — sunset, stage lighting, vignette
+   All baked into the editor background as a single rasterized
+   layer stack. Static, free at idle.
+   Layer order (bottom → top):
+     1. Base bg color
+     2. Sunset horizon (purple → magenta, bottom 20%)
+     3. Stage lighting top-left (cyan radial)
+     4. Stage lighting top-right (magenta radial)
+     5. Stage lighting bottom-right (rose radial)
+   Vignette delivered via inset box-shadow on same element.
+   ──────────────────────────────────────────────────────────── */
+.monaco-editor {
+  background:
+    radial-gradient(ellipse 900px 450px at 0% 0%,
+      rgba(80, 255, 255, 0.030) 0%, transparent 55%),
+    radial-gradient(ellipse 900px 450px at 100% 0%,
+      rgba(255, 123, 255, 0.030) 0%, transparent 55%),
+    radial-gradient(ellipse 800px 400px at 100% 100%,
+      rgba(255, 68, 136, 0.022) 0%, transparent 55%),
+    linear-gradient(180deg,
+      transparent 0%,
+      transparent 78%,
+      rgba(199, 146, 234, 0.030) 90%,
+      rgba(255, 110, 142, 0.060) 100%),
+    var(--aurora-bg) !important;
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.20),
+    inset 0 0 160px rgba(0, 0, 0, 0.10) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-E + F + G. WIDGETS — visionOS 8-layer spatial shadows,
+   Raycast light-catcher borders, Glassmorphism 2.0 lensing.
+
+   Layer recipe (applied to every popup widget):
+     • 1px white-alpha border       (light edge catching light)
+     • backdrop-filter saturate(180%) brightness(1.05)
+       → colors "lens" through the glass
+     • 5 progressively-larger ambient drop shadows
+     • 2 colored neon ambient halos
+     • inset top highlight (white 10%)
+     • inset bottom shade (black 30%)
+   ──────────────────────────────────────────────────────────── */
+.quick-input-widget {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(31, 35, 53, 0.74) !important;
+  backdrop-filter: blur(20px) saturate(180%) brightness(1.05) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.05) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.32),
+    0 8px  16px rgba(0, 0, 0, 0.24),
+    0 16px 32px rgba(0, 0, 0, 0.18),
+    0 32px 64px rgba(0, 0, 0, 0.12),
+    0 0 32px rgba(255, 123, 255, 0.18),
+    0 0 96px rgba(80, 255, 255, 0.06),
+    inset 0  1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.30) !important;
+}
+
+.monaco-editor .suggest-widget {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(16px) saturate(180%) brightness(1.04) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) brightness(1.04) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.30),
+    0 8px  16px rgba(0, 0, 0, 0.20),
+    0 16px 32px rgba(0, 0, 0, 0.14),
+    0 0 24px rgba(255, 123, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.monaco-editor .monaco-hover,
+.monaco-workbench .monaco-hover {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.28),
+    0 8px  16px rgba(0, 0, 0, 0.18),
+    0 0 20px rgba(80, 255, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+.monaco-workbench .notifications-toasts .notification-toast,
+.monaco-workbench .notification-list-item {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(16px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(170%) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.30),
+    0 8px  16px rgba(0, 0, 0, 0.22),
+    0 16px 32px rgba(0, 0, 0, 0.14),
+    0 0 24px rgba(255, 123, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.monaco-editor .find-widget {
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.30),
+    0 8px  16px rgba(0, 0, 0, 0.20),
+    0 16px 32px rgba(0, 0, 0, 0.12),
+    0 0 24px rgba(255, 123, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.monaco-editor .parameter-hints-widget {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+  box-shadow:
+    0 1px  2px  rgba(0, 0, 0, 0.40),
+    0 4px  8px  rgba(0, 0, 0, 0.28),
+    0 8px  16px rgba(0, 0, 0, 0.18),
+    0 0 20px rgba(80, 255, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-H. 3D HOVER TILT — perspective rotation on buttons.
+   2 deg max — premium "comes toward you" feel.
+   Scoped to interaction so no idle cost.
+   ──────────────────────────────────────────────────────────── */
+.monaco-button {
+  perspective: 800px !important;
+  transform-style: preserve-3d !important;
+  transition:
+    background-color 0.15s var(--ease),
+    box-shadow      0.20s var(--ease),
+    transform       0.25s var(--ease-out),
+    text-shadow     0.15s var(--ease) !important;
+}
+.monaco-button:hover:not(.disabled) {
+  transform: translateY(-1px) rotateX(2deg) rotateY(-1deg) !important;
+}
+.monaco-button:active:not(.disabled) {
+  transform: translateY(1px) rotateX(-1deg) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-I. BOOT PROMPT — single-fire on workbench mount
+   1.4s cinematic intro: ASCII text fades in, holds, fades out.
+   After that, the pseudo stays at opacity 0 forever.
+   Cost: ~1.4s of GPU work on window load, then $0.
+   ──────────────────────────────────────────────────────────── */
+@keyframes axis-boot {
+  0%   { opacity: 0;    transform: translate(-50%, -45%); letter-spacing: 12px; }
+  25%  { opacity: 0.85; transform: translate(-50%, -50%); letter-spacing: 6px;  }
+  70%  { opacity: 0.85; transform: translate(-50%, -50%); letter-spacing: 6px;  }
+  100% { opacity: 0;    transform: translate(-50%, -55%); letter-spacing: 2px;  }
+}
+.monaco-workbench {
+  position: relative !important;
+}
+.monaco-workbench::after {
+  content: "▶ AURORA::AXIS  ··  CONN-POD ONLINE  ··  CLEARANCE GRANTED" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--neon-magenta) !important;
+  text-shadow:
+    0 0 8px  var(--neon-magenta-soft),
+    0 0 24px rgba(255, 123, 255, 0.30) !important;
+  letter-spacing: 6px !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  z-index: 9999998 !important;
+  opacity: 0 !important;
+  animation: axis-boot 1.4s var(--ease-out) 0.15s forwards !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-J. MASK FADES — sidebar list bottoms fade out softly
+   Linear-style: removes the harsh cut-off at scroll boundaries.
+   Pure mask-image, no JS, no extra paint.
+   ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.sidebar .pane-body .monaco-list,
+.monaco-workbench .part.auxiliarybar .pane-body .monaco-list {
+  mask-image: linear-gradient(180deg,
+    black 0%,
+    black calc(100% - 28px),
+    transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(180deg,
+    black 0%,
+    black calc(100% - 28px),
+    transparent 100%) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-K. PHOSPHOR TERMINAL — green-tinted scanlines.
+   Only the terminal panel — not the entire bottom panel.
+   Subtle Mr. Robot CRT phosphor vibe.
+   ──────────────────────────────────────────────────────────── */
+.monaco-workbench .part.panel .integrated-terminal,
+.monaco-workbench .part.panel .terminal-wrapper,
+.monaco-workbench .part.panel .xterm-screen,
+.monaco-workbench .part.panel .xterm-viewport {
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 255, 130, 0.022) 2px,
+      rgba(0, 255, 130, 0.022) 3px),
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 6px,
+      rgba(0, 255, 130, 0.008) 6px,
+      rgba(0, 255, 130, 0.008) 7px) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   V5-L. REFINED RADII — bump small radii to 8 px for a
+   visionOS-friendly, softer geometry.
+   ──────────────────────────────────────────────────────────── */
+.monaco-button,
+.quick-input-widget,
+.monaco-editor .suggest-widget,
+.monaco-workbench .notifications-toasts .notification-toast,
+.monaco-workbench .notification-list-item,
+.monaco-editor .monaco-hover,
+.monaco-workbench .monaco-hover,
+.monaco-editor .find-widget,
+.monaco-editor .parameter-hints-widget {
+  border-radius: 8px !important;
+}
+.monaco-button::before {
+  border-radius: 10px !important;
+}

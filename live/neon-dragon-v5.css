@@ -1,0 +1,380 @@
+/* ============================================================
+   NEON DRAGON v5 — DBZ Neon Art Aesthetic
+   Pure void black + massive neon bloom on borders/edges
+   Colors: Cyan #00FFFF, Hot Pink #FF0099, Purple #CC44FF, Orange #FF6600
+   ZERO text-shadow — all glow is structural
+   ============================================================ */
+
+/* === SIDEBAR: cyan left-edge neon tube === */
+.monaco-workbench .part.sidebar {
+  box-shadow:
+    inset -2px 0 0 rgba(0, 255, 255, 0.5),
+    -6px 0 30px rgba(0, 255, 255, 0.15),
+    -12px 0 60px rgba(0, 255, 255, 0.06),
+    -20px 0 100px rgba(0, 255, 255, 0.03);
+}
+
+/* === ACTIVITY BAR: pink neon right edge === */
+.monaco-workbench .part.activitybar {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 0, 153, 0.55),
+    -6px 0 30px rgba(255, 0, 153, 0.15),
+    -12px 0 60px rgba(255, 0, 153, 0.06);
+}
+
+/* Active activity bar icon */
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked {
+  box-shadow: inset 0 0 40px rgba(255, 0, 153, 0.12);
+  position: relative;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #FF0099, #CC44FF, #00FFFF) !important;
+  box-shadow:
+    0 0 10px #FF0099,
+    0 0 25px #CC44FF,
+    0 0 50px rgba(204, 68, 255, 0.4),
+    0 0 80px rgba(255, 0, 153, 0.15);
+  opacity: 1;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  transition: opacity 0.5s;
+  opacity: 0;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover {
+  box-shadow: inset 0 0 30px rgba(255, 0, 153, 0.08);
+}
+
+/* === BADGE: orange neon glow === */
+.monaco-workbench .activitybar .badge .badge-content {
+  box-shadow:
+    0 0 8px #FF6600,
+    0 0 20px #FF6600,
+    0 0 45px rgba(255, 102, 0, 0.5),
+    0 0 80px rgba(255, 102, 0, 0.2);
+}
+
+/* === TITLE BAR: pink bottom edge neon === */
+.monaco-workbench .part.titlebar {
+  box-shadow:
+    inset 0 -2px 0 rgba(255, 0, 153, 0.4),
+    0 6px 35px rgba(255, 0, 153, 0.1),
+    0 10px 70px rgba(255, 0, 153, 0.04);
+}
+
+/* === TAB BAR CONTAINER === */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  box-shadow: inset 0 -1px 0 rgba(204, 68, 255, 0.2);
+}
+
+/* === ACTIVE TAB: rainbow gradient underline with massive bloom === */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  box-shadow: inset 0 -10px 40px rgba(0, 255, 255, 0.06);
+  position: relative;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #FF0099, #CC44FF, #00FFFF, #CC44FF, #FF0099) !important;
+  box-shadow:
+    0 0 10px #CC44FF,
+    0 0 25px #00FFFF,
+    0 0 50px rgba(0, 255, 255, 0.35),
+    0 0 90px rgba(0, 255, 255, 0.12);
+  opacity: 1;
+  z-index: 6;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0px;
+  transition: opacity 0.5s;
+  opacity: 0;
+  z-index: 6;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+  box-shadow: inset 0 -6px 20px rgba(204, 68, 255, 0.04);
+}
+
+/* === STATUS BAR: pink top edge neon === */
+.monaco-workbench .part.statusbar {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 0, 153, 0.4),
+    0 -6px 35px rgba(255, 0, 153, 0.1),
+    0 -10px 70px rgba(255, 0, 153, 0.04);
+}
+
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+  box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.08);
+}
+
+/* === PANEL / TERMINAL: purple top border neon === */
+.monaco-workbench .part.panel {
+  box-shadow:
+    inset 0 2px 0 rgba(204, 68, 255, 0.4),
+    0 -6px 35px rgba(204, 68, 255, 0.1),
+    0 -10px 70px rgba(204, 68, 255, 0.04);
+}
+
+/* === EDITOR CURSOR: cyan neon glow === */
+.monaco-editor .cursor {
+  box-shadow:
+    0 0 8px #00FFFF,
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 0 45px rgba(0, 255, 255, 0.25),
+    0 0 80px rgba(0, 255, 255, 0.08) !important;
+}
+
+/* === ACTIVE LINE NUMBER: subtle pink === */
+.monaco-editor .margin .line-numbers.active-line-number {
+  background: rgba(255, 0, 153, 0.08);
+  border-radius: 2px;
+}
+
+/* === BRACKET MATCH === */
+.monaco-editor .bracket-match {
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.35),
+    0 0 20px rgba(0, 255, 255, 0.12);
+}
+
+/* === FIND WIDGET === */
+.monaco-editor .find-widget {
+  box-shadow:
+    0 6px 30px rgba(204, 68, 255, 0.25),
+    0 0 2px rgba(204, 68, 255, 0.6),
+    0 0 60px rgba(204, 68, 255, 0.08) !important;
+  border-color: rgba(204, 68, 255, 0.5) !important;
+}
+
+/* === SUGGEST WIDGET === */
+.monaco-editor .suggest-widget {
+  box-shadow:
+    0 6px 35px rgba(204, 68, 255, 0.25),
+    0 0 2px rgba(204, 68, 255, 0.6),
+    0 0 60px rgba(204, 68, 255, 0.08) !important;
+}
+
+/* === INPUT FOCUS === */
+.monaco-inputbox.synthetic-focus {
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.35),
+    0 0 25px rgba(0, 255, 255, 0.15),
+    0 0 50px rgba(0, 255, 255, 0.06) !important;
+}
+
+/* === BUTTONS === */
+.monaco-button {
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.25),
+    0 0 20px rgba(0, 255, 255, 0.1) !important;
+}
+
+.monaco-button:hover {
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.45),
+    0 0 30px rgba(0, 255, 255, 0.18),
+    0 0 60px rgba(0, 255, 255, 0.06) !important;
+}
+
+/* === COMMAND PALETTE: purple neon halo === */
+.quick-input-widget {
+  box-shadow:
+    0 8px 45px rgba(204, 68, 255, 0.25),
+    0 0 3px rgba(204, 68, 255, 0.6),
+    0 0 80px rgba(204, 68, 255, 0.1),
+    0 0 120px rgba(204, 68, 255, 0.04) !important;
+}
+
+/* === NOTIFICATIONS === */
+.monaco-workbench .notifications-list-container .notification-list-item {
+  box-shadow:
+    0 0 15px rgba(204, 68, 255, 0.1),
+    inset 0 0 1px rgba(204, 68, 255, 0.3);
+}
+
+/* === SCROLLBAR === */
+.monaco-editor .minimap-slider .minimap-slider-horizontal {
+  box-shadow: 0 0 12px rgba(204, 68, 255, 0.2);
+}
+
+/* ============================================================
+   AGENT / CHAT / COMPOSER PANEL — Purple Neon Zone
+   ============================================================ */
+
+.monaco-workbench .part.auxiliarybar {
+  background: #030310 !important;
+  box-shadow:
+    inset 2px 0 0 rgba(204, 68, 255, 0.5),
+    6px 0 30px rgba(204, 68, 255, 0.15),
+    12px 0 60px rgba(204, 68, 255, 0.06),
+    20px 0 100px rgba(204, 68, 255, 0.03);
+}
+
+.monaco-workbench .part.auxiliarybar > .content {
+  background: #030310 !important;
+}
+
+.monaco-workbench .part.auxiliarybar .title {
+  background: #06061A !important;
+  box-shadow:
+    inset 0 -2px 0 rgba(204, 68, 255, 0.45),
+    0 6px 25px rgba(204, 68, 255, 0.08);
+}
+
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active {
+  background: #0C0C28 !important;
+  box-shadow: inset 0 -8px 25px rgba(204, 68, 255, 0.1);
+  position: relative;
+}
+
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #CC44FF, #FF0099, #CC44FF) !important;
+  box-shadow:
+    0 0 10px #CC44FF,
+    0 0 25px #FF0099,
+    0 0 50px rgba(204, 68, 255, 0.4),
+    0 0 80px rgba(255, 0, 153, 0.15);
+  z-index: 6;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row {
+  color: #AABBDD !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-name {
+  color: #BBCCEE !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-description {
+  color: #667799 !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row:hover {
+  background: rgba(204, 68, 255, 0.06) !important;
+  box-shadow: inset 0 0 25px rgba(204, 68, 255, 0.04);
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row.selected,
+.monaco-workbench .part.auxiliarybar .monaco-list-row.focused {
+  background: rgba(204, 68, 255, 0.1) !important;
+  box-shadow: inset 0 0 30px rgba(204, 68, 255, 0.06);
+}
+
+.monaco-workbench .part.auxiliarybar .interactive-input-part,
+.monaco-workbench .part.auxiliarybar textarea,
+.monaco-workbench .part.auxiliarybar .chat-input-toolbars,
+.monaco-workbench .part.auxiliarybar .interactive-session {
+  border-color: rgba(204, 68, 255, 0.3) !important;
+}
+
+.monaco-workbench .part.auxiliarybar textarea {
+  background: #04040F !important;
+  color: #CCBBEE !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-inputbox {
+  background: #04040F !important;
+  border-color: rgba(204, 68, 255, 0.3) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-inputbox.synthetic-focus,
+.monaco-workbench .part.auxiliarybar textarea:focus {
+  box-shadow:
+    0 0 12px rgba(204, 68, 255, 0.4),
+    0 0 30px rgba(204, 68, 255, 0.15),
+    0 0 60px rgba(204, 68, 255, 0.05) !important;
+  border-color: rgba(204, 68, 255, 0.6) !important;
+}
+
+.monaco-workbench .part.auxiliarybar pre,
+.monaco-workbench .part.auxiliarybar code {
+  background: #020208 !important;
+  border: 1px solid rgba(0, 255, 255, 0.2) !important;
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.05),
+    inset 0 0 2px rgba(0, 255, 255, 0.08);
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-button {
+  background: rgba(204, 68, 255, 0.15) !important;
+  color: #CC88FF !important;
+  border: 1px solid rgba(204, 68, 255, 0.3) !important;
+  box-shadow:
+    0 0 10px rgba(204, 68, 255, 0.25),
+    0 0 25px rgba(204, 68, 255, 0.1) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-button:hover {
+  background: rgba(204, 68, 255, 0.25) !important;
+  box-shadow:
+    0 0 15px rgba(204, 68, 255, 0.4),
+    0 0 35px rgba(204, 68, 255, 0.15),
+    0 0 60px rgba(204, 68, 255, 0.06) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .codicon {
+  color: #CC88FF !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(204, 68, 255, 0.2) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(204, 68, 255, 0.35) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list .separator {
+  border-color: rgba(204, 68, 255, 0.15) !important;
+}
+
+/* ============================================================
+   EDITOR GROUP BORDER
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container {
+  box-shadow: inset 0 0 1px rgba(204, 68, 255, 0.1);
+}
+
+/* ============================================================
+   LIGHTBULB PULSE
+   ============================================================ */
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.monaco-workbench .contentWidgets .codicon-lightbulb,
+.monaco-workbench .markers-panel-container .codicon-lightbulb {
+  animation: neon-pulse 2s ease infinite;
+}

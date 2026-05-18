@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#1A0810" stop-opacity="0.98"/>
+      <stop offset="60%" stop-color="#0A0406" stop-opacity="0.98"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="loadBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF2020"/>
+      <stop offset="50%" stop-color="#FFB800"/>
+      <stop offset="100%" stop-color="#FF1744"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bgGrad)"/>
+  <g stroke="#FF4444" stroke-width="0.4" opacity="0.15">
+    <path d="M 0 100 L 1600 100"/><path d="M 0 200 L 1600 200"/>
+    <path d="M 0 300 L 1600 300"/><path d="M 0 400 L 1600 400"/>
+    <path d="M 0 500 L 1600 500"/><path d="M 0 600 L 1600 600"/>
+    <path d="M 0 700 L 1600 700"/><path d="M 0 800 L 1600 800"/>
+    <path d="M 200 0 L 200 900"/><path d="M 400 0 L 400 900"/>
+    <path d="M 600 0 L 600 900"/><path d="M 800 0 L 800 900"/>
+    <path d="M 1000 0 L 1000 900"/><path d="M 1200 0 L 1200 900"/>
+    <path d="M 1400 0 L 1400 900"/>
+  </g>
+  <g transform="translate(800, 350)">
+    <path d="M -36 -24 L 36 -24 L 36 12 Q 36 44, 0 56 Q -36 44, -36 12 Z" fill="#FFEE00" stroke="#000" stroke-width="3" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;1" keyTimes="0;0.05;0.95;1" dur="5s" fill="freeze"/>
+    </path>
+    <text x="0" y="14" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#FF1744" opacity="0">SF<animate attributeName="opacity" values="0;1;1;1" keyTimes="0;0.05;0.95;1" dur="5s" fill="freeze"/></text>
+  </g>
+  <text x="800" y="500" text-anchor="middle" font-family="Menlo,Consolas,monospace" font-size="48" font-weight="900" fill="#FFB800" letter-spacing="8" opacity="0">SCUDERIA SYSTEMS<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.18;0.22" dur="5s" fill="freeze"/></text>
+  <text x="800" y="500" text-anchor="middle" font-family="Menlo,Consolas,monospace" font-size="42" font-weight="900" fill="#FF4444" letter-spacing="6" opacity="0">CHECKING ENGINES<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.18;0.22" dur="5s" begin="1s" fill="freeze"/></text>
+  <text x="800" y="500" text-anchor="middle" font-family="Menlo,Consolas,monospace" font-size="42" font-weight="900" fill="#00FF44" letter-spacing="6" opacity="0">SYSTEMS NOMINAL<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.15;0.22" dur="5s" begin="2s" fill="freeze"/></text>
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.04;0.18;0.22" dur="5s" begin="3s" fill="freeze"/>
+    <circle cx="600" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="660" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="720" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="780" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="840" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="900" cy="500" r="22" fill="#2A0808" stroke="#FF1744" stroke-width="2"/>
+    <circle cx="600" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.1s" fill="freeze"/></circle>
+    <circle cx="660" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.2s" fill="freeze"/></circle>
+    <circle cx="720" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.3s" fill="freeze"/></circle>
+    <circle cx="780" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.4s" fill="freeze"/></circle>
+    <circle cx="840" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.5s" fill="freeze"/></circle>
+    <circle cx="900" cy="500" r="18" fill="#FF1744" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.05;1" dur="0.6s" begin="3.6s" fill="freeze"/></circle>
+  </g>
+  <text x="800" y="500" text-anchor="middle" font-family="Menlo,Consolas,monospace" font-size="96" font-weight="900" fill="#00FF44" letter-spacing="20" opacity="0">GO GO GO<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.15;0.22" dur="5s" begin="4.2s" fill="freeze"/></text>
+  <text x="800" y="560" text-anchor="middle" font-family="Menlo,Consolas,monospace" font-size="14" font-weight="700" fill="#FF4444" letter-spacing="3" opacity="0">PIT WALL HUD v7  ::  CONN-POD ONLINE<animate attributeName="opacity" values="0;0.7;0.7;0" keyTimes="0;0.06;0.18;0.22" dur="5s" begin="2s" fill="freeze"/></text>
+  <rect x="600" y="600" width="400" height="6" fill="#1A0810" stroke="#FF2020" stroke-width="0.5" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.85;1" dur="5s" fill="freeze"/>
+  </rect>
+  <rect x="600" y="600" width="0" height="6" fill="url(#loadBar)" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.85;1" dur="5s" fill="freeze"/>
+    <animate attributeName="width" values="0;400" keyTimes="0;1" dur="3.8s" begin="0.3s" fill="freeze"/>
+  </rect>
+</svg>

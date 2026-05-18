@@ -89,6 +89,45 @@ A cleaner, more minimal JARVIS look with fewer CSS effects. Good for those who w
 
 ---
 
+### 4. Oracle Red Bull Racing — _RB21 Livery_ <sub>(active)</sub>
+
+> _"Lights out and away we go." Always at race pace, floors it on touch._
+
+Hard pivot away from the heavy-decoration JARVIS lineage to a **zero-RAM doctrine**: no infinite animations, no `position: fixed`, no `mix-blend-mode`, no large blur halos. Every effect is rasterized once and cached.
+
+| Feature | Detail |
+|---|---|
+| **Palette** | RB navy (`#040E2D` editor, `#020409` chrome), neon red, neon yellow, champagne gold |
+| **Always-on livery** | 12 px F1 start-lights gantry at editor top, checkered-flag stripe at bottom, tricolor under tab bar |
+| **Race overlays** | Racing-line arc across editor, sector-timing strip `S1 S2 S3` in status bar, P1 badge, pit-lane dashes, tachometer arc |
+| **Title bar** | `▶▶ RBR · RB21 · LAP 57` centered brand strip |
+| **Watermarks** | `▶ GARAGE` (sidebar) and `▶ PIT WALL` (chat) anchored top-right of each panel |
+| **Performance budget** | 0 infinite anim, 0 fixed overlays, 0 mix-blend, backdrop-blur confined to small popups |
+
+→ See [`themes/red-bull-racing/README.md`](themes/red-bull-racing/README.md)
+
+---
+
+### 5. Aurora Axis (Dusk → Neon → Terminal → Pulse → Axis) — _Magenta/Rose_ <sub>(archived)</sub>
+
+> _Five-iteration lineage. "Calm at rest, fireworks on touch."_
+
+The bridge between the heavy JARVIS era and the zero-RAM RBR era. Dusk → Neon brightened the base; Terminal added a hacker aesthetic; Pulse added interactive fireworks; Axis dimmed idle chrome and added cinematic boot prompts.
+
+→ See [`themes/aurora-dusk/README.md`](themes/aurora-dusk/README.md)
+
+---
+
+### 6. Scuderia Ferrari SF71H HUD (v1 → v7.3) — _Italian Red HUD_ <sub>(archived)</sub>
+
+> _Where the obsession started. Retired for RAM._
+
+The original heavy-decoration HUD. Steering-wheel cluster, F1 start lights, pit-board, radar, telemetry sparklines, mech-profile silhouette. Hit ~2,024 lines of CSS and triggered the zero-RAM rewrite. Kept here for reference + the SVG asset library.
+
+→ See [`themes/ferrari-scuderia-f1/README.md`](themes/ferrari-scuderia-f1/README.md)
+
+---
+
 ## Installation
 
 ### Prerequisites
@@ -213,16 +252,58 @@ cursor-hud-themes/
 ├── LICENSE
 ├── assets/
 │   └── jarvis-hud-reference.png
+├── live/                              # snapshot of ~/Library/Application Support/Cursor/User/themes/
+│   ├── red-bull-racing.css
+│   ├── aurora-dusk.css
+│   ├── neon-dragon-v5.css
+│   ├── stark-industries.css
+│   ├── jarvis-hud.css
+│   └── tron-neon-glow-backup.css
 └── themes/
-    ├── jarvis-techno-hud-v5/       # Flagship — full holographic
-    │   ├── theme-colors.json       # settings.json color values
-    │   ├── hud-effects.css         # CSS animations & glows
-    │   └── arc-reactor.svg         # Spinning watermark
-    ├── neon-dragon-magenta-v7/     # DBZ magenta aesthetic
+    ├── jarvis-techno-hud-v5/          # Flagship — full holographic
+    │   ├── theme-colors.json
+    │   ├── hud-effects.css
+    │   └── arc-reactor.svg
+    ├── neon-dragon-magenta-v7/        # DBZ magenta aesthetic
     │   └── theme-colors.json
-    └── jarvis-hud-v3/              # Minimal JARVIS blue
-        └── theme-colors.json
+    ├── jarvis-hud-v3/                 # Minimal JARVIS blue
+    │   └── theme-colors.json
+    ├── red-bull-racing/               # ACTIVE — RB21 livery, zero-RAM
+    │   ├── README.md
+    │   ├── theme-colors.json
+    │   └── red-bull-racing.css
+    ├── aurora-dusk/                   # Archived — magenta/rose, Dusk → Axis
+    │   ├── README.md
+    │   ├── theme-colors.json
+    │   └── aurora-dusk.css
+    └── ferrari-scuderia-f1/           # Archived — heavy HUD, SVG asset library
+        ├── README.md
+        ├── theme-colors.json
+        ├── ferrari-scuderia-f1.css
+        ├── screencast-mode.css
+        ├── velocity-core.svg
+        ├── steering-wheel.svg
+        ├── svgs/                      # 6 HUD assets (radar, pit-board, etc.)
+        └── versions/                  # 6 historical CSS iterations (v5 → v7.3)
 ```
+
+## Zero-RAM doctrine (themes 4-6)
+
+The newer themes (Red Bull Racing, Aurora Axis, post-v7 Ferrari) enforce a strict
+performance budget — verified per release:
+
+```
+braces:           balanced
+infinite anim:    0
+position:fixed:   0
+mix-blend-mode:   0
+backdrop-blur:    confined to small popups only (suggest, hover, quick-input, notifications)
+```
+
+This is a deliberate departure from the JARVIS-era effects (breathing glows,
+spinning reactors). After enough long Cursor sessions with infinite animations
+sitting in the background, the GPU/CPU cost compounds — so all interactive feedback
+is now single-fire on hover/focus only.
 
 ---
 

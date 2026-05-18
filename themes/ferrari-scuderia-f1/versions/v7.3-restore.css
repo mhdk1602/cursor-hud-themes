@@ -1,0 +1,2107 @@
+/* ============================================================
+   SCUDERIA F1 — Ferrari SF71H Edition
+   "Gentlemen, a short view back to the past..."
+
+   Rosso Corsa:    #FF2020  rgb(255, 32, 32)
+   Bright Red:     #FF4444  rgb(255, 68, 68)
+   Gold/Amber:     #FFB800  rgb(255, 184, 0)
+   Shell Gold:     #FFA000  rgb(255, 160, 0)
+   Pirelli Yellow: #FFEE00  rgb(255, 238, 0)
+   Orange Flame:   #FF6B20  rgb(255, 107, 32)
+   Cherry Red:     #FF1744  rgb(255, 23, 68)
+   Carbon Grey:    #6A5555  rgb(106, 85, 85)
+   ============================================================ */
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes glow-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 80px rgba(255, 32, 32, 0.08),
+      inset 0 0 200px rgba(255, 32, 32, 0.04);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 120px rgba(255, 32, 32, 0.15),
+      inset 0 0 280px rgba(255, 32, 32, 0.07);
+  }
+}
+
+@keyframes border-travel {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 300%; }
+}
+
+@keyframes border-pulse {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 4px rgba(255, 68, 68, 0.3); }
+  50% { opacity: 1; box-shadow: 0 0 10px rgba(255, 68, 68, 0.7); }
+}
+
+@keyframes hud-flicker {
+  0%, 100% { opacity: 1; }
+  88% { opacity: 1; }
+  89% { opacity: 0.3; }
+  90% { opacity: 1; }
+  93% { opacity: 0.5; }
+  94% { opacity: 1; }
+}
+
+@keyframes reactor-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(90deg) scale(1.03); }
+  50%  { transform: rotate(180deg) scale(1); }
+  75%  { transform: rotate(270deg) scale(1.03); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes energy-sweep {
+  0%   { left: -40%; }
+  100% { left: 140%; }
+}
+
+@keyframes arc-reactor-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.9)); }
+  50%      { opacity: 0.55; filter: drop-shadow(0 0 3px rgba(255, 68, 68, 0.4)); }
+}
+
+/* ============================================================
+   F1 REV COUNTER — vertical rev-counter strip (5 LEDs).
+   IDLE: bottom green light slow-pulses (engine running).
+   ACTION: full sequence rev-up green→amber→red→BLUE SHIFT
+   triggered ONLY when a loading spinner is visible (agent
+   thinking, file save, command running, etc.).
+   Lights stack UPWARD from the ::after origin via box-shadow.
+   ============================================================ */
+@keyframes f1-idle-pulse {
+  /* All lights mostly dark; bottom green dimly breathes
+     to indicate "engine on / system ready" */
+  0%, 100% {
+    background: #082008;
+    box-shadow:
+      0 -14px 0 #1A0606,
+      0 -28px 0 #1A0606,
+      0 -42px 0 #1A0606,
+      0 -56px 0 #1A0606,
+      0 0 4px rgba(0, 255, 68, 0.25);
+  }
+  50% {
+    background: #00AA22;
+    box-shadow:
+      0 -14px 0 #1A0606,
+      0 -28px 0 #1A0606,
+      0 -42px 0 #1A0606,
+      0 -56px 0 #1A0606,
+      0 0 8px rgba(0, 255, 68, 0.55), 0 0 16px rgba(0, 255, 68, 0.25);
+  }
+}
+
+@keyframes f1-rev-counter {
+  /* 0-10%: green LED (idle low rpm) */
+  0%, 8% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #1A0606, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 0 20px rgba(0, 255, 68, 0.5);
+  }
+  /* 10-25%: 2 green LEDs */
+  12%, 22% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44;
+  }
+  /* 25-40%: green + amber */
+  26%, 36% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44, 0 -28px 12px #FFEE00;
+  }
+  /* 40-55%: green + amber + amber */
+  40%, 50% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #FFB800, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44, 0 -28px 12px #FFEE00, 0 -42px 12px #FFB800;
+  }
+  /* 55-70%: ALL 5 — redline reached */
+  54%, 68% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #FFB800, 0 -56px 0 #FF1744,
+      0 0 12px #00FF44, 0 -14px 12px #00FF44, 0 -28px 14px #FFEE00, 0 -42px 14px #FFB800, 0 -56px 14px #FF1744;
+  }
+  /* 70-85%: SHIFT NOW — blue flash on all */
+  72%, 82% {
+    background: #4488FF;
+    box-shadow:
+      0 -14px 0 #4488FF, 0 -28px 0 #4488FF, 0 -42px 0 #4488FF, 0 -56px 0 #4488FF,
+      0 0 16px #4488FF, 0 -14px 16px #4488FF, 0 -28px 16px #4488FF, 0 -42px 16px #4488FF, 0 -56px 18px #4488FF;
+  }
+  /* 85-100%: snap dark, ready to repeat */
+  88%, 100% {
+    background: #082008;
+    box-shadow:
+      0 -14px 0 #1A0606, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606;
+  }
+}
+
+/* ============================================================
+   STEERING WHEEL WOBBLE — driver's micro-corrections
+   ============================================================ */
+@keyframes wheel-wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  25%      { transform: rotate(2deg); }
+  50%      { transform: rotate(-1deg); }
+  75%      { transform: rotate(4deg); }
+}
+
+/* ============================================================
+   RACING STRIPES — diagonal speed lines drifting across workbench
+   ============================================================ */
+@keyframes stripe-drift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 400px 400px, -400px 400px; }
+}
+
+/* ============================================================
+   REV COUNTER PULSE — for the watermark glow
+   ============================================================ */
+@keyframes rev-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.4)) drop-shadow(0 0 30px rgba(255, 23, 68, 0.2)); }
+  50%      { filter: drop-shadow(0 0 24px rgba(255, 32, 32, 0.7)) drop-shadow(0 0 50px rgba(255, 23, 68, 0.4)); }
+}
+
+/* ============================================================
+   WIREFRAME GRID — dark red lines, carbon fiber feel
+   ============================================================ */
+.monaco-workbench {
+  background-image:
+    linear-gradient(rgba(255, 32, 32, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 32, 32, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255, 32, 32, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 32, 32, 0.03) 1px, transparent 1px) !important;
+  background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px !important;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px !important;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.monaco-workbench .part.sidebar {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 68, 68, 0.75),
+    inset 0 0 100px rgba(255, 32, 32, 0.09),
+    -8px 0 35px rgba(255, 32, 32, 0.22),
+    -16px 0 70px rgba(255, 32, 32, 0.08) !important;
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border-right: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+.monaco-workbench .part.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 68, 68, 0.8);
+  border-right: 3px solid rgba(255, 68, 68, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite;
+}
+
+.monaco-workbench .part.sidebar::after {
+  content: "";
+  position: absolute;
+  bottom: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 68, 68, 0.8);
+  border-right: 3px solid rgba(255, 68, 68, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1s;
+}
+
+.monaco-workbench .part.sidebar .monaco-list-row {
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.sidebar .monaco-list-row:hover {
+  background: rgba(255, 32, 32, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(255, 32, 32, 0.08), inset -3px 0 0 rgba(255, 68, 68, 0.4);
+  transform: translateX(3px);
+}
+.monaco-workbench .part.sidebar .monaco-list-row.selected,
+.monaco-workbench .part.sidebar .monaco-list-row.focused {
+  background: rgba(255, 32, 32, 0.18) !important;
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.1), inset -3px 0 0 rgba(255, 68, 68, 0.55);
+}
+
+/* ============================================================
+   ACTIVITY BAR
+   ============================================================ */
+.monaco-workbench .part.activitybar {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 68, 68, 0.7),
+    inset 0 0 70px rgba(255, 32, 32, 0.12),
+    -6px 0 25px rgba(255, 32, 32, 0.15) !important;
+  border-right: 1px solid rgba(255, 68, 68, 0.4) !important;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover {
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.25);
+  transform: scale(1.1);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover .codicon {
+  filter: drop-shadow(0 0 12px rgba(255, 68, 68, 1)) drop-shadow(0 0 25px rgba(255, 32, 32, 0.6));
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked {
+  box-shadow: inset 0 0 60px rgba(255, 32, 32, 0.28);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked .codicon {
+  filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.95)) drop-shadow(0 0 22px rgba(255, 32, 32, 0.5));
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0; left: 0; width: 3px;
+  background: linear-gradient(180deg, #FF4444, #FF2020, #FFB800, #FF6B20, #FF4444);
+  background-size: 100% 300%;
+  animation: border-travel 3s linear infinite;
+  box-shadow: 0 0 12px #FF4444, 0 0 30px rgba(255, 68, 68, 0.7), 0 0 60px rgba(255, 32, 32, 0.35);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 0;
+  transition: opacity 0.5s; opacity: 0;
+}
+
+.monaco-workbench .activitybar .badge .badge-content {
+  box-shadow: 0 0 12px #FFEE00, 0 0 30px rgba(255, 238, 0, 0.7), 0 0 60px rgba(255, 238, 0, 0.35);
+  animation: hud-flicker 2.5s ease infinite;
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+.monaco-workbench .part.editor {
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border: 1px solid rgba(255, 68, 68, 0.35) !important;
+}
+
+.monaco-workbench .part.editor::before {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-right: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.25s;
+}
+.monaco-workbench .part.editor::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 68, 68, 0.7);
+  border-left: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.25s;
+}
+
+/* ============================================================
+   TITLE BAR
+   ============================================================ */
+.monaco-workbench .part.titlebar {
+  box-shadow:
+    inset 0 -2px 0 rgba(255, 68, 68, 0.8),
+    inset 0 0 60px rgba(255, 32, 32, 0.08),
+    0 4px 25px rgba(255, 32, 32, 0.2),
+    0 8px 60px rgba(255, 32, 32, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  box-shadow: inset 0 -1px 0 rgba(255, 68, 68, 0.45);
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  box-shadow: inset 0 -14px 45px rgba(255, 32, 32, 0.12);
+  position: relative;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active .codicon {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.8));
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #FF4444, #FF2020, #FFB800, #FF6B20, #FF1744, #FF4444, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #FF4444, 0 0 25px rgba(255, 68, 68, 0.6), 0 0 60px rgba(255, 32, 32, 0.2);
+  z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 0;
+  transition: opacity 0.5s; opacity: 0; z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+  box-shadow: inset 0 -12px 35px rgba(255, 32, 32, 0.08), inset 0 0 30px rgba(255, 32, 32, 0.05);
+  background: rgba(255, 32, 32, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.monaco-workbench .part.statusbar {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 68, 68, 0.8),
+    inset 0 0 60px rgba(255, 32, 32, 0.08),
+    0 -4px 25px rgba(255, 32, 32, 0.2),
+    0 -8px 60px rgba(255, 32, 32, 0.08) !important;
+  border-top: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+.monaco-workbench .part.statusbar .statusbar-item a {
+  transition: box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+  box-shadow: inset 0 0 35px rgba(255, 32, 32, 0.25);
+  background: rgba(255, 32, 32, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   TERMINAL / PANEL
+   ============================================================ */
+.monaco-workbench .part.panel {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 68, 68, 0.7),
+    inset 0 0 80px rgba(255, 32, 32, 0.07),
+    0 -5px 30px rgba(255, 32, 32, 0.15) !important;
+  border-top: 1px solid rgba(255, 68, 68, 0.5) !important;
+  position: relative;
+}
+
+.monaco-workbench .part.panel::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-left: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.5s;
+}
+.monaco-workbench .part.panel::after {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-right: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.5s;
+}
+
+/* ============================================================
+   AGENT / CHAT / COMPOSER (AUXILIARY BAR) — gold accents
+   ============================================================ */
+.monaco-workbench .part.auxiliarybar {
+  background: #0A0406 !important;
+  box-shadow:
+    inset 3px 0 0 rgba(255, 68, 68, 0.75),
+    inset 0 0 120px rgba(255, 32, 32, 0.09),
+    8px 0 35px rgba(255, 32, 32, 0.22),
+    16px 0 70px rgba(255, 32, 32, 0.08) !important;
+  animation: glow-breathe 5s ease infinite 2.5s;
+  position: relative;
+  border-left: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+.monaco-workbench .part.auxiliarybar::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 184, 0, 0.8);
+  border-left: 3px solid rgba(255, 184, 0, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.75s;
+}
+.monaco-workbench .part.auxiliarybar::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 184, 0, 0.8);
+  border-left: 3px solid rgba(255, 184, 0, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.75s;
+}
+
+.monaco-workbench .part.auxiliarybar > .content {
+  background: #0A0406 !important;
+}
+.monaco-workbench .part.auxiliarybar .title {
+  background: #100608 !important;
+  box-shadow: inset 0 -2px 0 rgba(255, 68, 68, 0.6), 0 5px 25px rgba(255, 32, 32, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab:hover:not(.active) {
+  background: rgba(255, 32, 32, 0.1) !important;
+  box-shadow: inset 0 -10px 30px rgba(255, 32, 32, 0.06);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active {
+  background: #1A0810 !important;
+  box-shadow: inset 0 -12px 35px rgba(255, 32, 32, 0.14);
+  position: relative;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #FFB800, #FF4444, #FF6B20, #FFB800, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #FFB800, 0 0 25px rgba(255, 184, 0, 0.6), 0 0 60px rgba(255, 184, 0, 0.2);
+  z-index: 6;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row {
+  color: #FFE8E0 !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-name { color: #FFE8E0 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-description { color: #AA7777 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row:hover {
+  background: rgba(255, 32, 32, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(255, 32, 32, 0.06), inset 3px 0 0 rgba(255, 68, 68, 0.3);
+  transform: translateX(-3px);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row.selected,
+.monaco-workbench .part.auxiliarybar .monaco-list-row.focused {
+  background: rgba(255, 32, 32, 0.16) !important;
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.08), inset 3px 0 0 rgba(255, 68, 68, 0.45);
+}
+
+.monaco-workbench .part.auxiliarybar .interactive-input-part,
+.monaco-workbench .part.auxiliarybar textarea,
+.monaco-workbench .part.auxiliarybar .chat-input-toolbars,
+.monaco-workbench .part.auxiliarybar .interactive-session {
+  border-color: rgba(255, 32, 32, 0.45) !important;
+}
+.monaco-workbench .part.auxiliarybar textarea {
+  background: #100608 !important;
+  color: #FFFFFF !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox {
+  background: #100608 !important;
+  border-color: rgba(255, 32, 32, 0.45) !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox.synthetic-focus,
+.monaco-workbench .part.auxiliarybar textarea:focus {
+  box-shadow: 0 0 16px rgba(255, 68, 68, 0.6), 0 0 40px rgba(255, 32, 32, 0.25), 0 0 70px rgba(255, 32, 32, 0.08) !important;
+  border-color: rgba(255, 68, 68, 0.8) !important;
+}
+.monaco-workbench .part.auxiliarybar pre,
+.monaco-workbench .part.auxiliarybar code {
+  background: #080304 !important;
+  border: 1px solid rgba(255, 32, 32, 0.35) !important;
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.08), inset 0 0 4px rgba(255, 32, 32, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .monaco-button {
+  background: rgba(255, 32, 32, 0.2) !important;
+  color: #FF2020 !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.35), 0 0 35px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-workbench .part.auxiliarybar .monaco-button:hover {
+  background: rgba(255, 32, 32, 0.32) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.55), 0 0 50px rgba(255, 32, 32, 0.25) !important;
+}
+.monaco-workbench .part.auxiliarybar .codicon { color: #FF2020 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(255, 32, 32, 0.25) !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(255, 32, 32, 0.45) !important;
+  box-shadow: 0 0 12px rgba(255, 32, 32, 0.3);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list .separator {
+  border-color: rgba(255, 32, 32, 0.22) !important;
+}
+
+/* ============================================================
+   SCUDERIA HUD v4 — F1 STEERING WHEEL WATERMARK
+
+   Anchored to .monaco-workbench::after (root workbench) which
+   we know renders reliably — racing stripes on ::before render
+   globally from this same element.
+
+   Key fix from v3: mix-blend-mode REMOVED. In v2 the wheel was
+   at this same selector but used mix-blend-mode: screen, which
+   meant the dark carbon-fiber wheel pixels screened against the
+   dark-red auxiliary bar (chat panel) bg = invisible. Without
+   blend mode + opacity 0.72 + no-stacking-context-interference
+   + z-index 99999, the wheel paints solidly on top of all panels.
+
+   Positioned bottom-right. If the chat panel is open it'll
+   overlap it — but at 300x300 and 0.72 opacity it sits over the
+   chat's bottom toolbar (non-essential area) without hiding the
+   actual conversation text above it.
+   ============================================================ */
+.monaco-workbench::after {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 40px !important;
+  width: 300px !important;
+  height: 300px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIiBvcGFjaXR5PSIwLjMyIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0id2hlZWwtZ3JhZCIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMDgxMCIgc3RvcC1vcGFjaXR5PSIwLjk1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjMEEwNDA2IiBzdG9wLW9wYWNpdHk9IjAuODUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ic2NyZWVuLWdsb3ciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjQ0NDQiIHN0b3Atb3BhY2l0eT0iMC45Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjRkYyMDIwIiBzdG9wLW9wYWNpdHk9IjAuNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRjIwMjAiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iY2FyYm9uLWZpYmVyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMDgxMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMkExMDE4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMEEwNDA2IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJsZWQtZ2xvdyI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi41Ii8+PC9maWx0ZXI+CiAgICA8ZmlsdGVyIGlkPSJzb2Z0LWdsb3ciPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQiLz48L2ZpbHRlcj4KICAgIDxmaWx0ZXIgaWQ9InN0cm9uZy1nbG93Ij48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI4Ii8+PC9maWx0ZXI+CiAgPC9kZWZzPgoKICA8IS0tID09PT09PT09PSBTVEVFUklORyBXSEVFTCBCT0RZIChGZXJyYXJpIFNGLXN0eWxlOiByZWN0YW5ndWxhciB0b3AsIHJvdW5kIGJvdHRvbSkgPT09PT09PT09IC0tPgogIDwhLS0gT3V0ZXIgcmltIC0tPgogIDxwYXRoIGQ9Ik0gODAgMTgwCiAgICAgICAgICAgTCA4MCAxMzAKICAgICAgICAgICBRIDgwIDkwLCAxNDAgOTAKICAgICAgICAgICBMIDM2MCA5MAogICAgICAgICAgIFEgNDIwIDkwLCA0MjAgMTMwCiAgICAgICAgICAgTCA0MjAgMTgwCiAgICAgICAgICAgUSA0MjAgMzIwLCAzNTAgMzgwCiAgICAgICAgICAgUSAyNTAgNDQwLCAxNTAgMzgwCiAgICAgICAgICAgUSA4MCAzMjAsIDgwIDE4MCBaIgogICAgICAgIGZpbGw9InVybCgjY2FyYm9uLWZpYmVyKSIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjIuNSIgb3BhY2l0eT0iMC45NSIvPgoKICA8IS0tIElubmVyIGN1dG91dCAoY3JlYXRlcyB0aGUgd2hlZWwgc2hhcGUpIC0tPgogIDxwYXRoIGQ9Ik0gMTQ1IDE5NQogICAgICAgICAgIEwgMTQ1IDE2NQogICAgICAgICAgIFEgMTQ1IDE0NSwgMTc1IDE0NQogICAgICAgICAgIEwgMzI1IDE0NQogICAgICAgICAgIFEgMzU1IDE0NSwgMzU1IDE2NQogICAgICAgICAgIEwgMzU1IDE5NQogICAgICAgICAgIFEgMzU1IDI4NSwgMzA1IDMyNQogICAgICAgICAgIFEgMjUwIDM2MCwgMTk1IDMyNQogICAgICAgICAgIFEgMTQ1IDI4NSwgMTQ1IDE5NSBaIgogICAgICAgIGZpbGw9IiMwQTA0MDYiIG9wYWNpdHk9IjAuOCIvPgoKICA8IS0tID09PT09PT09PSBSRVYgQ09VTlRFUiBMRUQgQkFSICh0b3Agb2Ygd2hlZWwpID09PT09PT09PSAtLT4KICA8IS0tIExFRCBob3VzaW5nIHN0cmlwIC0tPgogIDxyZWN0IHg9IjEzNSIgeT0iMTA1IiB3aWR0aD0iMjMwIiBoZWlnaHQ9IjIyIiByeD0iNCIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOSIvPgoKICA8IS0tIDE1IExFRCBsaWdodHMgFCBncmVlbiCSIGFtYmVyIJIgcmVkIJIgYmx1ZSBwcm9ncmVzc2lvbiAoRmVycmFyaSBGMSBzdHlsZSkgLS0+CiAgPGc+CiAgICA8IS0tIEdyZWVuIExFRHMgKDEtNSk6IGxvdy9taWQgUlBNIC0tPgogICAgPGNpcmNsZSBjeD0iMTQ4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjMDBGRjQ0IiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIxNDgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiM4OEZGODgiLz4KICAgIDxjaXJjbGUgY3g9IjE2NCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iIzAwRkY0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMTY0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjODhGRjg4Ii8+CiAgICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiMwMEZGNDQiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjE4MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iIzg4RkY4OCIvPgogICAgPGNpcmNsZSBjeD0iMTk2IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjNDRGRjIyIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIxOTYiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNBQUZGNjYiLz4KICAgIDxjaXJjbGUgY3g9IjIxMiIgY3k9IjExNiIgcj0iNiIgZmlsbD0iIzg4RUUwMCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjEyIiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjQ0NGRjY2Ii8+CgogICAgPCEtLSBBbWJlciBMRURzICg2LTEwKTogbWlkL2hpZ2ggUlBNIC0tPgogICAgPGNpcmNsZSBjeD0iMjI4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkZFRTAwIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIyMjgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRkZGODgiLz4KICAgIDxjaXJjbGUgY3g9IjI0NCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGQjgwMCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjQ0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkZEODY2Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNjAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiNGRjg4MDAiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjI2MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iI0ZGQUE2NiIvPgogICAgPGNpcmNsZSBjeD0iMjc2IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkY2QjIwIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNzYiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRkFBODgiLz4KICAgIDxjaXJjbGUgY3g9IjI5MiIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGNDQ0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjkyIiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkY4ODg4Ii8+CgogICAgPCEtLSBSZWQgTEVEcyAoMTEtMTMpOiByZWRsaW5lIC0tPgogICAgPGNpcmNsZSBjeD0iMzA4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkYxNzQ0IiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIzMDgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRjY2NzciLz4KICAgIDxjaXJjbGUgY3g9IjMyNCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGMTc0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMzI0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkY2Njc3Ii8+CiAgICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiNGRjE3NDQiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjM0MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iI0ZGNjY3NyIvPgoKICAgIDwhLS0gQmx1ZSBMRURzICgxNC0xNSk6IFNISUZUIE5PVyBpbmRpY2F0b3IgLS0+CiAgICA8Y2lyY2xlIGN4PSIzNTYiIGN5PSIxMTYiIHI9IjciIGZpbGw9IiM0NDg4RkYiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjM1NiIgY3k9IjExNiIgcj0iNSIgZmlsbD0iIzg4QkJGRiIvPgogIDwvZz4KCiAgPCEtLSA9PT09PT09PT0gQ0VOVEVSIERJU1BMQVkgU0NSRUVOID09PT09PT09PSAtLT4KICA8cmVjdCB4PSIxOTUiIHk9IjIwMCIgd2lkdGg9IjExMCIgaGVpZ2h0PSI2MCIgcng9IjMiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjE5NSIgeT0iMjAwIiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjYwIiByeD0iMyIgZmlsbD0idXJsKCNzY3JlZW4tZ2xvdykiIG9wYWNpdHk9IjAuNCIvPgogIDwhLS0gU2NyZWVuIGNvbnRlbnQ6IGdlYXIgaW5kaWNhdG9yICsgc3BlZWQgLS0+CiAgPHRleHQgeD0iMjUwIiB5PSIyMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCIgb3BhY2l0eT0iMC45NSI+NzwvdGV4dD4KICA8dGV4dCB4PSIyNTAiIHk9IjI1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuOSIgbGV0dGVyLXNwYWNpbmc9IjIiPjMxMiBLUEg8L3RleHQ+CgogIDwhLS0gVGlueSBzY3JlZW4gZGV0YWlsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIyMDYiIHgyPSIyNDUiIHkyPSIyMDYiIHN0cm9rZT0iI0ZGQjgwMCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuNSIvPgogIDxsaW5lIHgxPSIyNTUiIHkxPSIyMDYiIHgyPSIzMDAiIHkyPSIyMDYiIHN0cm9rZT0iI0ZGQjgwMCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuNSIvPgoKICA8IS0tID09PT09PT09PSBTQ1VERVJJQSBGRVJSQVJJIEJBREdFICh0b3AgY2VudGVyLCBiZXR3ZWVuIExFRHMgYW5kIHNjcmVlbikgPT09PT09PT09IC0tPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI1MCwgMTY1KSI+CiAgICA8IS0tIFNoaWVsZCBzaGFwZSAtLT4KICAgIDxwYXRoIGQ9Ik0gLTE4IC0xMiBMIDE4IC0xMiBMIDE4IDYgUSAxOCAxOCwgMCAyMiBRIC0xOCAxOCwgLTE4IDYgWiIKICAgICAgICAgIGZpbGw9IiNGRkVFMDAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuOTIiLz4KICAgIDwhLS0gU0YgdGV4dCAtLT4KICAgIDx0ZXh0IHg9IjAiIHk9IjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGMTc0NCI+U0Y8L3RleHQ+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBMRUZUIEdSSVAgSEFORExFID09PT09PT09PSAtLT4KICA8ZWxsaXBzZSBjeD0iMTAwIiBjeT0iMjQwIiByeD0iMjIiIHJ5PSI1NSIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC45MiIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogIDwhLS0gR3JpcCB0ZXh0dXJlIGxpbmVzIC0tPgogIDxnIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjYiIG9wYWNpdHk9IjAuNSI+CiAgICA8bGluZSB4MT0iODUiIHkxPSIyMTUiIHgyPSIxMTUiIHkyPSIyMTUiIHRyYW5zZm9ybT0icm90YXRlKC04LCAxMDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSI4MyIgeTE9IjIyNSIgeDI9IjExNyIgeTI9IjIyNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjgyIiB5MT0iMjM1IiB4Mj0iMTE4IiB5Mj0iMjM1IiB0cmFuc2Zvcm09InJvdGF0ZSgtOCwgMTAwLCAyNDApIi8+CiAgICA8bGluZSB4MT0iODIiIHkxPSIyNDUiIHgyPSIxMTgiIHkyPSIyNDUiIHRyYW5zZm9ybT0icm90YXRlKC04LCAxMDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSI4MyIgeTE9IjI1NSIgeDI9IjExNyIgeTI9IjI1NSIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9Ijg1IiB5MT0iMjY1IiB4Mj0iMTE1IiB5Mj0iMjY1IiB0cmFuc2Zvcm09InJvdGF0ZSgtOCwgMTAwLCAyNDApIi8+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBSSUdIVCBHUklQIEhBTkRMRSA9PT09PT09PT0gLS0+CiAgPGVsbGlwc2UgY3g9IjQwMCIgY3k9IjI0MCIgcng9IjIyIiByeT0iNTUiIGZpbGw9IiMxQTA4MTAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOTIiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogIDxnIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjYiIG9wYWNpdHk9IjAuNSI+CiAgICA8bGluZSB4MT0iMzg1IiB5MT0iMjE1IiB4Mj0iNDE1IiB5Mj0iMjE1IiB0cmFuc2Zvcm09InJvdGF0ZSg4LCA0MDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSIzODMiIHkxPSIyMjUiIHgyPSI0MTciIHkyPSIyMjUiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjM4MiIgeTE9IjIzNSIgeDI9IjQxOCIgeTI9IjIzNSIgdHJhbnNmb3JtPSJyb3RhdGUoOCwgNDAwLCAyNDApIi8+CiAgICA8bGluZSB4MT0iMzgyIiB5MT0iMjQ1IiB4Mj0iNDE4IiB5Mj0iMjQ1IiB0cmFuc2Zvcm09InJvdGF0ZSg4LCA0MDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSIzODMiIHkxPSIyNTUiIHgyPSI0MTciIHkyPSIyNTUiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjM4NSIgeTE9IjI2NSIgeDI9IjQxNSIgeTI9IjI2NSIgdHJhbnNmb3JtPSJyb3RhdGUoOCwgNDAwLCAyNDApIi8+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBCVVRUT05TIC8gRElBTFMgPT09PT09PT09IC0tPgogIDwhLS0gTGVmdCBzaWRlIGJ1dHRvbnMgLS0+CiAgPGNpcmNsZSBjeD0iMTE1IiBjeT0iMTcwIiByPSI5IiBmaWxsPSIjRkYyMDIwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMC44IiBvcGFjaXR5PSIwLjg1Ii8+CiAgPHRleHQgeD0iMTE1IiB5PSIxNzQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMDAwMDAwIj5EUlM8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMTU1IiBjeT0iMTcwIiByPSI3IiBmaWxsPSIjRkZCODAwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgPGNpcmNsZSBjeD0iMTU1IiBjeT0iMTcwIiByPSIzIiBmaWxsPSIjRkZFRTAwIi8+CgogIDwhLS0gUmlnaHQgc2lkZSBidXR0b25zIC0tPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE3MCIgcj0iOSIgZmlsbD0iIzQ0ODhGRiIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjAuOCIgb3BhY2l0eT0iMC44NSIvPgogIDx0ZXh0IHg9IjM4NSIgeT0iMTc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwMDAwMCI+Qk9YPC90ZXh0PgogIDxjaXJjbGUgY3g9IjM0NSIgY3k9IjE3MCIgcj0iNyIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjM0NSIgY3k9IjE3MCIgcj0iMyIgZmlsbD0iI0ZGRUUwMCIvPgoKICA8IS0tIEJvdHRvbSByb3c6IHJvdGFyeSBkaWFscyAtLT4KICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIyOTUiIHI9IjE0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjkiLz4KICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIyOTUiIHI9IjEwIiBmaWxsPSIjMEEwNDA2Ii8+CiAgPGxpbmUgeDE9IjE4MCIgeTE9IjI5NSIgeDI9IjE4MCIgeTI9IjI4NSIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOTUiLz4KICA8dGV4dCB4PSIxODAiIHk9IjMyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjIwMjAiPkRJRkY8L3RleHQ+CgogIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjI5NSIgcj0iMTQiIGZpbGw9IiMxQTA4MTAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOSIvPgogIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjI5NSIgcj0iMTAiIGZpbGw9IiMwQTA0MDYiLz4KICA8bGluZSB4MT0iMzIwIiB5MT0iMjk1IiB4Mj0iMzI4IiB5Mj0iMjg5IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC45NSIvPgogIDx0ZXh0IHg9IjMyMCIgeT0iMzIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGMjAyMCI+QkJBTDwvdGV4dD4KCiAgPCEtLSBUaW55IGluZGljYXRvciBkb3RzIHNjYXR0ZXJlZCBhcm91bmQgLS0+CiAgPGNpcmNsZSBjeD0iMjIwIiBjeT0iMjkwIiByPSIyLjUiIGZpbGw9IiMwMEZGNDQiIG9wYWNpdHk9IjAuODUiLz4KICA8Y2lyY2xlIGN4PSIyMzUiIGN5PSIyOTAiIHI9IjIuNSIgZmlsbD0iI0ZGRUUwMCIgb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjI2NSIgY3k9IjI5MCIgcj0iMi41IiBmaWxsPSIjRkZFRTAwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgPGNpcmNsZSBjeD0iMjgwIiBjeT0iMjkwIiByPSIyLjUiIGZpbGw9IiNGRjQ0NDQiIG9wYWNpdHk9IjAuODUiLz4KCiAgPCEtLSA9PT09PT09PT0gUEFERExFIFNISUZURVJTIChiZWhpbmQgd2hlZWwsIGhpbnRlZCBhdCBlZGdlcykgPT09PT09PT09IC0tPgogIDxwYXRoIGQ9Ik0gNzAgMjIwIEwgNjAgMjcwIEwgNzUgMjkwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC41NSIvPgogIDxwYXRoIGQ9Ik0gNDMwIDIyMCBMIDQ0MCAyNzAgTCA0MjUgMjkwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC41NSIvPgoKICA8IS0tID09PT09PT09PSBHTE9XSU5HIEFDQ0VOVCAoaG90IGxhcCByZWQgZ2xvdyBhcm91bmQgd2hlZWwpID09PT09PT09PSAtLT4KICA8ZWxsaXBzZSBjeD0iMjUwIiBjeT0iMjQwIiByeD0iMTgwIiByeT0iMTcwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjQiLz4KPC9zdmc+Cg==") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99999 !important;
+  opacity: 0.72 !important;
+  animation: wheel-wobble 6s ease-in-out infinite, rev-pulse 2.4s ease-in-out infinite !important;
+  transform-origin: center !important;
+}
+
+/* RESPONSIVE: shrink so the wheel never dominates */
+@media (max-width: 1500px) {
+  .monaco-workbench::after {
+    width: 220px !important; height: 220px !important;
+    bottom: 30px !important; right: 30px !important;
+    opacity: 0.6 !important;
+  }
+}
+@media (max-width: 1000px) {
+  .monaco-workbench::after {
+    width: 160px !important; height: 160px !important;
+    bottom: 20px !important; right: 20px !important;
+    opacity: 0.5 !important;
+  }
+}
+
+/* ============================================================
+   RACING STRIPES — unchanged, works reliably at workbench::before
+   ============================================================ */
+.monaco-workbench { position: relative; }
+.monaco-workbench::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background:
+    repeating-linear-gradient(
+      -25deg,
+      transparent 0px,
+      transparent 90px,
+      rgba(255, 32, 32, 0.045) 90px,
+      rgba(255, 32, 32, 0.045) 92px,
+      transparent 92px,
+      transparent 110px,
+      rgba(255, 255, 255, 0.025) 110px,
+      rgba(255, 255, 255, 0.025) 111px
+    ),
+    repeating-linear-gradient(
+      25deg,
+      transparent 0px,
+      transparent 140px,
+      rgba(255, 184, 0, 0.018) 140px,
+      rgba(255, 184, 0, 0.018) 142px
+    );
+  background-size: 400px 400px, 400px 400px;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: stripe-drift 18s linear infinite;
+}
+
+/* ============================================================
+   F1 REV COUNTER — vertical 5-LED strip in the activity bar
+
+   v4 fix: `!important` on EVERY property to beat any VSCode
+   default styles, and `overflow: visible !important` on the
+   parent to prevent clipping. Using TWO selector paths
+   (.part.activitybar and .activitybar without .part) for
+   maximum compatibility across Cursor version variants.
+
+   IDLE: bottom green LED slowly breathes ("engine running").
+   ACTION: when ANY loading spinner is in the DOM, full rev
+   sequence fires (agent thinking, save, command, autocomplete,
+   etc.) triggered by :has().
+   ============================================================ */
+.monaco-workbench .part.activitybar,
+.monaco-workbench .activitybar {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.monaco-workbench .part.activitybar::after,
+.monaco-workbench .activitybar::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 110px !important;
+  left: 50% !important;
+  margin-left: -5px !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: #082008 !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  box-shadow:
+    0 -14px 0 #1A0606,
+    0 -28px 0 #1A0606,
+    0 -42px 0 #1A0606,
+    0 -56px 0 #1A0606,
+    0 0 6px rgba(0, 255, 68, 0.35) !important;
+  animation: f1-idle-pulse 2.6s ease-in-out infinite !important;
+}
+
+/* "ENG" label — reads as a deliberate telemetry section */
+.monaco-workbench .part.activitybar::before,
+.monaco-workbench .activitybar::before {
+  content: "ENG" !important;
+  position: absolute !important;
+  bottom: 82px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  font-family: "Arial Black", "Impact", sans-serif !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  color: rgba(255, 32, 32, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  text-shadow: 0 0 4px rgba(255, 32, 32, 0.5) !important;
+  text-align: center !important;
+  width: auto !important;
+}
+
+/* ACTION: rev sequence fires on any Monaco/Cursor loading spinner.
+   Covers agent thinking, file save, command palette loading,
+   autocomplete in-flight, syncing, indexing, search, etc. */
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .part.activitybar::after,
+.monaco-workbench:has(.codicon-sync.codicon-modifier-spin) .part.activitybar::after,
+.monaco-workbench:has(.monaco-progress-container.active) .part.activitybar::after,
+.monaco-workbench:has(.progress-bit) .part.activitybar::after,
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .activitybar::after,
+.monaco-workbench:has(.codicon-sync.codicon-modifier-spin) .activitybar::after {
+  animation: f1-rev-counter 2.4s ease-out infinite !important;
+}
+
+
+/* ============================================================
+   GLOBAL ICON GLOW
+   ============================================================ */
+.codicon {
+  filter: drop-shadow(0 0 4px rgba(255, 32, 32, 0.6));
+  transition: filter 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+.codicon:hover {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.9)) drop-shadow(0 0 18px rgba(255, 32, 32, 0.5));
+  transform: scale(1.12);
+}
+.monaco-workbench .monaco-list-row:hover .codicon {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.8)) drop-shadow(0 0 16px rgba(255, 32, 32, 0.4));
+}
+.monaco-workbench .codicon-error  { filter: drop-shadow(0 0 6px rgba(255, 23, 68, 0.8)); }
+.monaco-workbench .codicon-warning { filter: drop-shadow(0 0 6px rgba(255, 238, 0, 0.8)); }
+.monaco-workbench .codicon-info    { filter: drop-shadow(0 0 6px rgba(255, 32, 32, 0.8)); }
+
+/* ============================================================
+   EDITOR CURSOR — Rosso Corsa pulse
+   ============================================================ */
+.monaco-editor .cursor {
+  box-shadow:
+    0 0 14px #FF4444,
+    0 0 30px rgba(255, 68, 68, 0.7),
+    0 0 60px rgba(255, 32, 32, 0.35),
+    0 0 100px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-editor .margin .line-numbers.active-line-number {
+  background: rgba(255, 32, 32, 0.12);
+  border-radius: 2px;
+}
+.monaco-editor .bracket-match {
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.6), 0 0 30px rgba(255, 32, 32, 0.3);
+}
+
+/* ============================================================
+   WIDGETS — holographic popups
+   ============================================================ */
+.monaco-editor .find-widget {
+  box-shadow:
+    0 10px 40px rgba(255, 32, 32, 0.35),
+    0 0 4px rgba(255, 68, 68, 0.8),
+    0 0 80px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.6) !important;
+  animation: hud-flicker 5s ease infinite;
+}
+.monaco-editor .suggest-widget {
+  box-shadow:
+    0 10px 40px rgba(255, 32, 32, 0.35),
+    0 0 4px rgba(255, 68, 68, 0.8),
+    0 0 80px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+.monaco-editor .suggest-widget .monaco-list-row {
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+.monaco-editor .suggest-widget .monaco-list-row:hover {
+  box-shadow: inset 0 0 30px rgba(255, 32, 32, 0.12);
+  transform: translateX(3px);
+}
+.monaco-editor .suggest-widget .monaco-list-row.focused {
+  box-shadow: inset 0 0 35px rgba(255, 32, 32, 0.15), inset -3px 0 0 rgba(255, 68, 68, 0.6);
+}
+
+/* ============================================================
+   INPUTS + BUTTONS
+   ============================================================ */
+.monaco-inputbox { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+.monaco-inputbox.synthetic-focus {
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.6), 0 0 35px rgba(255, 32, 32, 0.25), 0 0 60px rgba(255, 32, 32, 0.1) !important;
+}
+.monaco-button {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 12px rgba(255, 32, 32, 0.35), 0 0 30px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-button:hover {
+  box-shadow: 0 0 18px rgba(255, 68, 68, 0.6), 0 0 45px rgba(255, 32, 32, 0.28), 0 0 80px rgba(255, 32, 32, 0.1) !important;
+  transform: translateY(-2px);
+}
+.monaco-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 0 12px rgba(255, 68, 68, 0.8), 0 0 30px rgba(255, 32, 32, 0.4) !important;
+}
+
+/* ============================================================
+   COMMAND PALETTE — glow only (no pseudo-elements)
+   ============================================================ */
+.quick-input-widget {
+  box-shadow:
+    0 12px 60px rgba(255, 32, 32, 0.35),
+    0 0 5px rgba(255, 68, 68, 0.8),
+    0 0 100px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+.monaco-workbench .notifications-list-container .notification-list-item {
+  box-shadow: 0 0 25px rgba(255, 32, 32, 0.15), inset 0 0 4px rgba(255, 68, 68, 0.4);
+  border: 1px solid rgba(255, 68, 68, 0.35) !important;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.monaco-workbench .notifications-list-container .notification-list-item:hover {
+  box-shadow: 0 0 30px rgba(255, 32, 32, 0.28), inset 0 0 6px rgba(255, 68, 68, 0.5);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+.monaco-scrollable-element > .scrollbar > .slider {
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.3);
+}
+.monaco-scrollable-element > .scrollbar > .slider.active {
+  box-shadow: 0 0 22px rgba(255, 68, 68, 0.5);
+}
+
+/* ============================================================
+   EDITOR GROUP + MISCELLANEOUS
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container {
+  box-shadow: inset 0 0 3px rgba(255, 32, 32, 0.2);
+}
+
+.monaco-workbench .contentWidgets .codicon-lightbulb,
+.monaco-workbench .markers-panel-container .codicon-lightbulb {
+  animation: arc-reactor-glow 1.5s ease infinite;
+}
+
+.monaco-editor .minimap-slider .minimap-slider-horizontal {
+  box-shadow: 0 0 18px rgba(255, 32, 32, 0.3);
+}
+
+
+/* ============================================================================
+   PIT WALL HUD v5 — Scuderia Conn-Pod
+   Inspired by Pacific Rim's LOCCENT mission-control density and Ferrari's
+   actual pit-wall command center. Each panel becomes a codenamed station
+   with status badges, HUD frames, and live telemetry.
+   Layered ON TOP of v4 — additive only.
+   ============================================================================ */
+
+/* ============================================================
+   KEYFRAMES — HUD-specific motion
+   ============================================================ */
+@keyframes scan-line-drift {
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+@keyframes status-blink {
+  0%, 60%, 100% { opacity: 1; box-shadow: 0 0 6px currentColor, 0 0 14px currentColor; }
+  30%           { opacity: 0.35; box-shadow: 0 0 2px currentColor; }
+}
+@keyframes telemetry-tick {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+@keyframes plasma-vent {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%      { opacity: 0.85; transform: scaleY(1.4); }
+}
+@keyframes halo-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes data-stream {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 -200px; }
+}
+
+/* ============================================================
+   PANEL CODENAME HEADERS — top-left of each panel
+   Renders a station-callsign label like "▸ GARAGE :: ASSET BAY"
+   ============================================================ */
+
+/* SIDEBAR :: GARAGE */
+.monaco-workbench .part.sidebar > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.sidebar > .title::before {
+  content: "▸ GARAGE :: ASSET BAY" !important;
+  position: absolute !important;
+  top: -16px !important;
+  left: 12px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+  color: rgba(255, 68, 68, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 32, 32, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* TERMINAL / PANEL :: TELEMETRY */
+.monaco-workbench .part.panel > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.panel > .title::before {
+  content: "▸ TELEMETRY :: COMMS UPLINK  ●  LIVE" !important;
+  position: absolute !important;
+  top: -14px !important;
+  left: 32px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.8px !important;
+  color: rgba(255, 184, 0, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 184, 0, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* AUXILIARY BAR :: STRATEGY (chat panel) */
+.monaco-workbench .part.auxiliarybar > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.auxiliarybar > .title::before {
+  content: "▸ STRATEGY :: RACE ENGINEER" !important;
+  position: absolute !important;
+  top: -14px !important;
+  left: 12px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.8px !important;
+  color: rgba(255, 184, 0, 0.9) !important;
+  text-shadow: 0 0 6px rgba(255, 184, 0, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================
+   STATUS BADGES — top-right of each panel (pulsing dots + text)
+   ============================================================ */
+
+/* Sidebar: [FP-2 :: CLASSIFIED] amber badge */
+.monaco-workbench .part.sidebar::before {
+  /* Override v3's corner bracket — turn it into a real badge */
+  content: "FP-2 ● CLASSIFIED" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 8px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 184, 0, 0.7) !important;
+  background: rgba(20, 8, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: rgba(255, 184, 0, 0.95) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.6) !important;
+  box-shadow: 0 0 8px rgba(255, 184, 0, 0.4), inset 0 0 4px rgba(255, 184, 0, 0.15) !important;
+  z-index: 50 !important;
+  animation: telemetry-tick 3s ease-in-out infinite !important;
+}
+
+/* Terminal/panel: [LIVE] red pulsing badge */
+.monaco-workbench .part.panel::after {
+  content: "● LIVE" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 68, 68, 0.8) !important;
+  background: rgba(20, 4, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: #FF4444 !important;
+  text-shadow: 0 0 4px rgba(255, 68, 68, 0.8) !important;
+  box-shadow: 0 0 10px rgba(255, 32, 32, 0.5) !important;
+  z-index: 50 !important;
+  animation: status-blink 1.6s ease-in-out infinite !important;
+}
+
+/* Auxiliary bar: [ACTIVE] amber badge */
+.monaco-workbench .part.auxiliarybar::before {
+  content: "● ACTIVE" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 10px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 184, 0, 0.8) !important;
+  background: rgba(20, 8, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: #FFB800 !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.7) !important;
+  box-shadow: 0 0 10px rgba(255, 184, 0, 0.5) !important;
+  z-index: 50 !important;
+  animation: status-blink 2s ease-in-out infinite !important;
+}
+
+/* ============================================================
+   ANGULAR HUD FRAMES — replaces thin corner brackets with
+   proper Pacific-Rim-style notched frame corners on the
+   editor and major panels.
+   ============================================================ */
+.monaco-workbench .part.editor {
+  position: relative !important;
+}
+/* Top-left notched corner */
+.monaco-workbench .part.editor > .content::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-top: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-left: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-top-left-radius: 0 !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  background:
+    linear-gradient(135deg, rgba(255, 32, 32, 0.18) 0%, transparent 35%),
+    linear-gradient(135deg, transparent 0px, transparent 8px, rgba(255, 68, 68, 0.6) 8px, rgba(255, 68, 68, 0.6) 9px, transparent 9px) 0 0 / 100% 12px no-repeat !important;
+  box-shadow: -2px -2px 12px rgba(255, 32, 32, 0.35) !important;
+  clip-path: polygon(0 0, 100% 0, 100% 12px, 12px 12px, 12px 100%, 0 100%) !important;
+}
+/* Bottom-right notched corner */
+.monaco-workbench .part.editor > .content::after {
+  /* Re-purposed from v3 — becomes a corner HUD frame instead of the wheel */
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  left: auto !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-bottom: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-right: 2px solid rgba(255, 68, 68, 0.85) !important;
+  background: linear-gradient(315deg, rgba(255, 32, 32, 0.18) 0%, transparent 35%) !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-shadow: 2px 2px 12px rgba(255, 32, 32, 0.35) !important;
+  clip-path: polygon(0 100%, 100% 100%, 100% 0, 88% 0, 88% 88%, 0 88%) !important;
+  /* Override v4 wheel/animation since we moved wheel to ::after on workbench */
+  animation: none !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ============================================================
+   EDITOR SCAN LINE — a horizontal red beam drifts from top
+   to bottom of the editor every 8s. LOCCENT-style scanning.
+   ============================================================ */
+.monaco-workbench .part.editor > .content {
+  position: relative !important;
+}
+.monaco-editor::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 2px !important;
+  pointer-events: none !important;
+  z-index: 25 !important;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 68, 68, 0.05) 10%,
+    rgba(255, 68, 68, 0.6) 50%,
+    rgba(255, 68, 68, 0.05) 90%,
+    transparent 100%) !important;
+  box-shadow:
+    0 0 12px rgba(255, 32, 32, 0.55),
+    0 0 28px rgba(255, 32, 32, 0.25) !important;
+  animation: scan-line-drift 8s linear infinite !important;
+}
+
+/* ============================================================
+   PLASMA EXHAUST VENTS — at the very bottom of the workbench,
+   above the status bar. Three radial-gradient "vent glows"
+   pulse like the Pacific Rim image's bottom-edge energy lines.
+   ============================================================ */
+.monaco-workbench .part.statusbar {
+  position: relative !important;
+  overflow: visible !important;
+}
+.monaco-workbench .part.statusbar::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -32px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 32px !important;
+  pointer-events: none !important;
+  z-index: 20 !important;
+  background:
+    radial-gradient(ellipse 200px 30px at 22% 100%,  rgba(255, 32, 32, 0.55) 0%,  rgba(255, 32, 32, 0)   70%),
+    radial-gradient(ellipse 240px 35px at 50% 100%,  rgba(255, 184, 0, 0.45) 0%,  rgba(255, 184, 0, 0)   70%),
+    radial-gradient(ellipse 200px 30px at 78% 100%,  rgba(255, 32, 32, 0.55) 0%,  rgba(255, 32, 32, 0)   70%) !important;
+  transform-origin: center bottom !important;
+  animation: plasma-vent 3s ease-in-out infinite !important;
+  filter: blur(2px) !important;
+}
+
+/* ============================================================
+   STATUS BAR TELEMETRY — fake live race data on the right side.
+   Renders as a pseudo-element overlay so it never breaks
+   actual VSCode status items.
+   ============================================================ */
+.monaco-workbench .part.statusbar::after {
+  content: "ERS 87%  │  TIRE C3  │  DRS ENABLED  │  BAL +2  │  LAP 1:18.347" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 280px !important;
+  transform: translateY(-50%) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  color: rgba(255, 184, 0, 0.6) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.4) !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+  white-space: nowrap !important;
+  animation: telemetry-tick 4s ease-in-out infinite !important;
+}
+
+/* ============================================================
+   TITLE BAR — Scuderia branding strip on left side
+   ============================================================ */
+.monaco-workbench .part.titlebar {
+  position: relative !important;
+  overflow: visible !important;
+}
+.monaco-workbench .part.titlebar::before {
+  content: "▌SCUDERIA FERRARI  ::  SF-26  ::  HOT LAP" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 80px !important;
+  transform: translateY(-50%) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2.5px !important;
+  color: rgba(255, 32, 32, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 32, 32, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================
+   STEERING WHEEL — keep v4 placement BUT add a rotating halo
+   ring behind it for Conn-Pod presence. The halo uses a
+   second pseudo-element on the workbench (::after is taken
+   by the wheel itself, so we reuse it carefully).
+   ============================================================
+   Note: pseudo-element budget on .monaco-workbench is exhausted
+   (::before = stripes, ::after = wheel). To add the halo without
+   removing either, we attach it to the EDITOR pane wrapper.
+   ============================================================ */
+.monaco-workbench .editor-group-container {
+  position: relative !important;
+}
+.monaco-workbench .editor-group-container::after {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 60px !important;
+  right: 60px !important;
+  width: 260px !important;
+  height: 260px !important;
+  border-radius: 50% !important;
+  border: 1px dashed rgba(255, 68, 68, 0.3) !important;
+  pointer-events: none !important;
+  z-index: 99998 !important;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255, 32, 32, 0) 0%,
+      rgba(255, 32, 32, 0.08) 25%,
+      rgba(255, 184, 0, 0.06) 50%,
+      rgba(255, 32, 32, 0.08) 75%,
+      rgba(255, 32, 32, 0) 100%) !important;
+  animation: halo-spin 24s linear infinite !important;
+  box-shadow:
+    0 0 30px rgba(255, 32, 32, 0.15),
+    inset 0 0 40px rgba(255, 32, 32, 0.1) !important;
+}
+
+@media (max-width: 1500px) {
+  .monaco-workbench .editor-group-container::after {
+    width: 200px !important; height: 200px !important;
+    bottom: 50px !important; right: 50px !important;
+  }
+}
+@media (max-width: 1000px) {
+  .monaco-workbench .editor-group-container::after {
+    width: 140px !important; height: 140px !important;
+    bottom: 40px !important; right: 40px !important;
+  }
+}
+
+/* ============================================================
+   GRID NOISE — extra-dense scanlines over the editor for
+   that "holographic projection" feel
+   ============================================================ */
+.monaco-editor::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 4 !important;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 32, 32, 0.012) 3px,
+      rgba(255, 32, 32, 0.012) 4px
+    ) !important;
+  mix-blend-mode: screen !important;
+}
+
+/* ============================================================
+   FERRARI SHIELD EMBLEM — small pulsing badge in the bottom-left
+   of the workbench (above status bar, where Pacific Rim has the
+   "FIST" emblem). Pure CSS, no SVG.
+   ============================================================ */
+.monaco-workbench .part.statusbar .left-items::before,
+.monaco-workbench .part.statusbar > .left-items::before {
+  content: "▼ SF" !important;
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 8px !important;
+  margin-bottom: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, #FFEE00 0%, #FFB800 60%, #1A0810 95%) !important;
+  border: 2px solid #1A0810 !important;
+  font-family: "Arial Black", sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  color: #FF1744 !important;
+  text-align: center !important;
+  line-height: 36px !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+  box-shadow:
+    0 0 14px rgba(255, 184, 0, 0.7),
+    0 0 30px rgba(255, 184, 0, 0.35),
+    inset 0 0 6px rgba(255, 23, 68, 0.4) !important;
+  animation: glow-breathe 3s ease-in-out infinite !important;
+  text-shadow: 0 0 4px rgba(255, 23, 68, 0.6) !important;
+}
+
+
+/* ============================================================================
+   PIT WALL HUD v6 — CONN-POD COMPLETE
+   Adds the 4 final reference-image elements:
+   1. Per-file dossier card (top-right of editor, varies by extension)
+   2. Animated radar (bottom-center of workbench, fixed)
+   3. Telemetry sparklines panel (left of radar, animated SVG)
+   4. SF-26 car silhouette (mech-detail equivalent, top of status bar)
+   Layered ON TOP of v5 — additive only.
+   ============================================================================ */
+
+/* ============================================================
+   v6 KEYFRAMES — additional motion
+   ============================================================ */
+@keyframes dossier-flicker {
+  0%, 100% { opacity: 0.92; }
+  92%, 94%, 96% { opacity: 0.5; }
+  93%, 95% { opacity: 0.92; }
+}
+@keyframes hud-card-fade-in {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 0.92; transform: translateY(0); }
+}
+
+/* ============================================================
+   1. PER-FILE DOSSIER CARD
+   Renders a small classification card in the top-right of the
+   editor pane that shows what KIND of file is active. Uses
+   :has() to read the active tab's aria-label and project a
+   different label per file extension.
+
+   Default: hidden. Only specific extensions trigger.
+   ============================================================ */
+.monaco-workbench .editor-group-container {
+  position: relative !important;
+}
+
+/* Default — invisible unless an extension matches */
+.monaco-workbench .editor-group-container::before {
+  content: none !important;
+}
+
+/* Per-extension dossier — each rule below activates the ::before
+   pseudo-element with content specific to that file type */
+.monaco-workbench:has(.tab.active[aria-label$=".py"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label*=".py "]) .editor-group-container::before {
+  content: "▸ PYTHON  ::  NEURAL ASSET MODULE\A   CLEARANCE: BCG-AI-LEAD\A   VER 3.11.7  ●  ACTIVE" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".sql"]) .editor-group-container::before {
+  content: "▸ SQL  ::  DATA STREAM PIPELINE\A   DIALECT: POSTGRES 16\A   QUERY ENGINE  ●  READY" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".md"]) .editor-group-container::before {
+  content: "▸ MARKDOWN  ::  DOSSIER ARCHIVE\A   CLEARANCE: OPEN\A   FORMAT: GFM  ●  STABLE" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".css"]) .editor-group-container::before {
+  content: "▸ CSS  ::  HUD COMPILER\A   ENGINE: CHROMIUM 132\A   STYLESHEET  ●  HOT" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".json"]) .editor-group-container::before {
+  content: "▸ JSON  ::  CONFIG MATRIX\A   SCHEMA: STRICT\A   PARSER  ●  NOMINAL" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".ts"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label$=".tsx"]) .editor-group-container::before {
+  content: "▸ TYPESCRIPT  ::  REACTOR CORE\A   STRICT MODE: ON\A   COMPILER  ●  WARM" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".js"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label$=".jsx"]) .editor-group-container::before {
+  content: "▸ JAVASCRIPT  ::  PROPULSION UNIT\A   RUNTIME: NODE 22\A   V8 ENGINE  ●  HOT" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".html"]) .editor-group-container::before {
+  content: "▸ HTML  ::  COCKPIT FRAME\A   DOCTYPE: HTML5\A   RENDER  ●  CLEAR" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".yml"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label$=".yaml"]) .editor-group-container::before {
+  content: "▸ YAML  ::  PIT CREW SPEC\A   PARSER: STRICT\A   CONFIG  ●  LOADED" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".sh"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label$=".zsh"]) .editor-group-container::before,
+.monaco-workbench:has(.tab.active[aria-label$=".bash"]) .editor-group-container::before {
+  content: "▸ SHELL  ::  PIT RADIO\A   INTERPRETER: ZSH\A   COMMS  ●  OPEN" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".pdf"]) .editor-group-container::before {
+  content: "▸ PDF  ::  DOSSIER ARCHIVE\A   ENCRYPTED: NO\A   READER  ●  ACTIVE" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".txt"]) .editor-group-container::before {
+  content: "▸ TXT  ::  COMMS LOG\A   ENCODING: UTF-8\A   STREAM  ●  OPEN" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".csv"]) .editor-group-container::before {
+  content: "▸ CSV  ::  TELEMETRY EXPORT\A   DELIMITER: COMMA\A   STREAM  ●  OPEN" !important;
+}
+.monaco-workbench:has(.tab.active[aria-label$=".mdc"]) .editor-group-container::before {
+  content: "▸ MDC  ::  AGENT DIRECTIVE\A   CLEARANCE: AI-COUNCIL\A   RULE FILE  ●  BINDING" !important;
+}
+
+/* Style the dossier card itself */
+.monaco-workbench .editor-group-container::before {
+  position: absolute !important;
+  top: 38px !important;
+  right: 14px !important;
+  padding: 6px 10px !important;
+  background: linear-gradient(135deg, rgba(20, 8, 4, 0.95) 0%, rgba(10, 4, 6, 0.98) 100%) !important;
+  border: 1px solid rgba(255, 68, 68, 0.7) !important;
+  border-left: 3px solid rgba(255, 68, 68, 0.95) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  color: rgba(255, 184, 0, 0.95) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.6) !important;
+  white-space: pre !important;
+  line-height: 1.5 !important;
+  pointer-events: none !important;
+  z-index: 60 !important;
+  box-shadow:
+    0 0 14px rgba(255, 32, 32, 0.45),
+    0 0 28px rgba(255, 32, 32, 0.18),
+    inset 0 0 6px rgba(255, 32, 32, 0.18) !important;
+  animation: dossier-flicker 4s ease-in-out infinite, hud-card-fade-in 0.4s ease-out !important;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%) !important;
+}
+
+/* Hide the dossier on narrow viewports — chat panel open scenario */
+@media (max-width: 1400px) {
+  .monaco-workbench .editor-group-container::before {
+    font-size: 7px !important;
+    padding: 4px 7px !important;
+    top: 36px !important;
+    right: 8px !important;
+  }
+}
+@media (max-width: 1000px) {
+  .monaco-workbench:has(.tab.active) .editor-group-container::before {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   2. ANIMATED RADAR
+   Fixed bottom-center-right of viewport, beside the wheel.
+   pointer-events: none so file-tree clicks pass through.
+   ============================================================ */
+body::after {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 380px !important;
+  width: 130px !important;
+  height: 130px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDAgMTQwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0icmciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxQTA4MTAiIHN0b3Atb3BhY2l0eT0iMC45NSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjgwJSIgc3RvcC1jb2xvcj0iIzBBMDQwNiIgc3RvcC1vcGFjaXR5PSIwLjg1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjk1Ii8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJzdyIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjIwMjAiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iI0ZGNDQ0NCIgc3RvcC1vcGFjaXR5PSIwLjUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRkZFRTAwIiBzdG9wLW9wYWNpdHk9IjAuODUiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNzAiIHI9IjY1IiBmaWxsPSJ1cmwoI3JnKSIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC45NSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNzAiIHI9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjUiLz4KICA8Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSIzNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC40Ii8+CiAgPGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMzUiLz4KICA8bGluZSB4MT0iNSIgeTE9IjcwIiB4Mj0iMTM1IiB5Mj0iNzAiIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuMzUiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI1IiB4Mj0iNzAiIHkyPSIxMzUiIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuMzUiLz4KICA8Zz4KICAgIDxhbmltYXRlVHJhbnNmb3JtIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSIgdHlwZT0icm90YXRlIiBmcm9tPSIwIDcwIDcwIiB0bz0iMzYwIDcwIDcwIiBkdXI9IjRzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogICAgPHBhdGggZD0iTSA3MCA3MCBMIDEzNSA3MCBBIDY1IDY1IDAgMCAwIDg4IDEyIFoiIGZpbGw9InVybCgjc3cpIiBvcGFjaXR5PSIwLjU1Ii8+CiAgPC9nPgogIDxjaXJjbGUgY3g9IjkyIiBjeT0iNDgiIHI9IjIuNSIgZmlsbD0iI0ZGRUUwMCIgb3BhY2l0eT0iMC45Ij4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMC45OzAuMzswLjkiIGR1cj0iMS41cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L2NpcmNsZT4KICA8Y2lyY2xlIGN4PSI0MiIgY3k9Ijg4IiByPSIyLjUiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAuOSI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjAuOTswLjM7MC45IiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogIDwvY2lyY2xlPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjkyIiByPSIyIiBmaWxsPSIjMDBGRjQ0IiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMC44NTswLjQ7MC44NSIgZHVyPSIxLjhzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogIDwvY2lyY2xlPgogIDxjaXJjbGUgY3g9IjU1IiBjeT0iMzgiIHI9IjEuOCIgZmlsbD0iI0ZGMTc0NCIgb3BhY2l0eT0iMC44Ij4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMC44OzAuMzswLjgiIGR1cj0iMi4ycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L2NpcmNsZT4KICA8Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSIzIiBmaWxsPSIjRkYxNzQ0Ii8+CiAgPGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkYxNzQ0IiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC42Ii8+CiAgPHRleHQgeD0iNzAiIHk9IjEzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPk48L3RleHQ+CiAgPHRleHQgeD0iNzAiIHk9IjEzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0IiBvcGFjaXR5PSIwLjYiPlM8L3RleHQ+CiAgPHRleHQgeD0iOSIgeT0iNzMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCIgb3BhY2l0eT0iMC42Ij5XPC90ZXh0PgogIDx0ZXh0IHg9IjEzMSIgeT0iNzMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCIgb3BhY2l0eT0iMC42Ij5FPC90ZXh0Pgo8L3N2Zz4=") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99997 !important;
+  opacity: 0.85 !important;
+  filter: drop-shadow(0 0 18px rgba(255, 32, 32, 0.45)) drop-shadow(0 0 40px rgba(255, 32, 32, 0.2)) !important;
+}
+
+/* ============================================================
+   3. TELEMETRY SPARKLINES PANEL
+   Fixed bottom-center, left of the radar.
+   ============================================================ */
+body::before {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 540px !important;
+  width: 200px !important;
+  height: 140px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTQwIj4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE0MCIgcng9IjMiIGZpbGw9IiMwQTA0MDYiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjkyIi8+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNCIgZmlsbD0iIzFBMDgxMCIvPgogIDx0ZXh0IHg9IjYiIHk9IjEwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiIGxldHRlci1zcGFjaW5nPSIxIj4mIzk2NTY7IFRFTEVNRVRSWTwvdGV4dD4KICA8Y2lyY2xlIGN4PSIxOTAiIGN5PSI3IiByPSIyLjUiIGZpbGw9IiMwMEZGNDQiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIxOzAuMzsxIiBkdXI9IjEuNXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgPC9jaXJjbGU+CiAgPHRleHQgeD0iNiIgeT0iMjgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCIgbGV0dGVyLXNwYWNpbmc9IjAuNSI+UExBU01BIENPUkUgVEVNUDwvdGV4dD4KICA8cmVjdCB4PSI2IiB5PSIzMiIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIyOCIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjAuNCIgb3BhY2l0eT0iMC43Ii8+CiAgPHBvbHlsaW5lIHBvaW50cz0iOCw1NSAxOCw0OCAyOCw1MiAzOCw0MiA0OCwzOCA1OCw0NiA2OCw0MCA3OCw0NCA4OCwzNiA5OCw0MiAxMDgsMzQgMTE4LDQwIDEyOCwzOCAxMzgsMzIgMTQ4LDQ2IDE1OCw0MiAxNjUsMzgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuOTUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0icG9pbnRzIiB2YWx1ZXM9IjgsNTUgMTgsNDggMjgsNTIgMzgsNDIgNDgsMzggNTgsNDYgNjgsNDAgNzgsNDQgODgsMzYgOTgsNDIgMTA4LDM0IDExOCw0MCAxMjgsMzggMTM4LDMyIDE0OCw0NiAxNTgsNDIgMTY1LDM4OzgsNDIgMTgsNTIgMjgsNDYgMzgsMzggNDgsNDQgNTgsNDAgNjgsNDggNzgsMzYgODgsNDIgOTgsMzggMTA4LDQ2IDExOCwzNCAxMjgsNDAgMTM4LDM4IDE0OCwzMiAxNTgsNDYgMTY1LDQyOzgsNTUgMTgsNDggMjgsNTIgMzgsNDIgNDgsMzggNTgsNDYgNjgsNDAgNzgsNDQgODgsMzYgOTgsNDIgMTA4LDM0IDExOCw0MCAxMjgsMzggMTM4LDMyIDE0OCw0NiAxNTgsNDIgMTY1LDM4IiBkdXI9IjZzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogIDwvcG9seWxpbmU+CiAgPHRleHQgeD0iMTcwIiB5PSI1MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI5IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij44NDcmIzE3Njs8L3RleHQ+CiAgPHRleHQgeD0iNiIgeT0iNzYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCIgbGV0dGVyLXNwYWNpbmc9IjAuNSI+VElSRSBXRUFSICYjMTgzOyBDMzwvdGV4dD4KICA8cmVjdCB4PSI2IiB5PSI4MCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSI2IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iNiIgeT0iODAiIHdpZHRoPSIxMTUiIGhlaWdodD0iNiIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJ3aWR0aCIgdmFsdWVzPSIxMTU7MTEyOzExNTsxMTM7MTE1IiBkdXI9IjNzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogIDwvcmVjdD4KICA8dGV4dCB4PSIxNzAiIHk9Ijg2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiPjcyJTwvdGV4dD4KICA8dGV4dCB4PSI2IiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCIgbGV0dGVyLXNwYWNpbmc9IjAuNSI+UE9XRVIgT1VUUFVUICYjMTgzOyBNR1UtSzwvdGV4dD4KICA8Zz4KICAgIDxyZWN0IHg9IjYiIHk9IjEwNiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMEZGNDQiIG9wYWNpdHk9IjAuODUiLz4KICAgIDxyZWN0IHg9IjIyIiB5PSIxMDYiIHdpZHRoPSIxNCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDBGRjQ0IiBvcGFjaXR5PSIwLjg1Ii8+CiAgICA8cmVjdCB4PSIzOCIgeT0iMTA2IiB3aWR0aD0iMTQiIGhlaWdodD0iOCIgZmlsbD0iIzAwRkY0NCIgb3BhY2l0eT0iMC44NSIvPgogICAgPHJlY3QgeD0iNTQiIHk9IjEwNiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjgiIGZpbGw9IiNGRkVFMDAiIG9wYWNpdHk9IjAuODUiLz4KICAgIDxyZWN0IHg9IjcwIiB5PSIxMDYiIHdpZHRoPSIxNCIgaGVpZ2h0PSI4IiBmaWxsPSIjRkZFRTAwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgICA8cmVjdCB4PSI4NiIgeT0iMTA2IiB3aWR0aD0iMTQiIGhlaWdodD0iOCIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSIvPgogICAgPHJlY3QgeD0iMTAyIiB5PSIxMDYiIHdpZHRoPSIxNCIgaGVpZ2h0PSI4IiBmaWxsPSIjRkY2QjIwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgICA8cmVjdCB4PSIxMTgiIHk9IjEwNiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjgiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAuODUiPgogICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjAuODU7MC4zOzAuODUiIGR1cj0iMC44cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICAgIDwvcmVjdD4KICAgIDxyZWN0IHg9IjEzNCIgeT0iMTA2IiB3aWR0aD0iMTQiIGhlaWdodD0iOCIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogICAgPHJlY3QgeD0iMTUwIiB5PSIxMDYiIHdpZHRoPSIxNCIgaGVpZ2h0PSI4IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjE3MCIgeT0iMTEzIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjgyJTwvdGV4dD4KICA8bGluZSB4MT0iNiIgeTE9IjEyNiIgeDI9IjE5NCIgeTI9IjEyNiIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuMyIgb3BhY2l0eT0iMC41Ii8+CiAgPHRleHQgeD0iNiIgeT0iMTM1IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiIG9wYWNpdHk9IjAuNyI+U1lTIE5PTUlOQUwgJiMxODM7IERSSUZUIDg5JTwvdGV4dD4KPC9zdmc+") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99996 !important;
+  opacity: 0.92 !important;
+  filter: drop-shadow(0 0 14px rgba(255, 32, 32, 0.4)) drop-shadow(0 0 30px rgba(255, 32, 32, 0.18)) !important;
+}
+
+/* ============================================================
+   4. SF-26 CAR SILHOUETTE (MECH DETAIL)
+   Fixed at the BOTTOM of the title bar, top-right area.
+   Replaces v5's SF shield emblem with a much richer profile.
+   ============================================================ */
+html::after {
+  content: "" !important;
+  position: fixed !important;
+  top: 6px !important;
+  right: 200px !important;
+  width: 160px !important;
+  height: 56px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgNTYiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJib2QiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY0NDQ0IiBzdG9wLW9wYWNpdHk9IjAuOTUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNGRjIwMjAiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNBQTEwMTAiIHN0b3Atb3BhY2l0eT0iMC45Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjU2IiBmaWxsPSIjMEEwNDA2IiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC42IiBvcGFjaXR5PSIwLjg1Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzFBMDgxMCIvPgogIDx0ZXh0IHg9IjYiIHk9IjgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGQjgwMCIgbGV0dGVyLXNwYWNpbmc9IjEiPiYjOTY1NjsgTUFDUk8gJiMxODM7IFNGLTI2IFBST0ZJTEU8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMTUzIiBjeT0iNSIgcj0iMiIgZmlsbD0iI0ZGMTc0NCI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjE7MC40OzEiIGR1cj0iMS41cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L2NpcmNsZT4KICA8ZWxsaXBzZSBjeD0iMzIiIGN5PSI0MiIgcng9IjExIiByeT0iOCIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuNiIvPgogIDxlbGxpcHNlIGN4PSIxMjgiIGN5PSI0MiIgcng9IjExIiByeT0iOCIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuNiIvPgogIDxlbGxpcHNlIGN4PSIzMiIgY3k9IjQyIiByeD0iNiIgcnk9IjQiIGZpbGw9IiMwMDAiIHN0cm9rZT0iI0ZGQjgwMCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8ZWxsaXBzZSBjeD0iMTI4IiBjeT0iNDIiIHJ4PSI2IiByeT0iNCIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxyZWN0IHg9IjQyIiB5PSIzOCIgd2lkdGg9Ijc2IiBoZWlnaHQ9IjYiIGZpbGw9InVybCgjYm9kKSIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxyZWN0IHg9IjQyIiB5PSIzNiIgd2lkdGg9Ijc2IiBoZWlnaHQ9IjIiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuNyIvPgogIDxwYXRoIGQ9Ik0gNzAgMzggTCA4MCAyMiBMIDkwIDM4IFoiIGZpbGw9InVybCgjYm9kKSIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDxyZWN0IHg9Ijc2IiB5PSIyMCIgd2lkdGg9IjgiIGhlaWdodD0iMyIgZmlsbD0iI0ZGRUUwMCIgb3BhY2l0eT0iMC44NSIvPgogIDxwYXRoIGQ9Ik0gNjIgMzggUSA2MiAxNCwgODAgMTQgUSA5OCAxNCwgOTggMzgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwLjk1Ii8+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSIyMiIgcj0iMy41IiBmaWxsPSIjRkZFRTAwIi8+CiAgPHJlY3QgeD0iNzYuNSIgeT0iMjEiIHdpZHRoPSI3IiBoZWlnaHQ9IjIiIGZpbGw9IiMxQTA4MTAiLz4KICA8cmVjdCB4PSI0NiIgeT0iMzgiIHdpZHRoPSI2OCIgaGVpZ2h0PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC4zIiBvcGFjaXR5PSIwLjYiLz4KICA8cmVjdCB4PSIxNCIgeT0iNDYiIHdpZHRoPSIzNiIgaGVpZ2h0PSIyIiBmaWxsPSIjRkYxNzQ0IiBvcGFjaXR5PSIwLjg1Ii8+CiAgPHJlY3QgeD0iMTEwIiB5PSI0NiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjIiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAuODUiLz4KICA8cmVjdCB4PSIxNCIgeT0iNDQiIHdpZHRoPSIzNiIgaGVpZ2h0PSIwLjgiIGZpbGw9IiNGRkZGRkYiIG9wYWNpdHk9IjAuNCIvPgogIDxyZWN0IHg9IjExMCIgeT0iNDQiIHdpZHRoPSIzNiIgaGVpZ2h0PSIwLjgiIGZpbGw9IiNGRkZGRkYiIG9wYWNpdHk9IjAuNCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0IiBsZXR0ZXItc3BhY2luZz0iMS41Ij5TRi0yNiAmIzE4MzsgUk9TU08gQ09SU0E8L3RleHQ+Cjwvc3ZnPg==") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99995 !important;
+  opacity: 0.95 !important;
+  filter: drop-shadow(0 0 8px rgba(255, 32, 32, 0.5)) drop-shadow(0 0 18px rgba(255, 32, 32, 0.25)) !important;
+}
+
+/* Suppress v5's old SF shield emblem (replaced by mech profile) */
+.monaco-workbench .part.statusbar .left-items::before,
+.monaco-workbench .part.statusbar > .left-items::before {
+  content: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE — hide HUD telemetry stack on narrow viewports
+   so they never crowd a small editor / chat-panel-open layout
+   ============================================================ */
+@media (max-width: 1700px) {
+  body::after {
+    width: 110px !important;
+    height: 110px !important;
+    right: 320px !important;
+    bottom: 32px !important;
+  }
+  body::before {
+    width: 170px !important;
+    height: 120px !important;
+    right: 450px !important;
+    bottom: 32px !important;
+  }
+}
+@media (max-width: 1500px) {
+  body::after {
+    width: 90px !important;
+    height: 90px !important;
+    right: 250px !important;
+    bottom: 28px !important;
+  }
+  body::before {
+    width: 140px !important;
+    height: 100px !important;
+    right: 360px !important;
+    bottom: 28px !important;
+  }
+  html::after {
+    width: 130px !important;
+    height: 46px !important;
+    right: 160px !important;
+  }
+}
+@media (max-width: 1300px) {
+  body::before {
+    display: none !important;
+  }
+  body::after {
+    width: 80px !important;
+    height: 80px !important;
+    right: 220px !important;
+  }
+}
+@media (max-width: 1100px) {
+  body::after {
+    display: none !important;
+  }
+  html::after {
+    width: 100px !important;
+    height: 36px !important;
+    right: 130px !important;
+  }
+}
+
+
+/* ============================================================================
+   PIT WALL HUD v7 — CONN-POD ONLINE
+   Adds 15 cinematic features that make the IDE FEEL alive:
+     D1. Bootup sequence (one-shot 5s overlay every Cursor open)
+     B1. Agent CRT static (chat panel noise during loading)
+     D3. Race flag overlays (yellow/red corner ribbons by linter state)
+     A2. Cockpit lock indicator (focused panel flares, others dim)
+     C1. Tire wear gauge (4-tire telemetry SVG)
+     A1. Cursor arc reactor (text cursor pulses + breathing halo)
+     C2. Pit board (vertical scrolling SVG with fake live lap times)
+     C3. Engine RPM bar (animated tachometer in title bar)
+     E1. Command palette = PIT RADIO
+     E3. Find widget = DRS ENABLED
+     E4. Tab fly-in animations
+     F1. Helmet visor scratches (subtle editor overlay)
+     F2. Heat haze at editor bottom
+     F3. Attendance counter in title bar
+     G1. TURBO mode (animations 3x speed when busy)
+     G3. CHAMPIONSHIP P1 status (visible when no errors + no loading)
+   Layered ON TOP of v6 — additive only.
+   ============================================================================ */
+
+/* v7 KEYFRAMES */
+@keyframes boot-fade-out {
+  0%, 88%   { opacity: 1; pointer-events: auto; }
+  100%      { opacity: 0; pointer-events: none; visibility: hidden; }
+}
+@keyframes crt-static {
+  0%   { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+@keyframes flag-wave {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+@keyframes cursor-arc-reactor {
+  0%, 100% { box-shadow:
+    0 0 12px #FF4444,
+    0 0 24px rgba(255, 68, 68, 0.8),
+    0 0 48px rgba(255, 32, 32, 0.5),
+    0 0 90px rgba(255, 32, 32, 0.25),
+    0 0 140px rgba(255, 32, 32, 0.1) !important;
+  }
+  50%      { box-shadow:
+    0 0 20px #FF4444,
+    0 0 40px rgba(255, 68, 68, 1),
+    0 0 80px rgba(255, 32, 32, 0.7),
+    0 0 130px rgba(255, 32, 32, 0.35),
+    0 0 200px rgba(255, 32, 32, 0.15) !important;
+  }
+}
+@keyframes rpm-tachometer {
+  0%, 100% { width: 30%; background-position: 0% 50%; }
+  20%      { width: 65%; background-position: 50% 50%; }
+  40%      { width: 92%; background-position: 100% 50%; }
+  60%      { width: 78%; background-position: 70% 50%; }
+  80%      { width: 45%; background-position: 30% 50%; }
+}
+@keyframes tab-fly-in {
+  0%   { transform: translateX(40px) scaleX(0.7); opacity: 0; }
+  60%  { transform: translateX(-4px) scaleX(1.02); opacity: 1; }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+}
+@keyframes heat-haze {
+  0%, 100% { filter: blur(0.4px) brightness(1.04); transform: translateY(0); }
+  50%      { filter: blur(0.7px) brightness(1.08); transform: translateY(-1px); }
+}
+@keyframes attendance-tick {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+@keyframes p1-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 238, 0, 0.5), 0 0 18px rgba(255, 184, 0, 0.3); border-color: rgba(255, 238, 0, 0.7); }
+  50% { box-shadow: 0 0 14px rgba(255, 238, 0, 0.85), 0 0 30px rgba(255, 184, 0, 0.5); border-color: rgba(255, 238, 0, 1); }
+}
+
+/* D1. BOOTUP SEQUENCE */
+html::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDkwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgogIDxkZWZzPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZ0dyYWQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjYwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxQTA4MTAiIHN0b3Atb3BhY2l0eT0iMC45OCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iIzBBMDQwNiIgc3RvcC1vcGFjaXR5PSIwLjk4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsb2FkQmFyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjIwMjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNGRkI4MDAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRkYxNzQ0Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSI5MDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPgogIDxnIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuMTUiPgogICAgPHBhdGggZD0iTSAwIDEwMCBMIDE2MDAgMTAwIi8+PHBhdGggZD0iTSAwIDIwMCBMIDE2MDAgMjAwIi8+CiAgICA8cGF0aCBkPSJNIDAgMzAwIEwgMTYwMCAzMDAiLz48cGF0aCBkPSJNIDAgNDAwIEwgMTYwMCA0MDAiLz4KICAgIDxwYXRoIGQ9Ik0gMCA1MDAgTCAxNjAwIDUwMCIvPjxwYXRoIGQ9Ik0gMCA2MDAgTCAxNjAwIDYwMCIvPgogICAgPHBhdGggZD0iTSAwIDcwMCBMIDE2MDAgNzAwIi8+PHBhdGggZD0iTSAwIDgwMCBMIDE2MDAgODAwIi8+CiAgICA8cGF0aCBkPSJNIDIwMCAwIEwgMjAwIDkwMCIvPjxwYXRoIGQ9Ik0gNDAwIDAgTCA0MDAgOTAwIi8+CiAgICA8cGF0aCBkPSJNIDYwMCAwIEwgNjAwIDkwMCIvPjxwYXRoIGQ9Ik0gODAwIDAgTCA4MDAgOTAwIi8+CiAgICA8cGF0aCBkPSJNIDEwMDAgMCBMIDEwMDAgOTAwIi8+PHBhdGggZD0iTSAxMjAwIDAgTCAxMjAwIDkwMCIvPgogICAgPHBhdGggZD0iTSAxNDAwIDAgTCAxNDAwIDkwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg4MDAsIDM1MCkiPgogICAgPHBhdGggZD0iTSAtMzYgLTI0IEwgMzYgLTI0IEwgMzYgMTIgUSAzNiA0NCwgMCA1NiBRIC0zNiA0NCwgLTM2IDEyIFoiIGZpbGw9IiNGRkVFMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIzIiBvcGFjaXR5PSIwIj4KICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MTsxIiBrZXlUaW1lcz0iMDswLjA1OzAuOTU7MSIgZHVyPSI1cyIgZmlsbD0iZnJlZXplIi8+CiAgICA8L3BhdGg+CiAgICA8dGV4dCB4PSIwIiB5PSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIEJsYWNrLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAiPlNGPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MTsxIiBrZXlUaW1lcz0iMDswLjA1OzAuOTU7MSIgZHVyPSI1cyIgZmlsbD0iZnJlZXplIi8+PC90ZXh0PgogIDwvZz4KICA8dGV4dCB4PSI4MDAiIHk9IjUwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik1lbmxvLENvbnNvbGFzLG1vbm9zcGFjZSIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGQjgwMCIgbGV0dGVyLXNwYWNpbmc9IjgiIG9wYWNpdHk9IjAiPlNDVURFUklBIFNZU1RFTVM8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjA7MTsxOzAiIGtleVRpbWVzPSIwOzAuMDY7MC4xODswLjIyIiBkdXI9IjVzIiBmaWxsPSJmcmVlemUiLz48L3RleHQ+CiAgPHRleHQgeD0iODAwIiB5PSI1MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJNZW5sbyxDb25zb2xhcyxtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiIGxldHRlci1zcGFjaW5nPSI2IiBvcGFjaXR5PSIwIj5DSEVDS0lORyBFTkdJTkVTPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MTswIiBrZXlUaW1lcz0iMDswLjA1OzAuMTg7MC4yMiIgZHVyPSI1cyIgYmVnaW49IjFzIiBmaWxsPSJmcmVlemUiLz48L3RleHQ+CiAgPHRleHQgeD0iODAwIiB5PSI1MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJNZW5sbyxDb25zb2xhcyxtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMEZGNDQiIGxldHRlci1zcGFjaW5nPSI2IiBvcGFjaXR5PSIwIj5TWVNURU1TIE5PTUlOQUw8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjA7MTsxOzAiIGtleVRpbWVzPSIwOzAuMDU7MC4xNTswLjIyIiBkdXI9IjVzIiBiZWdpbj0iMnMiIGZpbGw9ImZyZWV6ZSIvPjwvdGV4dD4KICA8ZyBvcGFjaXR5PSIwIj4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMDsxOzE7MCIga2V5VGltZXM9IjA7MC4wNDswLjE4OzAuMjIiIGR1cj0iNXMiIGJlZ2luPSIzcyIgZmlsbD0iZnJlZXplIi8+CiAgICA8Y2lyY2xlIGN4PSI2MDAiIGN5PSI1MDAiIHI9IjIyIiBmaWxsPSIjMkEwODA4IiBzdHJva2U9IiNGRjE3NDQiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iNjYwIiBjeT0iNTAwIiByPSIyMiIgZmlsbD0iIzJBMDgwOCIgc3Ryb2tlPSIjRkYxNzQ0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxjaXJjbGUgY3g9IjcyMCIgY3k9IjUwMCIgcj0iMjIiIGZpbGw9IiMyQTA4MDgiIHN0cm9rZT0iI0ZGMTc0NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8Y2lyY2xlIGN4PSI3ODAiIGN5PSI1MDAiIHI9IjIyIiBmaWxsPSIjMkEwODA4IiBzdHJva2U9IiNGRjE3NDQiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iODQwIiBjeT0iNTAwIiByPSIyMiIgZmlsbD0iIzJBMDgwOCIgc3Ryb2tlPSIjRkYxNzQ0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxjaXJjbGUgY3g9IjkwMCIgY3k9IjUwMCIgcj0iMjIiIGZpbGw9IiMyQTA4MDgiIHN0cm9rZT0iI0ZGMTc0NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8Y2lyY2xlIGN4PSI2MDAiIGN5PSI1MDAiIHI9IjE4IiBmaWxsPSIjRkYxNzQ0IiBvcGFjaXR5PSIwIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjA7MTsxIiBrZXlUaW1lcz0iMDswLjA1OzEiIGR1cj0iMC42cyIgYmVnaW49IjMuMXMiIGZpbGw9ImZyZWV6ZSIvPjwvY2lyY2xlPgogICAgPGNpcmNsZSBjeD0iNjYwIiBjeT0iNTAwIiByPSIxOCIgZmlsbD0iI0ZGMTc0NCIgb3BhY2l0eT0iMCI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MSIga2V5VGltZXM9IjA7MC4wNTsxIiBkdXI9IjAuNnMiIGJlZ2luPSIzLjJzIiBmaWxsPSJmcmVlemUiLz48L2NpcmNsZT4KICAgIDxjaXJjbGUgY3g9IjcyMCIgY3k9IjUwMCIgcj0iMTgiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMDsxOzEiIGtleVRpbWVzPSIwOzAuMDU7MSIgZHVyPSIwLjZzIiBiZWdpbj0iMy4zcyIgZmlsbD0iZnJlZXplIi8+PC9jaXJjbGU+CiAgICA8Y2lyY2xlIGN4PSI3ODAiIGN5PSI1MDAiIHI9IjE4IiBmaWxsPSIjRkYxNzQ0IiBvcGFjaXR5PSIwIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjA7MTsxIiBrZXlUaW1lcz0iMDswLjA1OzEiIGR1cj0iMC42cyIgYmVnaW49IjMuNHMiIGZpbGw9ImZyZWV6ZSIvPjwvY2lyY2xlPgogICAgPGNpcmNsZSBjeD0iODQwIiBjeT0iNTAwIiByPSIxOCIgZmlsbD0iI0ZGMTc0NCIgb3BhY2l0eT0iMCI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MSIga2V5VGltZXM9IjA7MC4wNTsxIiBkdXI9IjAuNnMiIGJlZ2luPSIzLjVzIiBmaWxsPSJmcmVlemUiLz48L2NpcmNsZT4KICAgIDxjaXJjbGUgY3g9IjkwMCIgY3k9IjUwMCIgcj0iMTgiIGZpbGw9IiNGRjE3NDQiIG9wYWNpdHk9IjAiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMDsxOzEiIGtleVRpbWVzPSIwOzAuMDU7MSIgZHVyPSIwLjZzIiBiZWdpbj0iMy42cyIgZmlsbD0iZnJlZXplIi8+PC9jaXJjbGU+CiAgPC9nPgogIDx0ZXh0IHg9IjgwMCIgeT0iNTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iTWVubG8sQ29uc29sYXMsbW9ub3NwYWNlIiBmb250LXNpemU9Ijk2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMDBGRjQ0IiBsZXR0ZXItc3BhY2luZz0iMjAiIG9wYWNpdHk9IjAiPkdPIEdPIEdPPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIwOzE7MTswIiBrZXlUaW1lcz0iMDswLjA1OzAuMTU7MC4yMiIgZHVyPSI1cyIgYmVnaW49IjQuMnMiIGZpbGw9ImZyZWV6ZSIvPjwvdGV4dD4KICA8dGV4dCB4PSI4MDAiIHk9IjU2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik1lbmxvLENvbnNvbGFzLG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCIgbGV0dGVyLXNwYWNpbmc9IjMiIG9wYWNpdHk9IjAiPlBJVCBXQUxMIEhVRCB2NyAgOjogIENPTk4tUE9EIE9OTElORTxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMDswLjc7MC43OzAiIGtleVRpbWVzPSIwOzAuMDY7MC4xODswLjIyIiBkdXI9IjVzIiBiZWdpbj0iMnMiIGZpbGw9ImZyZWV6ZSIvPjwvdGV4dD4KICA8cmVjdCB4PSI2MDAiIHk9IjYwMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI2IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwIj4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMDsxOzE7MCIga2V5VGltZXM9IjA7MC4wNjswLjg1OzEiIGR1cj0iNXMiIGZpbGw9ImZyZWV6ZSIvPgogIDwvcmVjdD4KICA8cmVjdCB4PSI2MDAiIHk9IjYwMCIgd2lkdGg9IjAiIGhlaWdodD0iNiIgZmlsbD0idXJsKCNsb2FkQmFyKSIgb3BhY2l0eT0iMCI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiB2YWx1ZXM9IjA7MTsxOzAiIGtleVRpbWVzPSIwOzAuMDY7MC44NTsxIiBkdXI9IjVzIiBmaWxsPSJmcmVlemUiLz4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9IndpZHRoIiB2YWx1ZXM9IjA7NDAwIiBrZXlUaW1lcz0iMDsxIiBkdXI9IjMuOHMiIGJlZ2luPSIwLjNzIiBmaWxsPSJmcmVlemUiLz4KICA8L3JlY3Q+Cjwvc3ZnPgo=") !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: #000 !important;
+  pointer-events: auto !important;
+  animation: boot-fade-out 5.5s ease-in forwards !important;
+}
+
+/* B1. AGENT CRT STATIC */
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .part.auxiliarybar > .content {
+  position: relative !important;
+}
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .part.auxiliarybar > .content::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255, 32, 32, 0.04) 2px, rgba(255, 32, 32, 0.04) 3px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 4px, rgba(255, 184, 0, 0.025) 4px, rgba(255, 184, 0, 0.025) 5px) !important;
+  background-size: 100px 100px !important;
+  mix-blend-mode: screen !important;
+  animation: crt-static 0.8s steps(8) infinite !important;
+  opacity: 0.85 !important;
+}
+
+/* D3. RACE FLAG OVERLAYS */
+.monaco-workbench:has(.codicon-warning):not(:has(.codicon-error)) .part.editor::before {
+  content: "▲ YELLOW FLAG · CAUTION" !important;
+  position: absolute !important;
+  top: 36px !important;
+  left: 14px !important;
+  padding: 4px 10px !important;
+  background: linear-gradient(135deg, rgba(255, 238, 0, 0.95), rgba(255, 184, 0, 0.85)) !important;
+  border: 1px solid rgba(255, 238, 0, 1) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  color: #1A0810 !important;
+  pointer-events: none !important;
+  z-index: 70 !important;
+  box-shadow: 0 0 14px rgba(255, 238, 0, 0.65), 0 0 30px rgba(255, 184, 0, 0.35) !important;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%) !important;
+  animation: flag-wave 1.2s ease-in-out infinite !important;
+}
+.monaco-workbench:has(.codicon-error) .part.editor::before {
+  content: "■ RED FLAG · SESSION HALTED" !important;
+  position: absolute !important;
+  top: 36px !important;
+  left: 14px !important;
+  padding: 5px 12px !important;
+  background: linear-gradient(135deg, rgba(255, 23, 68, 0.95), rgba(170, 16, 16, 0.92)) !important;
+  border: 1px solid rgba(255, 23, 68, 1) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 4px rgba(255, 23, 68, 0.8) !important;
+  pointer-events: none !important;
+  z-index: 71 !important;
+  box-shadow: 0 0 18px rgba(255, 23, 68, 0.9), 0 0 40px rgba(255, 23, 68, 0.5) !important;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%) !important;
+  animation: status-blink 1s ease-in-out infinite !important;
+}
+
+/* A2. COCKPIT LOCK INDICATOR */
+.monaco-workbench .part.editor:focus-within {
+  box-shadow: inset 0 0 60px rgba(255, 32, 32, 0.18), 0 0 25px rgba(255, 68, 68, 0.35), 0 0 60px rgba(255, 32, 32, 0.18) !important;
+  border: 1px solid rgba(255, 68, 68, 0.85) !important;
+}
+.monaco-workbench:has(.part.editor:focus-within) .part.auxiliarybar {
+  opacity: 0.78 !important;
+  filter: brightness(0.85) !important;
+  transition: opacity 0.4s ease, filter 0.4s ease !important;
+}
+.monaco-workbench .part.auxiliarybar:focus-within {
+  box-shadow: inset 3px 0 0 rgba(255, 184, 0, 0.95), inset 0 0 80px rgba(255, 184, 0, 0.12), 0 0 25px rgba(255, 184, 0, 0.3) !important;
+}
+.monaco-workbench:has(.part.auxiliarybar:focus-within) .part.editor {
+  opacity: 0.82 !important;
+  filter: brightness(0.88) !important;
+  transition: opacity 0.4s ease, filter 0.4s ease !important;
+}
+
+/* C1. TIRE WEAR GAUGE */
+.monaco-workbench .monaco-grid-view {
+  position: relative !important;
+}
+.monaco-workbench .monaco-grid-view::before {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 190px !important;
+  right: 380px !important;
+  width: 200px !important;
+  height: 80px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIHJ4PSIzIiBmaWxsPSIjMEEwNDA2IiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC45MiIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMTIiIGZpbGw9IiMxQTA4MTAiLz4KICA8dGV4dCB4PSI2IiB5PSI5IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiIGxldHRlci1zcGFjaW5nPSIxIj4mIzk2NTY7IFRJUkVTICYjMTgzOyBDT01QT1VORCBDMzwvdGV4dD4KICA8Y2lyY2xlIGN4PSIxOTAiIGN5PSI2IiByPSIyIiBmaWxsPSIjMDBGRjQ0Ij4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMTswLjM7MSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L2NpcmNsZT4KICA8dGV4dCB4PSI2IiB5PSIyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij5GTDwvdGV4dD4KICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMzYiIGhlaWdodD0iNCIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJ3aWR0aCIgdmFsdWVzPSIzNjszNDszNjszNTszNiIgZHVyPSI0cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iNzQiIHk9IjI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiPjcxJTwvdGV4dD4KICA8dGV4dCB4PSIxMDAiIHk9IjI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPkZSPC90ZXh0PgogIDxyZWN0IHg9IjExNCIgeT0iMjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMTE0IiB5PSIyMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iNDA7Mzg7NDA7Mzk7NDAiIGR1cj0iNC4zcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iMTY4IiB5PSIyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZCODAwIj43OCU8L3RleHQ+CiAgPHRleHQgeD0iNiIgeT0iMzgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCI+Ukw8L3RleHQ+CiAgPHJlY3QgeD0iMjAiIHk9IjM0IiB3aWR0aD0iNTAiIGhlaWdodD0iNCIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxyZWN0IHg9IjIwIiB5PSIzNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjQiIGZpbGw9IiNGRjZCMjAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iMzI7MzA7MzI7MzE7MzIiIGR1cj0iMy45cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iNzQiIHk9IjM4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjZCMjAiPjY0JTwvdGV4dD4KICA8dGV4dCB4PSIxMDAiIHk9IjM4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPlJSPC90ZXh0PgogIDxyZWN0IHg9IjExNCIgeT0iMzQiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMTE0IiB5PSIzNCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjQiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iMzg7MzY7Mzg7Mzc7MzgiIGR1cj0iNC4xcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iMTY4IiB5PSIzOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZCODAwIj43NiU8L3RleHQ+CiAgPGxpbmUgeDE9IjYiIHkxPSI0OCIgeDI9IjE5NCIgeTI9IjQ4IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC4zIiBvcGFjaXR5PSIwLjUiLz4KICA8dGV4dCB4PSI2IiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5URU1QIDkyJiMxNzY7PC90ZXh0PgogIDx0ZXh0IHg9IjU4IiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5QU0kgMjIuNDwvdGV4dD4KICA8dGV4dCB4PSIxMTYiIHk9IjYwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlNUSU5UIEwxNDwvdGV4dD4KICA8dGV4dCB4PSI2IiB5PSI3NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIiBvcGFjaXR5PSIwLjciPkRFR1JBREFUSU9OICYjMTgzOyBOT01JTkFMPC90ZXh0Pgo8L3N2Zz4K") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99994 !important;
+  opacity: 0.92 !important;
+  filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.45)) drop-shadow(0 0 28px rgba(255, 32, 32, 0.18)) !important;
+}
+
+/* A1. CURSOR ARC REACTOR */
+.monaco-editor .cursors-layer .cursor {
+  background: linear-gradient(180deg, #FF4444, #FF1744) !important;
+  animation: cursor-arc-reactor 1.6s ease-in-out infinite !important;
+}
+
+/* C2. PIT BOARD */
+.monaco-workbench .editor-container {
+  position: relative !important;
+}
+.monaco-workbench .editor-container::before {
+  content: "" !important;
+  position: fixed !important;
+  top: 110px !important;
+  right: 18px !important;
+  width: 100px !important;
+  height: 240px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjQwIj4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjI0MCIgcng9IjIiIGZpbGw9IiMwQTA0MDYiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjk0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxNCIgZmlsbD0iIzFBMDgxMCIvPgogIDx0ZXh0IHg9IjYiIHk9IjEwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiIGxldHRlci1zcGFjaW5nPSIxIj4mIzk2NTY7IFBJVCBCT0FSRDwvdGV4dD4KICA8Y2lyY2xlIGN4PSI5MiIgY3k9IjYiIHI9IjIiIGZpbGw9IiNGRjE3NDQiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIxOzAuMzsxIiBkdXI9IjEuMnMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgPC9jaXJjbGU+CiAgPGxpbmUgeDE9IjAiIHkxPSIxNiIgeDI9IjEwMCIgeTI9IjE2IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPHRleHQgeD0iNiIgeT0iMjUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+UDwvdGV4dD4KICA8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+RFJWPC90ZXh0PgogIDx0ZXh0IHg9IjU1IiB5PSIyNSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5USU1FPC90ZXh0PgogIDxsaW5lIHgxPSIwIiB5MT0iMjgiIHgyPSIxMDAiIHkyPSIyOCIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuMyIgb3BhY2l0eT0iMC42Ii8+CiAgPGRlZnM+CiAgICA8Y2xpcFBhdGggaWQ9ImJvYXJkLWNsaXAiPgogICAgICA8cmVjdCB4PSIwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxOTUiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxnIGNsaXAtcGF0aD0idXJsKCNib2FyZC1jbGlwKSI+CiAgICA8Zz4KICAgICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJ0cmFuc2xhdGUiIHZhbHVlcz0iMCAwOyAwIC0xNTYiIGR1cj0iMjBzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogICAgICA8dGV4dCB4PSI2IiB5PSI0MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZFRTAwIj4xPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iNDAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRUUwMCI+TEVDPC90ZXh0PgogICAgICA8dGV4dCB4PSI1MCIgeT0iNDAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwRkY0NCI+MToxOC4zNDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjUyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNDMEMwQzAiPjI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI1MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjQzBDMEMwIj5WRVI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI1MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC4xMjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjY0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNDRDdGMzIiPjM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI2NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjQ0Q3RjMyIj5IQU08L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI2NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC40ODc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9Ijc2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5TQUk8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC44OTI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9Ijg4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI4OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5SVVM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI4OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMS4yMDU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEwMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij42PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTAwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPk5PUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEwMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMS41NDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjExMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij43PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTEyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlBJQTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjExMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMi4wMTQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij44PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPkFMTzwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMi42ODg8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEzNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij45PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTM2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlNUUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEzNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMy4xNDI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjE0OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij4xMDwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE0OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5HQVM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxNDgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCI+KzMuNzg4PC90ZXh0PgogICAgICA8dGV4dCB4PSI2IiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCI+MTE8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+SFVMPC90ZXh0PgogICAgICA8dGV4dCB4PSI1MCIgeT0iMTYwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkI4MDAiPis0LjIyMTwvdGV4dD4KICAgICAgPHRleHQgeD0iNiIgeT0iMTcyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjEyPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTcyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlRTVTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjE3MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rNC44NzM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjE4NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij4xMzwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE4NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5PQ088L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxODQiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCI+KzUuNDAyPC90ZXh0PgogICAgICA8dGV4dCB4PSI2IiB5PSIxOTYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGRUUwMCI+MTwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE5NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZFRTAwIj5MRUM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxOTYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwRkY0NCI+MToxOC4zNDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjIwOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjQzBDMEMwIj4yPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMjA4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNDMEMwQzAiPlZFUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjIwOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC4xMjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjIyMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjQ0Q3RjMyIj4zPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMjIwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNDRDdGMzIiPkhBTTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjIyMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC40ODc8L3RleHQ+CiAgICA8L2c+CiAgPC9nPgogIDxsaW5lIHgxPSIwIiB5MT0iMjI2IiB4Mj0iMTAwIiB5Mj0iMjI2IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPHRleHQgeD0iNiIgeT0iMjM2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiIG9wYWNpdHk9IjAuNyI+TCAxNC81NyAmIzE4MzsgU0FGRTwvdGV4dD4KPC9zdmc+Cg==") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99993 !important;
+  opacity: 0.92 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 32, 32, 0.4)) drop-shadow(0 0 22px rgba(255, 32, 32, 0.15)) !important;
+}
+@media (max-width: 1500px) {
+  .monaco-workbench .editor-container::before { display: none !important; }
+}
+
+/* C3. ENGINE RPM BAR */
+.monaco-workbench .part.titlebar > .titlebar-container {
+  position: relative !important;
+}
+.monaco-workbench .part.titlebar > .titlebar-container::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 200px !important;
+  right: 380px !important;
+  height: 2px !important;
+  background-color: rgba(20, 8, 4, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  border-radius: 1px !important;
+  overflow: hidden !important;
+}
+.monaco-workbench .part.titlebar > .titlebar-container::before {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 200px !important;
+  width: 30% !important;
+  max-width: calc(100% - 580px) !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, #00FF44 0%, #FFEE00 35%, #FFB800 60%, #FF6B20 80%, #FF1744 100%) !important;
+  background-size: 200% 100% !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  border-radius: 1px !important;
+  box-shadow: 0 0 6px currentColor, 0 0 14px rgba(255, 32, 32, 0.5) !important;
+  animation: rpm-tachometer 3s ease-in-out infinite !important;
+}
+
+/* E1. COMMAND PALETTE = PIT RADIO */
+.quick-input-widget {
+  position: relative !important;
+}
+.quick-input-widget::before {
+  content: "📻 PIT RADIO  ::  ACQUIRING TARGET" !important;
+  position: absolute !important;
+  top: -22px !important;
+  left: 0 !important;
+  right: 0 !important;
+  text-align: center !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2.5px !important;
+  color: rgba(255, 184, 0, 0.95) !important;
+  text-shadow: 0 0 6px rgba(255, 184, 0, 0.7), 0 0 12px rgba(255, 32, 32, 0.4) !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+  animation: status-blink 1.8s ease-in-out infinite !important;
+}
+
+/* E3. FIND WIDGET = DRS ENABLED */
+.monaco-editor .find-widget {
+  position: relative !important;
+}
+.monaco-editor .find-widget.visible::before {
+  content: "▸ DRS ENABLED" !important;
+  position: absolute !important;
+  top: -18px !important;
+  left: 8px !important;
+  padding: 2px 8px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  color: #FFFFFF !important;
+  background: linear-gradient(90deg, rgba(0, 255, 68, 0.9), rgba(0, 200, 50, 0.85)) !important;
+  border: 1px solid rgba(0, 255, 68, 1) !important;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 68, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+  border-radius: 2px !important;
+  animation: status-blink 1.4s ease-in-out infinite !important;
+}
+
+/* E4. TAB FLY-IN ANIMATIONS */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  animation: tab-fly-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  transform-origin: right center !important;
+}
+
+/* F1. HELMET VISOR SCRATCHES */
+.monaco-editor .overflow-guard::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 80px !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+  background:
+    linear-gradient(115deg, transparent 0%, transparent 28%, rgba(255, 255, 255, 0.012) 28.5%, transparent 29%),
+    linear-gradient(115deg, transparent 0%, transparent 47%, rgba(255, 255, 255, 0.018) 47.4%, transparent 47.8%),
+    linear-gradient(115deg, transparent 0%, transparent 64%, rgba(255, 255, 255, 0.01) 64.5%, transparent 65%),
+    linear-gradient(115deg, transparent 0%, transparent 81%, rgba(255, 255, 255, 0.014) 81.4%, transparent 81.8%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 100%) !important;
+  mix-blend-mode: screen !important;
+}
+
+/* F2. HEAT HAZE */
+.monaco-editor .overflow-guard::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 18px !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+  background: linear-gradient(0deg, rgba(255, 107, 32, 0.06) 0%, transparent 100%) !important;
+  animation: heat-haze 2.8s ease-in-out infinite !important;
+}
+
+/* F3. ATTENDANCE COUNTER */
+.monaco-workbench .part.titlebar .window-controls-container {
+  position: relative !important;
+}
+.monaco-workbench .part.titlebar .window-controls-container::before {
+  content: "ATTENDANCE  156,847  ▲" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 100% !important;
+  transform: translateY(-50%) !important;
+  margin-right: 12px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+  color: rgba(255, 184, 0, 0.7) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.4) !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+  animation: attendance-tick 4s ease-in-out infinite !important;
+}
+
+/* G1. TURBO MODE */
+.monaco-workbench:has(.part.sidebar):has(.part.auxiliarybar):has(.part.panel):has(.codicon-loading.codicon-modifier-spin)::before {
+  animation: stripe-drift 6s linear infinite !important;
+  opacity: 0.95 !important;
+}
+.monaco-workbench:has(.part.sidebar):has(.part.auxiliarybar):has(.part.panel):has(.codicon-loading.codicon-modifier-spin) .part.activitybar::after {
+  animation: f1-rev-counter 0.9s ease-out infinite !important;
+}
+
+/* G3. CHAMPIONSHIP P1 STATUS */
+.monaco-workbench .monaco-grid-view::after {
+  content: "▲ P1  ·  ON PACE" !important;
+  position: fixed !important;
+  bottom: 30px !important;
+  left: 80px !important;
+  padding: 3px 10px !important;
+  background: linear-gradient(135deg, rgba(255, 238, 0, 0.18), rgba(255, 184, 0, 0.12)) !important;
+  border: 1px solid rgba(255, 238, 0, 0.7) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  color: rgba(255, 238, 0, 0.95) !important;
+  text-shadow: 0 0 6px rgba(255, 238, 0, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 99992 !important;
+  border-radius: 2px !important;
+  opacity: 0 !important;
+  transition: opacity 0.5s ease !important;
+}
+.monaco-workbench:not(:has(.codicon-error)):not(:has(.codicon-loading.codicon-modifier-spin)) .monaco-grid-view::after {
+  opacity: 1 !important;
+  animation: p1-glow 2.4s ease-in-out infinite !important;
+}
+
+
+/* ============================================================================
+   v7.1 — AMBIENT MODE
+   Reduces every HUD-widget opacity so they never obscure underlying text.
+   Adds a smart "chat-focused" fade: when you click into the chat panel,
+   widgets fade further (so reading agent output is unobstructed).
+   ============================================================================ */
+
+/* === Base ambient opacities (significantly reduced from v6/v7) === */
+.monaco-workbench::after                              { opacity: 0.32 !important; }   /* Steering wheel */
+body::after                                            { opacity: 0.45 !important; }   /* Radar */
+body::before                                           { opacity: 0.50 !important; }   /* Telemetry sparklines */
+html::after                                            { opacity: 0.58 !important; }   /* SF-26 mech profile */
+.monaco-workbench .monaco-grid-view::before            { opacity: 0.48 !important; }   /* Tire wear gauge */
+.monaco-workbench .editor-container::before            { opacity: 0.38 !important; }   /* Pit board (worst offender — overlaps chat) */
+.monaco-workbench .editor-group-container::after       { opacity: 0.42 !important; }   /* Halo ring around wheel */
+
+/* === Per-file dossier card: lower opacity by redefining the keyframe === */
+@keyframes dossier-flicker {
+  0%, 100% { opacity: 0.62; }
+  92%, 94%, 96% { opacity: 0.30; }
+  93%, 95% { opacity: 0.62; }
+}
+
+/* === Smart fade when chat panel is focused (user is actively reading) === */
+body:has(.monaco-workbench .part.auxiliarybar:focus-within)::before                                     { opacity: 0.22 !important; }
+body:has(.monaco-workbench .part.auxiliarybar:focus-within)::after                                      { opacity: 0.22 !important; }
+html:has(.monaco-workbench .part.auxiliarybar:focus-within)::after                                      { opacity: 0.35 !important; }
+.monaco-workbench:has(.part.auxiliarybar:focus-within)::after                                           { opacity: 0.18 !important; }
+.monaco-workbench:has(.part.auxiliarybar:focus-within) .monaco-grid-view::before                        { opacity: 0.24 !important; }
+.monaco-workbench:has(.part.auxiliarybar:focus-within) .editor-container::before                        { opacity: 0.20 !important; }
+.monaco-workbench:has(.part.auxiliarybar:focus-within) .editor-group-container::after                   { opacity: 0.20 !important; }
+
+/* Smooth opacity transitions so the fade is noticed but not jarring */
+.monaco-workbench::after,
+body::before,
+body::after,
+html::after,
+.monaco-workbench .monaco-grid-view::before,
+.monaco-workbench .editor-container::before,
+.monaco-workbench .editor-group-container::after {
+  transition: opacity 0.4s ease !important;
+}
+
+
+/* ============================================================================
+   v7.2 — DECLUTTER + WATERMARK MODE
+   Two fixes for readability/duplication:
+     1. REMOVE the widgets whose selectors match multiple DOM elements
+        (tire wear gauge, pit board, halo ring) — these were duplicating
+        and overlapping editor + chat content.
+     2. Drop remaining widget opacities to TRUE watermark levels (0.12-0.20)
+        so they read as ambient texture, never as foreground UI.
+        Hover the widget area = pops to inspection opacity.
+   ============================================================================ */
+
+/* === HARD REMOVE the duplicating widgets === */
+.monaco-workbench .monaco-grid-view::before  { content: none !important; display: none !important; background-image: none !important; }
+.monaco-workbench .editor-container::before  { content: none !important; display: none !important; background-image: none !important; }
+.monaco-workbench .editor-group-container::after { content: none !important; display: none !important; background-image: none !important; }
+.monaco-workbench:not(:has(.codicon-error)):not(:has(.codicon-loading.codicon-modifier-spin)) .monaco-grid-view::after { display: none !important; }
+
+/* === Drop remaining widgets to true watermark opacity === */
+.monaco-workbench::after  { opacity: 0.15 !important; }                /* Steering wheel */
+body::after               { opacity: 0.18 !important; }                /* Radar */
+body::before              { opacity: 0.22 !important; }                /* Telemetry sparklines */
+html::after               { opacity: 0.45 !important; }                /* SF-26 mech profile (in title bar, less intrusive) */
+
+/* === Per-file dossier — much lower flicker range === */
+@keyframes dossier-flicker {
+  0%, 100% { opacity: 0.32; }
+  92%, 94%, 96% { opacity: 0.16; }
+  93%, 95% { opacity: 0.32; }
+}
+
+/* === Smart fade when chat panel is focused (truly ghost) === */
+body:has(.monaco-workbench .part.auxiliarybar:focus-within)::before  { opacity: 0.10 !important; }
+body:has(.monaco-workbench .part.auxiliarybar:focus-within)::after   { opacity: 0.10 !important; }
+html:has(.monaco-workbench .part.auxiliarybar:focus-within)::after   { opacity: 0.25 !important; }
+.monaco-workbench:has(.part.auxiliarybar:focus-within)::after        { opacity: 0.08 !important; }
+
+/* === Hover to pop: when mouse is anywhere in the workbench, widgets
+   stay at watermark levels. When mouse is in the bottom-right corner
+   specifically (over the wheel/radar/sparklines zone), they brighten.
+   Achieved by hovering the workbench while mouse is positioned by user. === */
+.monaco-workbench:hover::after { opacity: 0.28 !important; }
+
+/* === Smooth transitions === */
+.monaco-workbench::after, body::before, body::after, html::after {
+  transition: opacity 0.5s ease !important;
+}
+
+
+/* ============================================================================
+   v7.3 — STOP DIMMING PANES + RESTORE LEADERBOARD & TIRES
+   Fixes two mistakes from v7.1/v7.2:
+     1. Stops dimming the editor pane and chat panel (those rules were
+        making code/chat text harder to read). Panes are full opacity now.
+        Focus GLOW (box-shadow) is preserved — only the opacity/brightness
+        dimming is removed.
+     2. Restores the pit board (leaderboard) and tire wear gauge using a
+        UNIQUE direct-child selector (.monaco-workbench > .monaco-grid-view)
+        so they no longer render multiple times.
+   Theme HUD widget opacities stay at watermark level (don't change).
+   ============================================================================ */
+
+/* === STOP DIMMING THE PANES — full opacity + no brightness reduction === */
+.monaco-workbench:has(.part.editor:focus-within) .part.auxiliarybar,
+.monaco-workbench:has(.part.auxiliarybar:focus-within) .part.editor {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* === RESTORE TIRE WEAR GAUGE (unique top-level grid-view, no duplicates) === */
+.monaco-workbench > .monaco-grid-view {
+  position: relative !important;
+}
+.monaco-workbench > .monaco-grid-view::before {
+  content: "" !important;
+  display: block !important;
+  position: fixed !important;
+  bottom: 190px !important;
+  right: 380px !important;
+  width: 200px !important;
+  height: 80px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIHJ4PSIzIiBmaWxsPSIjMEEwNDA2IiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC45MiIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMTIiIGZpbGw9IiMxQTA4MTAiLz4KICA8dGV4dCB4PSI2IiB5PSI5IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiIGxldHRlci1zcGFjaW5nPSIxIj4mIzk2NTY7IFRJUkVTICYjMTgzOyBDT01QT1VORCBDMzwvdGV4dD4KICA8Y2lyY2xlIGN4PSIxOTAiIGN5PSI2IiByPSIyIiBmaWxsPSIjMDBGRjQ0Ij4KICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIHZhbHVlcz0iMTswLjM7MSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L2NpcmNsZT4KICA8dGV4dCB4PSI2IiB5PSIyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij5GTDwvdGV4dD4KICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMzYiIGhlaWdodD0iNCIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSI+CiAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJ3aWR0aCIgdmFsdWVzPSIzNjszNDszNjszNTszNiIgZHVyPSI0cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iNzQiIHk9IjI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiPjcxJTwvdGV4dD4KICA8dGV4dCB4PSIxMDAiIHk9IjI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPkZSPC90ZXh0PgogIDxyZWN0IHg9IjExNCIgeT0iMjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMTE0IiB5PSIyMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iNDA7Mzg7NDA7Mzk7NDAiIGR1cj0iNC4zcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iMTY4IiB5PSIyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZCODAwIj43OCU8L3RleHQ+CiAgPHRleHQgeD0iNiIgeT0iMzgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCI+Ukw8L3RleHQ+CiAgPHJlY3QgeD0iMjAiIHk9IjM0IiB3aWR0aD0iNTAiIGhlaWdodD0iNCIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxyZWN0IHg9IjIwIiB5PSIzNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjQiIGZpbGw9IiNGRjZCMjAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iMzI7MzA7MzI7MzE7MzIiIGR1cj0iMy45cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iNzQiIHk9IjM4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjZCMjAiPjY0JTwvdGV4dD4KICA8dGV4dCB4PSIxMDAiIHk9IjM4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPlJSPC90ZXh0PgogIDxyZWN0IHg9IjExNCIgeT0iMzQiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHJlY3QgeD0iMTE0IiB5PSIzNCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjQiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuODUiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0id2lkdGgiIHZhbHVlcz0iMzg7MzY7Mzg7Mzc7MzgiIGR1cj0iNC4xcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz4KICA8L3JlY3Q+CiAgPHRleHQgeD0iMTY4IiB5PSIzOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZCODAwIj43NiU8L3RleHQ+CiAgPGxpbmUgeDE9IjYiIHkxPSI0OCIgeDI9IjE5NCIgeTI9IjQ4IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC4zIiBvcGFjaXR5PSIwLjUiLz4KICA8dGV4dCB4PSI2IiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5URU1QIDkyJiMxNzY7PC90ZXh0PgogIDx0ZXh0IHg9IjU4IiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5QU0kgMjIuNDwvdGV4dD4KICA8dGV4dCB4PSIxMTYiIHk9IjYwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlNUSU5UIEwxNDwvdGV4dD4KICA8dGV4dCB4PSI2IiB5PSI3NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIiBvcGFjaXR5PSIwLjciPkRFR1JBREFUSU9OICYjMTgzOyBOT01JTkFMPC90ZXh0Pgo8L3N2Zz4K") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99994 !important;
+  opacity: 0.28 !important;
+  filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.45)) drop-shadow(0 0 28px rgba(255, 32, 32, 0.18)) !important;
+  transition: opacity 0.5s ease !important;
+}
+
+/* === RESTORE PIT BOARD / LEADERBOARD (unique top-level grid-view) === */
+.monaco-workbench > .monaco-grid-view::after {
+  content: "" !important;
+  display: block !important;
+  position: fixed !important;
+  top: 110px !important;
+  right: 18px !important;
+  width: 100px !important;
+  height: 240px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjQwIj4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjI0MCIgcng9IjIiIGZpbGw9IiMwQTA0MDYiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjk0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxNCIgZmlsbD0iIzFBMDgxMCIvPgogIDx0ZXh0IHg9IjYiIHk9IjEwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRkI4MDAiIGxldHRlci1zcGFjaW5nPSIxIj4mIzk2NTY7IFBJVCBCT0FSRDwvdGV4dD4KICA8Y2lyY2xlIGN4PSI5MiIgY3k9IjYiIHI9IjIiIGZpbGw9IiNGRjE3NDQiPgogICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgdmFsdWVzPSIxOzAuMzsxIiBkdXI9IjEuMnMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgPC9jaXJjbGU+CiAgPGxpbmUgeDE9IjAiIHkxPSIxNiIgeDI9IjEwMCIgeTI9IjE2IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPHRleHQgeD0iNiIgeT0iMjUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+UDwvdGV4dD4KICA8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+RFJWPC90ZXh0PgogIDx0ZXh0IHg9IjU1IiB5PSIyNSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5USU1FPC90ZXh0PgogIDxsaW5lIHgxPSIwIiB5MT0iMjgiIHgyPSIxMDAiIHkyPSIyOCIgc3Ryb2tlPSIjRkY0NDQ0IiBzdHJva2Utd2lkdGg9IjAuMyIgb3BhY2l0eT0iMC42Ii8+CiAgPGRlZnM+CiAgICA8Y2xpcFBhdGggaWQ9ImJvYXJkLWNsaXAiPgogICAgICA8cmVjdCB4PSIwIiB5PSIzMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxOTUiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxnIGNsaXAtcGF0aD0idXJsKCNib2FyZC1jbGlwKSI+CiAgICA8Zz4KICAgICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJ0cmFuc2xhdGUiIHZhbHVlcz0iMCAwOyAwIC0xNTYiIGR1cj0iMjBzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPgogICAgICA8dGV4dCB4PSI2IiB5PSI0MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZFRTAwIj4xPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iNDAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRUUwMCI+TEVDPC90ZXh0PgogICAgICA8dGV4dCB4PSI1MCIgeT0iNDAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwRkY0NCI+MToxOC4zNDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjUyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNDMEMwQzAiPjI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI1MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjQzBDMEMwIj5WRVI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI1MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC4xMjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjY0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNDRDdGMzIiPjM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI2NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjQ0Q3RjMyIj5IQU08L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI2NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC40ODc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9Ijc2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5TQUk8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC44OTI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9Ijg4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSI4OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5SVVM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSI4OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMS4yMDU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEwMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij42PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTAwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPk5PUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEwMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMS41NDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjExMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij43PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTEyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlBJQTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjExMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMi4wMTQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij44PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTI0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPkFMTzwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEyNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMi42ODg8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjEzNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij45PC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTM2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlNUUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjEzNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMy4xNDI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjE0OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij4xMDwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE0OCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5HQVM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxNDgiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCI+KzMuNzg4PC90ZXh0PgogICAgICA8dGV4dCB4PSI2IiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCI+MTE8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjIwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGNDQ0NCI+SFVMPC90ZXh0PgogICAgICA8dGV4dCB4PSI1MCIgeT0iMTYwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkI4MDAiPis0LjIyMTwvdGV4dD4KICAgICAgPHRleHQgeD0iNiIgeT0iMTcyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNGRjQ0NDQiPjEyPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMTcyIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiPlRTVTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjE3MiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rNC44NzM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjE4NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY0NDQ0Ij4xMzwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE4NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkY0NDQ0Ij5PQ088L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxODQiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGQjgwMCI+KzUuNDAyPC90ZXh0PgogICAgICA8dGV4dCB4PSI2IiB5PSIxOTYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGRUUwMCI+MTwvdGV4dD4KICAgICAgPHRleHQgeD0iMjAiIHk9IjE5NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZFRTAwIj5MRUM8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjUwIiB5PSIxOTYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwRkY0NCI+MToxOC4zNDc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjIwOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjQzBDMEMwIj4yPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMjA4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNDMEMwQzAiPlZFUjwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjIwOCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC4xMjQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjYiIHk9IjIyMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjQ0Q3RjMyIj4zPC90ZXh0PgogICAgICA8dGV4dCB4PSIyMCIgeT0iMjIwIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNDRDdGMzIiPkhBTTwvdGV4dD4KICAgICAgPHRleHQgeD0iNTAiIHk9IjIyMCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZCODAwIj4rMC40ODc8L3RleHQ+CiAgICA8L2c+CiAgPC9nPgogIDxsaW5lIHgxPSIwIiB5MT0iMjI2IiB4Mj0iMTAwIiB5Mj0iMjI2IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPHRleHQgeD0iNiIgeT0iMjM2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjQ0NDQiIG9wYWNpdHk9IjAuNyI+TCAxNC81NyAmIzE4MzsgU0FGRTwvdGV4dD4KPC9zdmc+Cg==") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99993 !important;
+  opacity: 0.32 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 32, 32, 0.4)) drop-shadow(0 0 22px rgba(255, 32, 32, 0.15)) !important;
+  transition: opacity 0.5s ease !important;
+}
+@media (max-width: 1500px) {
+  .monaco-workbench > .monaco-grid-view::after { display: none !important; }
+}
+
+/* === Smart fade for the restored widgets when chat panel is focused === */
+.monaco-workbench:has(.part.auxiliarybar:focus-within) > .monaco-grid-view::before {
+  opacity: 0.14 !important;
+}
+.monaco-workbench:has(.part.auxiliarybar:focus-within) > .monaco-grid-view::after {
+  opacity: 0.14 !important;
+}

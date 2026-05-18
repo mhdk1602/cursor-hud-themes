@@ -1,0 +1,260 @@
+/* ═══════════════════════════════════════════════════════════
+   J.A.R.V.I.S. — Holographic User Display
+   Translucent panels | Scanline overlay | Arc reactor glow
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Scanline overlay across entire IDE ── */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 200, 255, 0.015) 2px,
+    rgba(0, 200, 255, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Holographic shimmer on the editor ── */
+.monaco-editor .overflow-guard {
+  background:
+    linear-gradient(
+      120deg,
+      transparent 25%,
+      rgba(0, 180, 220, 0.035) 45%,
+      rgba(0, 255, 180, 0.025) 55%,
+      transparent 75%
+    ) !important;
+  background-size: 250% 250% !important;
+  animation: hud-shimmer 12s ease-in-out infinite !important;
+}
+
+@keyframes hud-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Arc reactor cursor glow (pulsing) ── */
+.monaco-editor .cursors-layer .cursor {
+  background-color: #00ccff !important;
+  box-shadow:
+    0 0 4px rgba(0, 204, 255, 0.8),
+    0 0 12px rgba(0, 204, 255, 0.5),
+    0 0 24px rgba(0, 204, 255, 0.2) !important;
+  border: none !important;
+  animation: cursor-reactor 2.5s ease-in-out infinite !important;
+}
+
+@keyframes cursor-reactor {
+  0%, 100% {
+    box-shadow:
+      0 0 4px rgba(0, 204, 255, 0.6),
+      0 0 10px rgba(0, 204, 255, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 6px rgba(0, 204, 255, 0.9),
+      0 0 16px rgba(0, 204, 255, 0.5),
+      0 0 30px rgba(0, 204, 255, 0.2);
+  }
+}
+
+/* ── Active line: HUD targeting scan ── */
+.monaco-editor .view-overlays .current-line-margin,
+.monaco-editor .view-overlays .current-line {
+  border-left: 2px solid rgba(0, 200, 255, 0.25) !important;
+  box-shadow: inset 4px 0 20px -8px rgba(0, 200, 255, 0.1) !important;
+}
+
+/* ── Selection: holographic glass ── */
+.monaco-editor .selected-text {
+  background-color: rgba(0, 180, 255, 0.12) !important;
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.06) !important;
+  border-radius: 1px !important;
+}
+
+/* ── Glowing syntax tokens ── */
+/* All code gets a subtle glow */
+.monaco-editor .view-line span {
+  text-shadow: 0 0 2px rgba(0, 180, 255, 0.08) !important;
+}
+
+/* Keywords - bright cyan glow */
+.monaco-editor .mtk5,
+.monaco-editor .mtk15,
+.monaco-editor .mtk18 {
+  text-shadow: 0 0 4px rgba(0, 212, 255, 0.5), 0 0 12px rgba(0, 212, 255, 0.2) !important;
+}
+
+/* Functions - white with bloom */
+.monaco-editor .mtk1 {
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.25), 0 0 8px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Strings - gold with warm glow */
+.monaco-editor .mtk6,
+.monaco-editor .mtk12 {
+  text-shadow: 0 0 4px rgba(255, 182, 39, 0.4), 0 0 10px rgba(255, 182, 39, 0.15) !important;
+}
+
+/* Types - teal glow */
+.monaco-editor .mtk10,
+.monaco-editor .mtk8 {
+  text-shadow: 0 0 4px rgba(114, 239, 221, 0.4), 0 0 10px rgba(114, 239, 221, 0.15) !important;
+}
+
+/* Numbers - orange glow */
+.monaco-editor .mtk7 {
+  text-shadow: 0 0 3px rgba(255, 107, 53, 0.4), 0 0 8px rgba(255, 107, 53, 0.15) !important;
+}
+
+/* ── Panel borders: HUD frame lines ── */
+.monaco-workbench .part.sidebar {
+  border-right: 1px solid rgba(0, 180, 255, 0.12) !important;
+  box-shadow: inset -1px 0 20px rgba(0, 180, 255, 0.02) !important;
+}
+
+.monaco-workbench .part.panel {
+  border-top: 1px solid rgba(0, 180, 255, 0.12) !important;
+  box-shadow: inset 0 1px 20px rgba(0, 180, 255, 0.02) !important;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container {
+  box-shadow: inset 0 0 40px rgba(0, 180, 255, 0.015) !important;
+}
+
+/* ── Tab bar: display panel headers ── */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tab.active {
+  border-top: 1px solid rgba(0, 200, 255, 0.4) !important;
+  box-shadow: 0 -1px 8px rgba(0, 200, 255, 0.15) !important;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tab:hover {
+  background-color: rgba(0, 180, 255, 0.06) !important;
+}
+
+/* ── Sidebar section headers: uppercase HUD labels ── */
+.monaco-workbench .part.sidebar .title-label h2,
+.monaco-workbench .pane-header .title {
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  font-size: 10px !important;
+}
+
+/* ── Activity bar icons: reactor indicators ── */
+.monaco-workbench .activitybar > .content .action-item.checked .active-item-indicator {
+  border-left-color: rgba(0, 200, 255, 0.7) !important;
+  box-shadow: -2px 0 10px rgba(0, 200, 255, 0.25) !important;
+}
+
+/* ── Status bar: telemetry strip with gradient ── */
+.monaco-workbench .part.statusbar {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 180, 255, 0.06),
+    rgba(100, 120, 250, 0.04),
+    rgba(0, 220, 180, 0.06)
+  ) !important;
+  border-top: 1px solid rgba(0, 180, 255, 0.15) !important;
+  box-shadow: 0 -2px 12px rgba(0, 180, 255, 0.04) !important;
+}
+
+/* ── Command palette: JARVIS prompt ── */
+.quick-input-widget {
+  border: 1px solid rgba(0, 180, 255, 0.2) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(0, 180, 255, 0.06),
+    inset 0 0 40px rgba(0, 180, 255, 0.02) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* ── Input fields: glass interface ── */
+.monaco-inputbox {
+  border: 1px solid rgba(0, 180, 255, 0.15) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.monaco-inputbox.synthetic-focus {
+  border-color: rgba(0, 200, 255, 0.35) !important;
+  box-shadow: 0 0 10px rgba(0, 200, 255, 0.1) !important;
+}
+
+/* ── Find widget: targeting overlay ── */
+.monaco-editor .find-widget {
+  border: 1px solid rgba(0, 180, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 0 12px rgba(0, 180, 255, 0.05) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* ── Scrollbars: thin reactor tracks ── */
+.monaco-scrollable-element > .scrollbar > .slider {
+  border-radius: 0 !important;
+  background-color: rgba(0, 180, 255, 0.12) !important;
+}
+
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+  background-color: rgba(0, 180, 255, 0.25) !important;
+}
+
+/* ── Minimap: radar ── */
+.monaco-editor .minimap {
+  opacity: 0.5 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.monaco-editor .minimap:hover {
+  opacity: 0.8 !important;
+}
+
+/* ── Bracket match glow ── */
+.monaco-editor .bracket-match {
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.2) !important;
+}
+
+/* ── Notifications: threat alerts ── */
+.monaco-workbench .notifications-center,
+.monaco-workbench .notification-toast {
+  border: 1px solid rgba(0, 180, 255, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 12px rgba(0, 180, 255, 0.04) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* ── Terminal cursor glow ── */
+.terminal .xterm-cursor-layer .xterm-cursor {
+  box-shadow: 0 0 6px rgba(0, 200, 255, 0.5) !important;
+}
+
+/* ── Subtle vignette on editor edges ── */
+.monaco-editor .overflow-guard::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 20, 50, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Welcome/empty state ── */
+.monaco-workbench .part.editor .content .editor-group-container .editor-group-letterpress {
+  opacity: 0.03 !important;
+}
+
+/* ── Focus rings: reactor blue ── */
+*:focus {
+  outline-color: rgba(0, 180, 255, 0.3) !important;
+}
+
+/* ── Smooth transitions on interactive elements ── */
+.monaco-button,
+.monaco-workbench .part.statusbar .statusbar-item a,
+.monaco-list-row {
+  transition: all 0.15s ease !important;
+}

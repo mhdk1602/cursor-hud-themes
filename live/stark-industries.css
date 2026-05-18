@@ -1,0 +1,169 @@
+/* ═══════════════════════════════════════════════════
+   STARK INDUSTRIES — JARVIS HUD
+   Arc reactor cyan | Carbon black | Gold telemetry
+   ═══════════════════════════════════════════════════ */
+
+/* ── Base canvas ── */
+body {
+    background-color: #09090F !important;
+}
+
+/* ── Arc reactor cursor glow ── */
+.cursor-line-no-selection .view-line,
+.cursor-line .view-line {
+    text-shadow: 0 0 1px rgba(0, 229, 255, 0.04);
+}
+
+.monaco-editor .cursors-layer .cursor {
+    background-color: #00E5FF !important;
+    box-shadow: 0 0 6px #00E5FF88, 0 0 20px #00BFFF33 !important;
+    border: none !important;
+}
+
+/* ── Active line: subtle reactor scan ── */
+.monaco-editor .view-overlays .current-line-margin,
+.monaco-editor .view-overlays .current-line {
+    border-left: 2px solid #00E5FF18 !important;
+    box-shadow: inset 3px 0 12px -6px #00BFFF15 !important;
+}
+
+/* ── Selection: holographic highlight ── */
+.monaco-editor .selected-text {
+    background-color: #00BFFF20 !important;
+    box-shadow: 0 0 8px #00BFFF10 !important;
+}
+
+/* ── Sidebar: weapon rack ── */
+.monaco-workbench .part.sidebar {
+    border-right: 1px solid #0D1E2B !important;
+}
+
+.monaco-workbench .part.sidebar .title-label h2 {
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    font-size: 10px !important;
+}
+
+/* ── Activity bar: suit selector ── */
+.monaco-workbench .activitybar > .content .action-item.checked .active-item-indicator {
+    border-left-color: #00E5FF !important;
+    box-shadow: -2px 0 8px #00BFFF33 !important;
+}
+
+/* ── Tabs: HUD display panels ── */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tab.active {
+    border-top: 1px solid #00E5FF !important;
+    box-shadow: 0 -1px 6px #00BFFF22 !important;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tab:hover {
+    background-color: #00BFFF08 !important;
+}
+
+/* ── Panel (terminal): workshop floor ── */
+.monaco-workbench .part.panel {
+    border-top: 1px solid #0D1E2B !important;
+}
+
+.monaco-workbench .part.panel .title-label {
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+/* ── Terminal glow ── */
+.terminal .xterm-cursor-layer .xterm-cursor {
+    box-shadow: 0 0 4px #00E5FF88 !important;
+}
+
+/* ── Scrollbar: thin reactor tracks ── */
+.monaco-scrollable-element > .scrollbar > .slider {
+    border-radius: 0 !important;
+    background-color: #00BFFF18 !important;
+}
+
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+    background-color: #00BFFF30 !important;
+}
+
+/* ── Status bar: telemetry strip ── */
+.monaco-workbench .part.statusbar {
+    border-top: 1px solid #0D1E2B !important;
+}
+
+.monaco-workbench .part.statusbar .statusbar-item a {
+    letter-spacing: 0.5px !important;
+}
+
+/* ── Input fields: command interface ── */
+.monaco-inputbox {
+    border: 1px solid #0D1E2B !important;
+    box-shadow: 0 0 4px #00BFFF08 !important;
+}
+
+.monaco-inputbox.synthetic-focus {
+    border-color: #00BFFF44 !important;
+    box-shadow: 0 0 8px #00BFFF15 !important;
+}
+
+/* ── Command palette: JARVIS prompt ── */
+.quick-input-widget {
+    border: 1px solid #00BFFF22 !important;
+    box-shadow: 0 4px 24px #00000088, 0 0 16px #00BFFF08 !important;
+}
+
+/* ── Buttons: arc reactor pulse ── */
+.monaco-button {
+    border: 1px solid #00BFFF33 !important;
+    transition: all 0.15s ease !important;
+}
+
+.monaco-button:hover {
+    box-shadow: 0 0 8px #00BFFF22 !important;
+}
+
+/* ── Notifications: threat alerts ── */
+.monaco-workbench .notifications-center,
+.monaco-workbench .notification-toast {
+    border: 1px solid #0D1E2B !important;
+    box-shadow: 0 4px 16px #00000066 !important;
+}
+
+/* ── Find widget: targeting system ── */
+.monaco-editor .find-widget {
+    border: 1px solid #00BFFF22 !important;
+    box-shadow: 0 2px 12px #00000044 !important;
+}
+
+/* ── Minimap: radar display ── */
+.monaco-editor .minimap {
+    opacity: 0.6 !important;
+}
+
+.monaco-editor .minimap:hover {
+    opacity: 0.85 !important;
+}
+
+/* ── Editor groups border glow ── */
+.monaco-editor .editor-group-container {
+    transition: box-shadow 0.2s ease !important;
+}
+
+/* ── Bracket pair colorization boost ── */
+.monaco-editor .bracket-match {
+    box-shadow: 0 0 4px #00BFFF22 !important;
+}
+
+/* ── Git decoration emphasis ── */
+.monaco-icon-label.file-icon .git-added {
+    text-shadow: 0 0 2px #00CC8822 !important;
+}
+
+/* ── Welcome / empty state ── */
+.monaco-workbench .part.editor .content .editor-group-container .editor-group-letterpress {
+    opacity: 0.04 !important;
+}
+
+/* ── Focus borders: reactor ring ── */
+*:focus {
+    outline-color: #00BFFF33 !important;
+}

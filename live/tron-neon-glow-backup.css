@@ -1,0 +1,364 @@
+/* ============================================================
+   TRON x NEON — v3
+   Rules: NO text-shadow anywhere. Glow = box-shadow on borders
+   and containers only. Text stays crisp.
+   ============================================================ */
+
+/* === ACTIVE TAB: gradient underline glow === */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  box-shadow: inset 0 -6px 25px rgba(255, 0, 153, 0.1);
+  position: relative;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, #FF0099, #00FFFF, #FF0099) !important;
+  box-shadow:
+    0 0 8px #FF0099,
+    0 0 18px #00FFFF,
+    0 0 35px rgba(255, 0, 153, 0.4);
+  opacity: 1;
+  z-index: 6;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0px;
+  transition: opacity 0.5s;
+  opacity: 0;
+  z-index: 6;
+}
+
+/* === TAB BAR BORDER === */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  box-shadow: inset 0 -1px 0 rgba(255, 0, 153, 0.2);
+}
+
+/* === TAB HOVER === */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+  box-shadow: inset 0 -4px 15px rgba(0, 255, 255, 0.06);
+}
+
+/* === SIDEBAR: border glow === */
+.monaco-workbench .part.sidebar {
+  box-shadow:
+    inset -1px 0 0 rgba(255, 0, 153, 0.3),
+    -3px 0 18px rgba(255, 0, 153, 0.06);
+}
+
+/* === SIDEBAR: selected item highlight === */
+.monaco-workbench .part.sidebar .monaco-list-row.selected,
+.monaco-workbench .part.sidebar .monaco-list-row.focused {
+  box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.06);
+}
+
+/* === ACTIVITY BAR: border + selected === */
+.monaco-workbench .part.activitybar {
+  box-shadow: inset -1px 0 0 rgba(255, 0, 153, 0.25);
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked {
+  box-shadow: inset 0 0 25px rgba(255, 0, 153, 0.12);
+  position: relative;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #FF0099, #CC44FF, #FF0099) !important;
+  box-shadow:
+    0 0 6px #FF0099,
+    0 0 14px #FF0099,
+    0 0 25px rgba(255, 0, 153, 0.5);
+  opacity: 1;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  transition: opacity 0.5s;
+  opacity: 0;
+}
+
+/* === ACTIVITY BAR: hover glow (box, not text) === */
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover {
+  box-shadow: inset 0 0 15px rgba(255, 0, 153, 0.1);
+}
+
+/* === BADGE GLOW === */
+.monaco-workbench .activitybar .badge .badge-content {
+  box-shadow:
+    0 0 4px #FF0099,
+    0 0 12px #FF0099,
+    0 0 22px rgba(255, 0, 153, 0.4);
+}
+
+/* === STATUS BAR === */
+.monaco-workbench .part.statusbar {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 0, 153, 0.3),
+    0 -3px 18px rgba(255, 0, 153, 0.06);
+}
+
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+  box-shadow: inset 0 0 12px rgba(0, 255, 255, 0.08);
+}
+
+/* === TITLE BAR === */
+.monaco-workbench .part.titlebar {
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 0, 153, 0.3),
+    0 3px 18px rgba(255, 0, 153, 0.06);
+}
+
+/* === PANEL / TERMINAL BORDER === */
+.monaco-workbench .part.panel {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 0, 153, 0.25),
+    0 -3px 16px rgba(255, 0, 153, 0.05);
+}
+
+/* === CURSOR GLOW === */
+.monaco-editor .cursor {
+  box-shadow:
+    0 0 4px #00FFFF,
+    0 0 12px rgba(0, 255, 255, 0.4) !important;
+}
+
+/* === FIND WIDGET === */
+.monaco-editor .find-widget {
+  box-shadow:
+    0 4px 18px rgba(255, 0, 153, 0.15),
+    0 0 1px rgba(255, 0, 153, 0.5) !important;
+  border-color: rgba(255, 0, 153, 0.5) !important;
+}
+
+/* === SUGGEST/AUTOCOMPLETE WIDGET === */
+.monaco-editor .suggest-widget {
+  box-shadow:
+    0 4px 20px rgba(255, 0, 153, 0.15),
+    0 0 1px rgba(255, 0, 153, 0.5) !important;
+}
+
+/* === INPUT FOCUS === */
+.monaco-inputbox.synthetic-focus {
+  box-shadow:
+    0 0 6px rgba(255, 0, 153, 0.3),
+    0 0 14px rgba(255, 0, 153, 0.15) !important;
+}
+
+/* === BUTTONS === */
+.monaco-button {
+  box-shadow:
+    0 0 6px rgba(0, 255, 255, 0.25),
+    0 0 14px rgba(0, 255, 255, 0.1) !important;
+}
+
+.monaco-button:hover {
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.4),
+    0 0 20px rgba(0, 255, 255, 0.2) !important;
+}
+
+/* === COMMAND PALETTE === */
+.quick-input-widget {
+  box-shadow:
+    0 6px 30px rgba(255, 0, 153, 0.15),
+    0 0 1px rgba(255, 0, 153, 0.5) !important;
+}
+
+/* === NOTIFICATION === */
+.monaco-workbench .notifications-list-container .notification-list-item {
+  box-shadow:
+    0 0 10px rgba(255, 0, 153, 0.08),
+    inset 0 0 1px rgba(255, 0, 153, 0.2);
+}
+
+/* === BRACKET MATCH === */
+.monaco-editor .bracket-match {
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+/* === ACTIVE LINE NUMBER (box glow, not text) === */
+.monaco-editor .margin .line-numbers.active-line-number {
+  background: rgba(255, 0, 153, 0.08);
+  border-radius: 2px;
+}
+
+/* === SCROLLBAR === */
+.monaco-editor .minimap-slider .minimap-slider-horizontal {
+  box-shadow: 0 0 8px rgba(255, 0, 153, 0.2);
+}
+
+/* ============================================================
+   AGENT / CHAT / COMPOSER PANEL — FULL TREATMENT
+   ============================================================ */
+
+/* --- Agent panel: purple-tinted background --- */
+.monaco-workbench .part.auxiliarybar {
+  background: #0A0714 !important;
+  box-shadow:
+    inset 1px 0 0 rgba(204, 68, 255, 0.35),
+    4px 0 22px rgba(204, 68, 255, 0.08);
+}
+
+/* --- Agent panel content area --- */
+.monaco-workbench .part.auxiliarybar > .content {
+  background: #0A0714 !important;
+}
+
+/* --- Agent panel title/header --- */
+.monaco-workbench .part.auxiliarybar .title {
+  background: #0D0A18 !important;
+  box-shadow: inset 0 -1px 0 rgba(204, 68, 255, 0.35);
+}
+
+/* --- Agent panel tabs --- */
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active {
+  background: #140E24 !important;
+  box-shadow: inset 0 -4px 15px rgba(204, 68, 255, 0.12);
+}
+
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, #CC44FF, #FF0099, #CC44FF) !important;
+  box-shadow:
+    0 0 6px #CC44FF,
+    0 0 14px rgba(204, 68, 255, 0.5);
+  z-index: 6;
+}
+
+/* --- All text inside agent panel --- */
+.monaco-workbench .part.auxiliarybar .monaco-list-row {
+  color: #BBAADD !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-name {
+  color: #CCBBEE !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-description {
+  color: #8877AA !important;
+}
+
+/* --- Agent list items hover/selected --- */
+.monaco-workbench .part.auxiliarybar .monaco-list-row:hover {
+  background: rgba(204, 68, 255, 0.08) !important;
+  box-shadow: inset 0 0 20px rgba(204, 68, 255, 0.06);
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row.selected,
+.monaco-workbench .part.auxiliarybar .monaco-list-row.focused {
+  background: rgba(204, 68, 255, 0.12) !important;
+  box-shadow: inset 0 0 25px rgba(204, 68, 255, 0.08);
+}
+
+/* --- Agent input area --- */
+.monaco-workbench .part.auxiliarybar .interactive-input-part,
+.monaco-workbench .part.auxiliarybar textarea,
+.monaco-workbench .part.auxiliarybar .chat-input-toolbars,
+.monaco-workbench .part.auxiliarybar .interactive-session {
+  border-color: rgba(204, 68, 255, 0.3) !important;
+}
+
+.monaco-workbench .part.auxiliarybar textarea {
+  background: #0D0A18 !important;
+  color: #DDCCFF !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-inputbox {
+  background: #0D0A18 !important;
+  border-color: rgba(204, 68, 255, 0.3) !important;
+}
+
+/* --- Agent input focus glow --- */
+.monaco-workbench .part.auxiliarybar .monaco-inputbox.synthetic-focus,
+.monaco-workbench .part.auxiliarybar textarea:focus {
+  box-shadow:
+    0 0 8px rgba(204, 68, 255, 0.35),
+    0 0 18px rgba(204, 68, 255, 0.15) !important;
+  border-color: rgba(204, 68, 255, 0.5) !important;
+}
+
+/* --- Agent code blocks --- */
+.monaco-workbench .part.auxiliarybar pre,
+.monaco-workbench .part.auxiliarybar code {
+  background: #080510 !important;
+  border: 1px solid rgba(0, 255, 255, 0.2) !important;
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.06),
+    inset 0 0 1px rgba(0, 255, 255, 0.1);
+}
+
+/* --- Agent buttons --- */
+.monaco-workbench .part.auxiliarybar .monaco-button {
+  background: rgba(204, 68, 255, 0.2) !important;
+  color: #CC88FF !important;
+  border: 1px solid rgba(204, 68, 255, 0.3) !important;
+  box-shadow:
+    0 0 8px rgba(204, 68, 255, 0.2),
+    0 0 16px rgba(204, 68, 255, 0.08) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-button:hover {
+  background: rgba(204, 68, 255, 0.3) !important;
+  box-shadow:
+    0 0 10px rgba(204, 68, 255, 0.35),
+    0 0 22px rgba(204, 68, 255, 0.15) !important;
+}
+
+/* --- Agent icons --- */
+.monaco-workbench .part.auxiliarybar .codicon {
+  color: #CC88FF !important;
+  opacity: 0.9;
+}
+
+/* --- Agent scrollbar --- */
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(204, 68, 255, 0.25) !important;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(204, 68, 255, 0.4) !important;
+}
+
+/* --- Agent separator lines --- */
+.monaco-workbench .part.auxiliarybar .monaco-list .separator {
+  border-color: rgba(204, 68, 255, 0.15) !important;
+}
+
+/* ============================================================
+   LIGHTBULB ANIMATIONS
+   ============================================================ */
+
+@keyframes tron-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.monaco-workbench .contentWidgets .codicon-lightbulb,
+.monaco-workbench .markers-panel-container .codicon-lightbulb {
+  animation: tron-pulse 2s ease infinite;
+}

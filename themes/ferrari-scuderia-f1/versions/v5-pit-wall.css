@@ -1,0 +1,1277 @@
+/* ============================================================
+   SCUDERIA F1 — Ferrari SF71H Edition
+   "Gentlemen, a short view back to the past..."
+
+   Rosso Corsa:    #FF2020  rgb(255, 32, 32)
+   Bright Red:     #FF4444  rgb(255, 68, 68)
+   Gold/Amber:     #FFB800  rgb(255, 184, 0)
+   Shell Gold:     #FFA000  rgb(255, 160, 0)
+   Pirelli Yellow: #FFEE00  rgb(255, 238, 0)
+   Orange Flame:   #FF6B20  rgb(255, 107, 32)
+   Cherry Red:     #FF1744  rgb(255, 23, 68)
+   Carbon Grey:    #6A5555  rgb(106, 85, 85)
+   ============================================================ */
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes glow-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 80px rgba(255, 32, 32, 0.08),
+      inset 0 0 200px rgba(255, 32, 32, 0.04);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 120px rgba(255, 32, 32, 0.15),
+      inset 0 0 280px rgba(255, 32, 32, 0.07);
+  }
+}
+
+@keyframes border-travel {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 300%; }
+}
+
+@keyframes border-pulse {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 4px rgba(255, 68, 68, 0.3); }
+  50% { opacity: 1; box-shadow: 0 0 10px rgba(255, 68, 68, 0.7); }
+}
+
+@keyframes hud-flicker {
+  0%, 100% { opacity: 1; }
+  88% { opacity: 1; }
+  89% { opacity: 0.3; }
+  90% { opacity: 1; }
+  93% { opacity: 0.5; }
+  94% { opacity: 1; }
+}
+
+@keyframes reactor-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(90deg) scale(1.03); }
+  50%  { transform: rotate(180deg) scale(1); }
+  75%  { transform: rotate(270deg) scale(1.03); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes energy-sweep {
+  0%   { left: -40%; }
+  100% { left: 140%; }
+}
+
+@keyframes arc-reactor-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.9)); }
+  50%      { opacity: 0.55; filter: drop-shadow(0 0 3px rgba(255, 68, 68, 0.4)); }
+}
+
+/* ============================================================
+   F1 REV COUNTER — vertical rev-counter strip (5 LEDs).
+   IDLE: bottom green light slow-pulses (engine running).
+   ACTION: full sequence rev-up green→amber→red→BLUE SHIFT
+   triggered ONLY when a loading spinner is visible (agent
+   thinking, file save, command running, etc.).
+   Lights stack UPWARD from the ::after origin via box-shadow.
+   ============================================================ */
+@keyframes f1-idle-pulse {
+  /* All lights mostly dark; bottom green dimly breathes
+     to indicate "engine on / system ready" */
+  0%, 100% {
+    background: #082008;
+    box-shadow:
+      0 -14px 0 #1A0606,
+      0 -28px 0 #1A0606,
+      0 -42px 0 #1A0606,
+      0 -56px 0 #1A0606,
+      0 0 4px rgba(0, 255, 68, 0.25);
+  }
+  50% {
+    background: #00AA22;
+    box-shadow:
+      0 -14px 0 #1A0606,
+      0 -28px 0 #1A0606,
+      0 -42px 0 #1A0606,
+      0 -56px 0 #1A0606,
+      0 0 8px rgba(0, 255, 68, 0.55), 0 0 16px rgba(0, 255, 68, 0.25);
+  }
+}
+
+@keyframes f1-rev-counter {
+  /* 0-10%: green LED (idle low rpm) */
+  0%, 8% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #1A0606, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 0 20px rgba(0, 255, 68, 0.5);
+  }
+  /* 10-25%: 2 green LEDs */
+  12%, 22% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44;
+  }
+  /* 25-40%: green + amber */
+  26%, 36% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44, 0 -28px 12px #FFEE00;
+  }
+  /* 40-55%: green + amber + amber */
+  40%, 50% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #FFB800, 0 -56px 0 #1A0606,
+      0 0 10px #00FF44, 0 -14px 10px #00FF44, 0 -28px 12px #FFEE00, 0 -42px 12px #FFB800;
+  }
+  /* 55-70%: ALL 5 — redline reached */
+  54%, 68% {
+    background: #00FF44;
+    box-shadow:
+      0 -14px 0 #00FF44, 0 -28px 0 #FFEE00, 0 -42px 0 #FFB800, 0 -56px 0 #FF1744,
+      0 0 12px #00FF44, 0 -14px 12px #00FF44, 0 -28px 14px #FFEE00, 0 -42px 14px #FFB800, 0 -56px 14px #FF1744;
+  }
+  /* 70-85%: SHIFT NOW — blue flash on all */
+  72%, 82% {
+    background: #4488FF;
+    box-shadow:
+      0 -14px 0 #4488FF, 0 -28px 0 #4488FF, 0 -42px 0 #4488FF, 0 -56px 0 #4488FF,
+      0 0 16px #4488FF, 0 -14px 16px #4488FF, 0 -28px 16px #4488FF, 0 -42px 16px #4488FF, 0 -56px 18px #4488FF;
+  }
+  /* 85-100%: snap dark, ready to repeat */
+  88%, 100% {
+    background: #082008;
+    box-shadow:
+      0 -14px 0 #1A0606, 0 -28px 0 #1A0606, 0 -42px 0 #1A0606, 0 -56px 0 #1A0606;
+  }
+}
+
+/* ============================================================
+   STEERING WHEEL WOBBLE — driver's micro-corrections
+   ============================================================ */
+@keyframes wheel-wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  25%      { transform: rotate(2deg); }
+  50%      { transform: rotate(-1deg); }
+  75%      { transform: rotate(4deg); }
+}
+
+/* ============================================================
+   RACING STRIPES — diagonal speed lines drifting across workbench
+   ============================================================ */
+@keyframes stripe-drift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 400px 400px, -400px 400px; }
+}
+
+/* ============================================================
+   REV COUNTER PULSE — for the watermark glow
+   ============================================================ */
+@keyframes rev-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.4)) drop-shadow(0 0 30px rgba(255, 23, 68, 0.2)); }
+  50%      { filter: drop-shadow(0 0 24px rgba(255, 32, 32, 0.7)) drop-shadow(0 0 50px rgba(255, 23, 68, 0.4)); }
+}
+
+/* ============================================================
+   WIREFRAME GRID — dark red lines, carbon fiber feel
+   ============================================================ */
+.monaco-workbench {
+  background-image:
+    linear-gradient(rgba(255, 32, 32, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 32, 32, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255, 32, 32, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 32, 32, 0.03) 1px, transparent 1px) !important;
+  background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px !important;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px !important;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.monaco-workbench .part.sidebar {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 68, 68, 0.75),
+    inset 0 0 100px rgba(255, 32, 32, 0.09),
+    -8px 0 35px rgba(255, 32, 32, 0.22),
+    -16px 0 70px rgba(255, 32, 32, 0.08) !important;
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border-right: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+.monaco-workbench .part.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 68, 68, 0.8);
+  border-right: 3px solid rgba(255, 68, 68, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite;
+}
+
+.monaco-workbench .part.sidebar::after {
+  content: "";
+  position: absolute;
+  bottom: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 68, 68, 0.8);
+  border-right: 3px solid rgba(255, 68, 68, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1s;
+}
+
+.monaco-workbench .part.sidebar .monaco-list-row {
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.sidebar .monaco-list-row:hover {
+  background: rgba(255, 32, 32, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(255, 32, 32, 0.08), inset -3px 0 0 rgba(255, 68, 68, 0.4);
+  transform: translateX(3px);
+}
+.monaco-workbench .part.sidebar .monaco-list-row.selected,
+.monaco-workbench .part.sidebar .monaco-list-row.focused {
+  background: rgba(255, 32, 32, 0.18) !important;
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.1), inset -3px 0 0 rgba(255, 68, 68, 0.55);
+}
+
+/* ============================================================
+   ACTIVITY BAR
+   ============================================================ */
+.monaco-workbench .part.activitybar {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 68, 68, 0.7),
+    inset 0 0 70px rgba(255, 32, 32, 0.12),
+    -6px 0 25px rgba(255, 32, 32, 0.15) !important;
+  border-right: 1px solid rgba(255, 68, 68, 0.4) !important;
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover {
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.25);
+  transform: scale(1.1);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item:hover .codicon {
+  filter: drop-shadow(0 0 12px rgba(255, 68, 68, 1)) drop-shadow(0 0 25px rgba(255, 32, 32, 0.6));
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked {
+  box-shadow: inset 0 0 60px rgba(255, 32, 32, 0.28);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked .codicon {
+  filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.95)) drop-shadow(0 0 22px rgba(255, 32, 32, 0.5));
+}
+
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item.checked::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0; left: 0; width: 3px;
+  background: linear-gradient(180deg, #FF4444, #FF2020, #FFB800, #FF6B20, #FF4444);
+  background-size: 100% 300%;
+  animation: border-travel 3s linear infinite;
+  box-shadow: 0 0 12px #FF4444, 0 0 30px rgba(255, 68, 68, 0.7), 0 0 60px rgba(255, 32, 32, 0.35);
+}
+.monaco-workbench .activitybar > .content .monaco-action-bar .action-item::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 0;
+  transition: opacity 0.5s; opacity: 0;
+}
+
+.monaco-workbench .activitybar .badge .badge-content {
+  box-shadow: 0 0 12px #FFEE00, 0 0 30px rgba(255, 238, 0, 0.7), 0 0 60px rgba(255, 238, 0, 0.35);
+  animation: hud-flicker 2.5s ease infinite;
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+.monaco-workbench .part.editor {
+  animation: glow-breathe 5s ease infinite;
+  position: relative;
+  border: 1px solid rgba(255, 68, 68, 0.35) !important;
+}
+
+.monaco-workbench .part.editor::before {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-right: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.25s;
+}
+.monaco-workbench .part.editor::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 68, 68, 0.7);
+  border-left: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.25s;
+}
+
+/* ============================================================
+   TITLE BAR
+   ============================================================ */
+.monaco-workbench .part.titlebar {
+  box-shadow:
+    inset 0 -2px 0 rgba(255, 68, 68, 0.8),
+    inset 0 0 60px rgba(255, 32, 32, 0.08),
+    0 4px 25px rgba(255, 32, 32, 0.2),
+    0 8px 60px rgba(255, 32, 32, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+  box-shadow: inset 0 -1px 0 rgba(255, 68, 68, 0.45);
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  box-shadow: inset 0 -14px 45px rgba(255, 32, 32, 0.12);
+  position: relative;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active .codicon {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.8));
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #FF4444, #FF2020, #FFB800, #FF6B20, #FF1744, #FF4444, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #FF4444, 0 0 25px rgba(255, 68, 68, 0.6), 0 0 60px rgba(255, 32, 32, 0.2);
+  z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 0;
+  transition: opacity 0.5s; opacity: 0; z-index: 6;
+}
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+  box-shadow: inset 0 -12px 35px rgba(255, 32, 32, 0.08), inset 0 0 30px rgba(255, 32, 32, 0.05);
+  background: rgba(255, 32, 32, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.monaco-workbench .part.statusbar {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 68, 68, 0.8),
+    inset 0 0 60px rgba(255, 32, 32, 0.08),
+    0 -4px 25px rgba(255, 32, 32, 0.2),
+    0 -8px 60px rgba(255, 32, 32, 0.08) !important;
+  border-top: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+.monaco-workbench .part.statusbar .statusbar-item a {
+  transition: box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+  box-shadow: inset 0 0 35px rgba(255, 32, 32, 0.25);
+  background: rgba(255, 32, 32, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   TERMINAL / PANEL
+   ============================================================ */
+.monaco-workbench .part.panel {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 68, 68, 0.7),
+    inset 0 0 80px rgba(255, 32, 32, 0.07),
+    0 -5px 30px rgba(255, 32, 32, 0.15) !important;
+  border-top: 1px solid rgba(255, 68, 68, 0.5) !important;
+  position: relative;
+}
+
+.monaco-workbench .part.panel::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-left: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.5s;
+}
+.monaco-workbench .part.panel::after {
+  content: "";
+  position: absolute; top: 5px; right: 5px;
+  width: 22px; height: 22px;
+  border-top: 3px solid rgba(255, 68, 68, 0.7);
+  border-right: 3px solid rgba(255, 68, 68, 0.7);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.5s;
+}
+
+/* ============================================================
+   AGENT / CHAT / COMPOSER (AUXILIARY BAR) — gold accents
+   ============================================================ */
+.monaco-workbench .part.auxiliarybar {
+  background: #0A0406 !important;
+  box-shadow:
+    inset 3px 0 0 rgba(255, 68, 68, 0.75),
+    inset 0 0 120px rgba(255, 32, 32, 0.09),
+    8px 0 35px rgba(255, 32, 32, 0.22),
+    16px 0 70px rgba(255, 32, 32, 0.08) !important;
+  animation: glow-breathe 5s ease infinite 2.5s;
+  position: relative;
+  border-left: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+.monaco-workbench .part.auxiliarybar::before {
+  content: "";
+  position: absolute; top: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-top: 3px solid rgba(255, 184, 0, 0.8);
+  border-left: 3px solid rgba(255, 184, 0, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 0.75s;
+}
+.monaco-workbench .part.auxiliarybar::after {
+  content: "";
+  position: absolute; bottom: 5px; left: 5px;
+  width: 26px; height: 26px;
+  border-bottom: 3px solid rgba(255, 184, 0, 0.8);
+  border-left: 3px solid rgba(255, 184, 0, 0.8);
+  pointer-events: none; z-index: 10;
+  animation: border-pulse 2s ease infinite 1.75s;
+}
+
+.monaco-workbench .part.auxiliarybar > .content {
+  background: #0A0406 !important;
+}
+.monaco-workbench .part.auxiliarybar .title {
+  background: #100608 !important;
+  box-shadow: inset 0 -2px 0 rgba(255, 68, 68, 0.6), 0 5px 25px rgba(255, 32, 32, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab {
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab:hover:not(.active) {
+  background: rgba(255, 32, 32, 0.1) !important;
+  box-shadow: inset 0 -10px 30px rgba(255, 32, 32, 0.06);
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active {
+  background: #1A0810 !important;
+  box-shadow: inset 0 -12px 35px rgba(255, 32, 32, 0.14);
+  position: relative;
+}
+.monaco-workbench .part.auxiliarybar .title .tabs-container .tab.active::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #FFB800, #FF4444, #FF6B20, #FFB800, transparent);
+  background-size: 300% 100%;
+  animation: border-travel 2.5s linear infinite;
+  box-shadow: 0 0 10px #FFB800, 0 0 25px rgba(255, 184, 0, 0.6), 0 0 60px rgba(255, 184, 0, 0.2);
+  z-index: 6;
+}
+
+.monaco-workbench .part.auxiliarybar .monaco-list-row {
+  color: #FFE8E0 !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-name { color: #FFE8E0 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row .label-description { color: #AA7777 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-list-row:hover {
+  background: rgba(255, 32, 32, 0.12) !important;
+  box-shadow: inset 0 0 40px rgba(255, 32, 32, 0.06), inset 3px 0 0 rgba(255, 68, 68, 0.3);
+  transform: translateX(-3px);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list-row.selected,
+.monaco-workbench .part.auxiliarybar .monaco-list-row.focused {
+  background: rgba(255, 32, 32, 0.16) !important;
+  box-shadow: inset 0 0 50px rgba(255, 32, 32, 0.08), inset 3px 0 0 rgba(255, 68, 68, 0.45);
+}
+
+.monaco-workbench .part.auxiliarybar .interactive-input-part,
+.monaco-workbench .part.auxiliarybar textarea,
+.monaco-workbench .part.auxiliarybar .chat-input-toolbars,
+.monaco-workbench .part.auxiliarybar .interactive-session {
+  border-color: rgba(255, 32, 32, 0.45) !important;
+}
+.monaco-workbench .part.auxiliarybar textarea {
+  background: #100608 !important;
+  color: #FFFFFF !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox {
+  background: #100608 !important;
+  border-color: rgba(255, 32, 32, 0.45) !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-inputbox.synthetic-focus,
+.monaco-workbench .part.auxiliarybar textarea:focus {
+  box-shadow: 0 0 16px rgba(255, 68, 68, 0.6), 0 0 40px rgba(255, 32, 32, 0.25), 0 0 70px rgba(255, 32, 32, 0.08) !important;
+  border-color: rgba(255, 68, 68, 0.8) !important;
+}
+.monaco-workbench .part.auxiliarybar pre,
+.monaco-workbench .part.auxiliarybar code {
+  background: #080304 !important;
+  border: 1px solid rgba(255, 32, 32, 0.35) !important;
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.08), inset 0 0 4px rgba(255, 32, 32, 0.12);
+}
+.monaco-workbench .part.auxiliarybar .monaco-button {
+  background: rgba(255, 32, 32, 0.2) !important;
+  color: #FF2020 !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.35), 0 0 35px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-workbench .part.auxiliarybar .monaco-button:hover {
+  background: rgba(255, 32, 32, 0.32) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.55), 0 0 50px rgba(255, 32, 32, 0.25) !important;
+}
+.monaco-workbench .part.auxiliarybar .codicon { color: #FF2020 !important; }
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(255, 32, 32, 0.25) !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-workbench .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(255, 32, 32, 0.45) !important;
+  box-shadow: 0 0 12px rgba(255, 32, 32, 0.3);
+}
+.monaco-workbench .part.auxiliarybar .monaco-list .separator {
+  border-color: rgba(255, 32, 32, 0.22) !important;
+}
+
+/* ============================================================
+   SCUDERIA HUD v4 — F1 STEERING WHEEL WATERMARK
+
+   Anchored to .monaco-workbench::after (root workbench) which
+   we know renders reliably — racing stripes on ::before render
+   globally from this same element.
+
+   Key fix from v3: mix-blend-mode REMOVED. In v2 the wheel was
+   at this same selector but used mix-blend-mode: screen, which
+   meant the dark carbon-fiber wheel pixels screened against the
+   dark-red auxiliary bar (chat panel) bg = invisible. Without
+   blend mode + opacity 0.72 + no-stacking-context-interference
+   + z-index 99999, the wheel paints solidly on top of all panels.
+
+   Positioned bottom-right. If the chat panel is open it'll
+   overlap it — but at 300x300 and 0.72 opacity it sits over the
+   chat's bottom toolbar (non-essential area) without hiding the
+   actual conversation text above it.
+   ============================================================ */
+.monaco-workbench::after {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 40px !important;
+  width: 300px !important;
+  height: 300px !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIiBvcGFjaXR5PSIwLjMyIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0id2hlZWwtZ3JhZCIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMDgxMCIgc3RvcC1vcGFjaXR5PSIwLjk1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjMEEwNDA2IiBzdG9wLW9wYWNpdHk9IjAuODUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ic2NyZWVuLWdsb3ciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjQ0NDQiIHN0b3Atb3BhY2l0eT0iMC45Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjRkYyMDIwIiBzdG9wLW9wYWNpdHk9IjAuNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRjIwMjAiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iY2FyYm9uLWZpYmVyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMDgxMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMkExMDE4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMEEwNDA2IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJsZWQtZ2xvdyI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi41Ii8+PC9maWx0ZXI+CiAgICA8ZmlsdGVyIGlkPSJzb2Z0LWdsb3ciPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQiLz48L2ZpbHRlcj4KICAgIDxmaWx0ZXIgaWQ9InN0cm9uZy1nbG93Ij48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI4Ii8+PC9maWx0ZXI+CiAgPC9kZWZzPgoKICA8IS0tID09PT09PT09PSBTVEVFUklORyBXSEVFTCBCT0RZIChGZXJyYXJpIFNGLXN0eWxlOiByZWN0YW5ndWxhciB0b3AsIHJvdW5kIGJvdHRvbSkgPT09PT09PT09IC0tPgogIDwhLS0gT3V0ZXIgcmltIC0tPgogIDxwYXRoIGQ9Ik0gODAgMTgwCiAgICAgICAgICAgTCA4MCAxMzAKICAgICAgICAgICBRIDgwIDkwLCAxNDAgOTAKICAgICAgICAgICBMIDM2MCA5MAogICAgICAgICAgIFEgNDIwIDkwLCA0MjAgMTMwCiAgICAgICAgICAgTCA0MjAgMTgwCiAgICAgICAgICAgUSA0MjAgMzIwLCAzNTAgMzgwCiAgICAgICAgICAgUSAyNTAgNDQwLCAxNTAgMzgwCiAgICAgICAgICAgUSA4MCAzMjAsIDgwIDE4MCBaIgogICAgICAgIGZpbGw9InVybCgjY2FyYm9uLWZpYmVyKSIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjIuNSIgb3BhY2l0eT0iMC45NSIvPgoKICA8IS0tIElubmVyIGN1dG91dCAoY3JlYXRlcyB0aGUgd2hlZWwgc2hhcGUpIC0tPgogIDxwYXRoIGQ9Ik0gMTQ1IDE5NQogICAgICAgICAgIEwgMTQ1IDE2NQogICAgICAgICAgIFEgMTQ1IDE0NSwgMTc1IDE0NQogICAgICAgICAgIEwgMzI1IDE0NQogICAgICAgICAgIFEgMzU1IDE0NSwgMzU1IDE2NQogICAgICAgICAgIEwgMzU1IDE5NQogICAgICAgICAgIFEgMzU1IDI4NSwgMzA1IDMyNQogICAgICAgICAgIFEgMjUwIDM2MCwgMTk1IDMyNQogICAgICAgICAgIFEgMTQ1IDI4NSwgMTQ1IDE5NSBaIgogICAgICAgIGZpbGw9IiMwQTA0MDYiIG9wYWNpdHk9IjAuOCIvPgoKICA8IS0tID09PT09PT09PSBSRVYgQ09VTlRFUiBMRUQgQkFSICh0b3Agb2Ygd2hlZWwpID09PT09PT09PSAtLT4KICA8IS0tIExFRCBob3VzaW5nIHN0cmlwIC0tPgogIDxyZWN0IHg9IjEzNSIgeT0iMTA1IiB3aWR0aD0iMjMwIiBoZWlnaHQ9IjIyIiByeD0iNCIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOSIvPgoKICA8IS0tIDE1IExFRCBsaWdodHMgFCBncmVlbiCSIGFtYmVyIJIgcmVkIJIgYmx1ZSBwcm9ncmVzc2lvbiAoRmVycmFyaSBGMSBzdHlsZSkgLS0+CiAgPGc+CiAgICA8IS0tIEdyZWVuIExFRHMgKDEtNSk6IGxvdy9taWQgUlBNIC0tPgogICAgPGNpcmNsZSBjeD0iMTQ4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjMDBGRjQ0IiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIxNDgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiM4OEZGODgiLz4KICAgIDxjaXJjbGUgY3g9IjE2NCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iIzAwRkY0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMTY0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjODhGRjg4Ii8+CiAgICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiMwMEZGNDQiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjE4MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iIzg4RkY4OCIvPgogICAgPGNpcmNsZSBjeD0iMTk2IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjNDRGRjIyIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIxOTYiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNBQUZGNjYiLz4KICAgIDxjaXJjbGUgY3g9IjIxMiIgY3k9IjExNiIgcj0iNiIgZmlsbD0iIzg4RUUwMCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjEyIiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjQ0NGRjY2Ii8+CgogICAgPCEtLSBBbWJlciBMRURzICg2LTEwKTogbWlkL2hpZ2ggUlBNIC0tPgogICAgPGNpcmNsZSBjeD0iMjI4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkZFRTAwIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIyMjgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRkZGODgiLz4KICAgIDxjaXJjbGUgY3g9IjI0NCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGQjgwMCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjQ0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkZEODY2Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNjAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiNGRjg4MDAiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjI2MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iI0ZGQUE2NiIvPgogICAgPGNpcmNsZSBjeD0iMjc2IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkY2QjIwIiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNzYiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRkFBODgiLz4KICAgIDxjaXJjbGUgY3g9IjI5MiIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGNDQ0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMjkyIiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkY4ODg4Ii8+CgogICAgPCEtLSBSZWQgTEVEcyAoMTEtMTMpOiByZWRsaW5lIC0tPgogICAgPGNpcmNsZSBjeD0iMzA4IiBjeT0iMTE2IiByPSI2IiBmaWxsPSIjRkYxNzQ0IiBmaWx0ZXI9InVybCgjbGVkLWdsb3cpIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIzMDgiIGN5PSIxMTYiIHI9IjQiIGZpbGw9IiNGRjY2NzciLz4KICAgIDxjaXJjbGUgY3g9IjMyNCIgY3k9IjExNiIgcj0iNiIgZmlsbD0iI0ZGMTc0NCIgZmlsdGVyPSJ1cmwoI2xlZC1nbG93KSIgb3BhY2l0eT0iMC45NSIvPgogICAgPGNpcmNsZSBjeD0iMzI0IiBjeT0iMTE2IiByPSI0IiBmaWxsPSIjRkY2Njc3Ii8+CiAgICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIxMTYiIHI9IjYiIGZpbGw9IiNGRjE3NDQiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjM0MCIgY3k9IjExNiIgcj0iNCIgZmlsbD0iI0ZGNjY3NyIvPgoKICAgIDwhLS0gQmx1ZSBMRURzICgxNC0xNSk6IFNISUZUIE5PVyBpbmRpY2F0b3IgLS0+CiAgICA8Y2lyY2xlIGN4PSIzNTYiIGN5PSIxMTYiIHI9IjciIGZpbGw9IiM0NDg4RkYiIGZpbHRlcj0idXJsKCNsZWQtZ2xvdykiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjM1NiIgY3k9IjExNiIgcj0iNSIgZmlsbD0iIzg4QkJGRiIvPgogIDwvZz4KCiAgPCEtLSA9PT09PT09PT0gQ0VOVEVSIERJU1BMQVkgU0NSRUVOID09PT09PT09PSAtLT4KICA8cmVjdCB4PSIxOTUiIHk9IjIwMCIgd2lkdGg9IjExMCIgaGVpZ2h0PSI2MCIgcng9IjMiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOSIvPgogIDxyZWN0IHg9IjE5NSIgeT0iMjAwIiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjYwIiByeD0iMyIgZmlsbD0idXJsKCNzY3JlZW4tZ2xvdykiIG9wYWNpdHk9IjAuNCIvPgogIDwhLS0gU2NyZWVuIGNvbnRlbnQ6IGdlYXIgaW5kaWNhdG9yICsgc3BlZWQgLS0+CiAgPHRleHQgeD0iMjUwIiB5PSIyMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNDQ0NCIgb3BhY2l0eT0iMC45NSI+NzwvdGV4dD4KICA8dGV4dCB4PSIyNTAiIHk9IjI1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkI4MDAiIG9wYWNpdHk9IjAuOSIgbGV0dGVyLXNwYWNpbmc9IjIiPjMxMiBLUEg8L3RleHQ+CgogIDwhLS0gVGlueSBzY3JlZW4gZGV0YWlsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIyMDYiIHgyPSIyNDUiIHkyPSIyMDYiIHN0cm9rZT0iI0ZGQjgwMCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuNSIvPgogIDxsaW5lIHgxPSIyNTUiIHkxPSIyMDYiIHgyPSIzMDAiIHkyPSIyMDYiIHN0cm9rZT0iI0ZGQjgwMCIgc3Ryb2tlLXdpZHRoPSIwLjQiIG9wYWNpdHk9IjAuNSIvPgoKICA8IS0tID09PT09PT09PSBTQ1VERVJJQSBGRVJSQVJJIEJBREdFICh0b3AgY2VudGVyLCBiZXR3ZWVuIExFRHMgYW5kIHNjcmVlbikgPT09PT09PT09IC0tPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI1MCwgMTY1KSI+CiAgICA8IS0tIFNoaWVsZCBzaGFwZSAtLT4KICAgIDxwYXRoIGQ9Ik0gLTE4IC0xMiBMIDE4IC0xMiBMIDE4IDYgUSAxOCAxOCwgMCAyMiBRIC0xOCAxOCwgLTE4IDYgWiIKICAgICAgICAgIGZpbGw9IiNGRkVFMDAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuOTIiLz4KICAgIDwhLS0gU0YgdGV4dCAtLT4KICAgIDx0ZXh0IHg9IjAiIHk9IjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGMTc0NCI+U0Y8L3RleHQ+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBMRUZUIEdSSVAgSEFORExFID09PT09PT09PSAtLT4KICA8ZWxsaXBzZSBjeD0iMTAwIiBjeT0iMjQwIiByeD0iMjIiIHJ5PSI1NSIgZmlsbD0iIzFBMDgxMCIgc3Ryb2tlPSIjRkYyMDIwIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC45MiIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogIDwhLS0gR3JpcCB0ZXh0dXJlIGxpbmVzIC0tPgogIDxnIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjYiIG9wYWNpdHk9IjAuNSI+CiAgICA8bGluZSB4MT0iODUiIHkxPSIyMTUiIHgyPSIxMTUiIHkyPSIyMTUiIHRyYW5zZm9ybT0icm90YXRlKC04LCAxMDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSI4MyIgeTE9IjIyNSIgeDI9IjExNyIgeTI9IjIyNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjgyIiB5MT0iMjM1IiB4Mj0iMTE4IiB5Mj0iMjM1IiB0cmFuc2Zvcm09InJvdGF0ZSgtOCwgMTAwLCAyNDApIi8+CiAgICA8bGluZSB4MT0iODIiIHkxPSIyNDUiIHgyPSIxMTgiIHkyPSIyNDUiIHRyYW5zZm9ybT0icm90YXRlKC04LCAxMDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSI4MyIgeTE9IjI1NSIgeDI9IjExNyIgeTI9IjI1NSIgdHJhbnNmb3JtPSJyb3RhdGUoLTgsIDEwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9Ijg1IiB5MT0iMjY1IiB4Mj0iMTE1IiB5Mj0iMjY1IiB0cmFuc2Zvcm09InJvdGF0ZSgtOCwgMTAwLCAyNDApIi8+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBSSUdIVCBHUklQIEhBTkRMRSA9PT09PT09PT0gLS0+CiAgPGVsbGlwc2UgY3g9IjQwMCIgY3k9IjI0MCIgcng9IjIyIiByeT0iNTUiIGZpbGw9IiMxQTA4MTAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOTIiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogIDxnIHN0cm9rZT0iI0ZGNDQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjYiIG9wYWNpdHk9IjAuNSI+CiAgICA8bGluZSB4MT0iMzg1IiB5MT0iMjE1IiB4Mj0iNDE1IiB5Mj0iMjE1IiB0cmFuc2Zvcm09InJvdGF0ZSg4LCA0MDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSIzODMiIHkxPSIyMjUiIHgyPSI0MTciIHkyPSIyMjUiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjM4MiIgeTE9IjIzNSIgeDI9IjQxOCIgeTI9IjIzNSIgdHJhbnNmb3JtPSJyb3RhdGUoOCwgNDAwLCAyNDApIi8+CiAgICA8bGluZSB4MT0iMzgyIiB5MT0iMjQ1IiB4Mj0iNDE4IiB5Mj0iMjQ1IiB0cmFuc2Zvcm09InJvdGF0ZSg4LCA0MDAsIDI0MCkiLz4KICAgIDxsaW5lIHgxPSIzODMiIHkxPSIyNTUiIHgyPSI0MTciIHkyPSIyNTUiIHRyYW5zZm9ybT0icm90YXRlKDgsIDQwMCwgMjQwKSIvPgogICAgPGxpbmUgeDE9IjM4NSIgeTE9IjI2NSIgeDI9IjQxNSIgeTI9IjI2NSIgdHJhbnNmb3JtPSJyb3RhdGUoOCwgNDAwLCAyNDApIi8+CiAgPC9nPgoKICA8IS0tID09PT09PT09PSBCVVRUT05TIC8gRElBTFMgPT09PT09PT09IC0tPgogIDwhLS0gTGVmdCBzaWRlIGJ1dHRvbnMgLS0+CiAgPGNpcmNsZSBjeD0iMTE1IiBjeT0iMTcwIiByPSI5IiBmaWxsPSIjRkYyMDIwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMC44IiBvcGFjaXR5PSIwLjg1Ii8+CiAgPHRleHQgeD0iMTE1IiB5PSIxNzQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMDAwMDAwIj5EUlM8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMTU1IiBjeT0iMTcwIiByPSI3IiBmaWxsPSIjRkZCODAwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgPGNpcmNsZSBjeD0iMTU1IiBjeT0iMTcwIiByPSIzIiBmaWxsPSIjRkZFRTAwIi8+CgogIDwhLS0gUmlnaHQgc2lkZSBidXR0b25zIC0tPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE3MCIgcj0iOSIgZmlsbD0iIzQ0ODhGRiIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjAuOCIgb3BhY2l0eT0iMC44NSIvPgogIDx0ZXh0IHg9IjM4NSIgeT0iMTc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzAwMDAwMCI+Qk9YPC90ZXh0PgogIDxjaXJjbGUgY3g9IjM0NSIgY3k9IjE3MCIgcj0iNyIgZmlsbD0iI0ZGQjgwMCIgb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjM0NSIgY3k9IjE3MCIgcj0iMyIgZmlsbD0iI0ZGRUUwMCIvPgoKICA8IS0tIEJvdHRvbSByb3c6IHJvdGFyeSBkaWFscyAtLT4KICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIyOTUiIHI9IjE0IiBmaWxsPSIjMUEwODEwIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjkiLz4KICA8Y2lyY2xlIGN4PSIxODAiIGN5PSIyOTUiIHI9IjEwIiBmaWxsPSIjMEEwNDA2Ii8+CiAgPGxpbmUgeDE9IjE4MCIgeTE9IjI5NSIgeDI9IjE4MCIgeTI9IjI4NSIgc3Ryb2tlPSIjRkZCODAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOTUiLz4KICA8dGV4dCB4PSIxODAiIHk9IjMyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRjIwMjAiPkRJRkY8L3RleHQ+CgogIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjI5NSIgcj0iMTQiIGZpbGw9IiMxQTA4MTAiIHN0cm9rZT0iI0ZGMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOSIvPgogIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjI5NSIgcj0iMTAiIGZpbGw9IiMwQTA0MDYiLz4KICA8bGluZSB4MT0iMzIwIiB5MT0iMjk1IiB4Mj0iMzI4IiB5Mj0iMjg5IiBzdHJva2U9IiNGRjQ0NDQiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC45NSIvPgogIDx0ZXh0IHg9IjMyMCIgeT0iMzIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGMjAyMCI+QkJBTDwvdGV4dD4KCiAgPCEtLSBUaW55IGluZGljYXRvciBkb3RzIHNjYXR0ZXJlZCBhcm91bmQgLS0+CiAgPGNpcmNsZSBjeD0iMjIwIiBjeT0iMjkwIiByPSIyLjUiIGZpbGw9IiMwMEZGNDQiIG9wYWNpdHk9IjAuODUiLz4KICA8Y2lyY2xlIGN4PSIyMzUiIGN5PSIyOTAiIHI9IjIuNSIgZmlsbD0iI0ZGRUUwMCIgb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjI2NSIgY3k9IjI5MCIgcj0iMi41IiBmaWxsPSIjRkZFRTAwIiBvcGFjaXR5PSIwLjg1Ii8+CiAgPGNpcmNsZSBjeD0iMjgwIiBjeT0iMjkwIiByPSIyLjUiIGZpbGw9IiNGRjQ0NDQiIG9wYWNpdHk9IjAuODUiLz4KCiAgPCEtLSA9PT09PT09PT0gUEFERExFIFNISUZURVJTIChiZWhpbmQgd2hlZWwsIGhpbnRlZCBhdCBlZGdlcykgPT09PT09PT09IC0tPgogIDxwYXRoIGQ9Ik0gNzAgMjIwIEwgNjAgMjcwIEwgNzUgMjkwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC41NSIvPgogIDxwYXRoIGQ9Ik0gNDMwIDIyMCBMIDQ0MCAyNzAgTCA0MjUgMjkwIiBzdHJva2U9IiNGRkI4MDAiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC41NSIvPgoKICA8IS0tID09PT09PT09PSBHTE9XSU5HIEFDQ0VOVCAoaG90IGxhcCByZWQgZ2xvdyBhcm91bmQgd2hlZWwpID09PT09PT09PSAtLT4KICA8ZWxsaXBzZSBjeD0iMjUwIiBjeT0iMjQwIiByeD0iMTgwIiByeT0iMTcwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRjIwMjAiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjQiLz4KPC9zdmc+Cg==") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  pointer-events: none !important;
+  z-index: 99999 !important;
+  opacity: 0.72 !important;
+  animation: wheel-wobble 6s ease-in-out infinite, rev-pulse 2.4s ease-in-out infinite !important;
+  transform-origin: center !important;
+}
+
+/* RESPONSIVE: shrink so the wheel never dominates */
+@media (max-width: 1500px) {
+  .monaco-workbench::after {
+    width: 220px !important; height: 220px !important;
+    bottom: 30px !important; right: 30px !important;
+    opacity: 0.6 !important;
+  }
+}
+@media (max-width: 1000px) {
+  .monaco-workbench::after {
+    width: 160px !important; height: 160px !important;
+    bottom: 20px !important; right: 20px !important;
+    opacity: 0.5 !important;
+  }
+}
+
+/* ============================================================
+   RACING STRIPES — unchanged, works reliably at workbench::before
+   ============================================================ */
+.monaco-workbench { position: relative; }
+.monaco-workbench::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background:
+    repeating-linear-gradient(
+      -25deg,
+      transparent 0px,
+      transparent 90px,
+      rgba(255, 32, 32, 0.045) 90px,
+      rgba(255, 32, 32, 0.045) 92px,
+      transparent 92px,
+      transparent 110px,
+      rgba(255, 255, 255, 0.025) 110px,
+      rgba(255, 255, 255, 0.025) 111px
+    ),
+    repeating-linear-gradient(
+      25deg,
+      transparent 0px,
+      transparent 140px,
+      rgba(255, 184, 0, 0.018) 140px,
+      rgba(255, 184, 0, 0.018) 142px
+    );
+  background-size: 400px 400px, 400px 400px;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: stripe-drift 18s linear infinite;
+}
+
+/* ============================================================
+   F1 REV COUNTER — vertical 5-LED strip in the activity bar
+
+   v4 fix: `!important` on EVERY property to beat any VSCode
+   default styles, and `overflow: visible !important` on the
+   parent to prevent clipping. Using TWO selector paths
+   (.part.activitybar and .activitybar without .part) for
+   maximum compatibility across Cursor version variants.
+
+   IDLE: bottom green LED slowly breathes ("engine running").
+   ACTION: when ANY loading spinner is in the DOM, full rev
+   sequence fires (agent thinking, save, command, autocomplete,
+   etc.) triggered by :has().
+   ============================================================ */
+.monaco-workbench .part.activitybar,
+.monaco-workbench .activitybar {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.monaco-workbench .part.activitybar::after,
+.monaco-workbench .activitybar::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 110px !important;
+  left: 50% !important;
+  margin-left: -5px !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: #082008 !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  box-shadow:
+    0 -14px 0 #1A0606,
+    0 -28px 0 #1A0606,
+    0 -42px 0 #1A0606,
+    0 -56px 0 #1A0606,
+    0 0 6px rgba(0, 255, 68, 0.35) !important;
+  animation: f1-idle-pulse 2.6s ease-in-out infinite !important;
+}
+
+/* "ENG" label — reads as a deliberate telemetry section */
+.monaco-workbench .part.activitybar::before,
+.monaco-workbench .activitybar::before {
+  content: "ENG" !important;
+  position: absolute !important;
+  bottom: 82px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  font-family: "Arial Black", "Impact", sans-serif !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  color: rgba(255, 32, 32, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  text-shadow: 0 0 4px rgba(255, 32, 32, 0.5) !important;
+  text-align: center !important;
+  width: auto !important;
+}
+
+/* ACTION: rev sequence fires on any Monaco/Cursor loading spinner.
+   Covers agent thinking, file save, command palette loading,
+   autocomplete in-flight, syncing, indexing, search, etc. */
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .part.activitybar::after,
+.monaco-workbench:has(.codicon-sync.codicon-modifier-spin) .part.activitybar::after,
+.monaco-workbench:has(.monaco-progress-container.active) .part.activitybar::after,
+.monaco-workbench:has(.progress-bit) .part.activitybar::after,
+.monaco-workbench:has(.codicon-loading.codicon-modifier-spin) .activitybar::after,
+.monaco-workbench:has(.codicon-sync.codicon-modifier-spin) .activitybar::after {
+  animation: f1-rev-counter 2.4s ease-out infinite !important;
+}
+
+
+/* ============================================================
+   GLOBAL ICON GLOW
+   ============================================================ */
+.codicon {
+  filter: drop-shadow(0 0 4px rgba(255, 32, 32, 0.6));
+  transition: filter 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+.codicon:hover {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.9)) drop-shadow(0 0 18px rgba(255, 32, 32, 0.5));
+  transform: scale(1.12);
+}
+.monaco-workbench .monaco-list-row:hover .codicon {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.8)) drop-shadow(0 0 16px rgba(255, 32, 32, 0.4));
+}
+.monaco-workbench .codicon-error  { filter: drop-shadow(0 0 6px rgba(255, 23, 68, 0.8)); }
+.monaco-workbench .codicon-warning { filter: drop-shadow(0 0 6px rgba(255, 238, 0, 0.8)); }
+.monaco-workbench .codicon-info    { filter: drop-shadow(0 0 6px rgba(255, 32, 32, 0.8)); }
+
+/* ============================================================
+   EDITOR CURSOR — Rosso Corsa pulse
+   ============================================================ */
+.monaco-editor .cursor {
+  box-shadow:
+    0 0 14px #FF4444,
+    0 0 30px rgba(255, 68, 68, 0.7),
+    0 0 60px rgba(255, 32, 32, 0.35),
+    0 0 100px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-editor .margin .line-numbers.active-line-number {
+  background: rgba(255, 32, 32, 0.12);
+  border-radius: 2px;
+}
+.monaco-editor .bracket-match {
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.6), 0 0 30px rgba(255, 32, 32, 0.3);
+}
+
+/* ============================================================
+   WIDGETS — holographic popups
+   ============================================================ */
+.monaco-editor .find-widget {
+  box-shadow:
+    0 10px 40px rgba(255, 32, 32, 0.35),
+    0 0 4px rgba(255, 68, 68, 0.8),
+    0 0 80px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.6) !important;
+  animation: hud-flicker 5s ease infinite;
+}
+.monaco-editor .suggest-widget {
+  box-shadow:
+    0 10px 40px rgba(255, 32, 32, 0.35),
+    0 0 4px rgba(255, 68, 68, 0.8),
+    0 0 80px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+.monaco-editor .suggest-widget .monaco-list-row {
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+.monaco-editor .suggest-widget .monaco-list-row:hover {
+  box-shadow: inset 0 0 30px rgba(255, 32, 32, 0.12);
+  transform: translateX(3px);
+}
+.monaco-editor .suggest-widget .monaco-list-row.focused {
+  box-shadow: inset 0 0 35px rgba(255, 32, 32, 0.15), inset -3px 0 0 rgba(255, 68, 68, 0.6);
+}
+
+/* ============================================================
+   INPUTS + BUTTONS
+   ============================================================ */
+.monaco-inputbox { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+.monaco-inputbox.synthetic-focus {
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.6), 0 0 35px rgba(255, 32, 32, 0.25), 0 0 60px rgba(255, 32, 32, 0.1) !important;
+}
+.monaco-button {
+  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 12px rgba(255, 32, 32, 0.35), 0 0 30px rgba(255, 32, 32, 0.15) !important;
+}
+.monaco-button:hover {
+  box-shadow: 0 0 18px rgba(255, 68, 68, 0.6), 0 0 45px rgba(255, 32, 32, 0.28), 0 0 80px rgba(255, 32, 32, 0.1) !important;
+  transform: translateY(-2px);
+}
+.monaco-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 0 12px rgba(255, 68, 68, 0.8), 0 0 30px rgba(255, 32, 32, 0.4) !important;
+}
+
+/* ============================================================
+   COMMAND PALETTE — glow only (no pseudo-elements)
+   ============================================================ */
+.quick-input-widget {
+  box-shadow:
+    0 12px 60px rgba(255, 32, 32, 0.35),
+    0 0 5px rgba(255, 68, 68, 0.8),
+    0 0 100px rgba(255, 32, 32, 0.15) !important;
+  border: 1px solid rgba(255, 68, 68, 0.5) !important;
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+.monaco-workbench .notifications-list-container .notification-list-item {
+  box-shadow: 0 0 25px rgba(255, 32, 32, 0.15), inset 0 0 4px rgba(255, 68, 68, 0.4);
+  border: 1px solid rgba(255, 68, 68, 0.35) !important;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.monaco-workbench .notifications-list-container .notification-list-item:hover {
+  box-shadow: 0 0 30px rgba(255, 32, 32, 0.28), inset 0 0 6px rgba(255, 68, 68, 0.5);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+.monaco-scrollable-element > .scrollbar > .slider {
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.monaco-scrollable-element > .scrollbar > .slider:hover {
+  box-shadow: 0 0 14px rgba(255, 32, 32, 0.3);
+}
+.monaco-scrollable-element > .scrollbar > .slider.active {
+  box-shadow: 0 0 22px rgba(255, 68, 68, 0.5);
+}
+
+/* ============================================================
+   EDITOR GROUP + MISCELLANEOUS
+   ============================================================ */
+.monaco-workbench .part.editor > .content .editor-group-container {
+  box-shadow: inset 0 0 3px rgba(255, 32, 32, 0.2);
+}
+
+.monaco-workbench .contentWidgets .codicon-lightbulb,
+.monaco-workbench .markers-panel-container .codicon-lightbulb {
+  animation: arc-reactor-glow 1.5s ease infinite;
+}
+
+.monaco-editor .minimap-slider .minimap-slider-horizontal {
+  box-shadow: 0 0 18px rgba(255, 32, 32, 0.3);
+}
+
+
+/* ============================================================================
+   PIT WALL HUD v5 — Scuderia Conn-Pod
+   Inspired by Pacific Rim's LOCCENT mission-control density and Ferrari's
+   actual pit-wall command center. Each panel becomes a codenamed station
+   with status badges, HUD frames, and live telemetry.
+   Layered ON TOP of v4 — additive only.
+   ============================================================================ */
+
+/* ============================================================
+   KEYFRAMES — HUD-specific motion
+   ============================================================ */
+@keyframes scan-line-drift {
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+@keyframes status-blink {
+  0%, 60%, 100% { opacity: 1; box-shadow: 0 0 6px currentColor, 0 0 14px currentColor; }
+  30%           { opacity: 0.35; box-shadow: 0 0 2px currentColor; }
+}
+@keyframes telemetry-tick {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+@keyframes plasma-vent {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%      { opacity: 0.85; transform: scaleY(1.4); }
+}
+@keyframes halo-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes data-stream {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 -200px; }
+}
+
+/* ============================================================
+   PANEL CODENAME HEADERS — top-left of each panel
+   Renders a station-callsign label like "▸ GARAGE :: ASSET BAY"
+   ============================================================ */
+
+/* SIDEBAR :: GARAGE */
+.monaco-workbench .part.sidebar > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.sidebar > .title::before {
+  content: "▸ GARAGE :: ASSET BAY" !important;
+  position: absolute !important;
+  top: -16px !important;
+  left: 12px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+  color: rgba(255, 68, 68, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 32, 32, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* TERMINAL / PANEL :: TELEMETRY */
+.monaco-workbench .part.panel > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.panel > .title::before {
+  content: "▸ TELEMETRY :: COMMS UPLINK  ●  LIVE" !important;
+  position: absolute !important;
+  top: -14px !important;
+  left: 32px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.8px !important;
+  color: rgba(255, 184, 0, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 184, 0, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* AUXILIARY BAR :: STRATEGY (chat panel) */
+.monaco-workbench .part.auxiliarybar > .title {
+  position: relative !important;
+}
+.monaco-workbench .part.auxiliarybar > .title::before {
+  content: "▸ STRATEGY :: RACE ENGINEER" !important;
+  position: absolute !important;
+  top: -14px !important;
+  left: 12px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.8px !important;
+  color: rgba(255, 184, 0, 0.9) !important;
+  text-shadow: 0 0 6px rgba(255, 184, 0, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================
+   STATUS BADGES — top-right of each panel (pulsing dots + text)
+   ============================================================ */
+
+/* Sidebar: [FP-2 :: CLASSIFIED] amber badge */
+.monaco-workbench .part.sidebar::before {
+  /* Override v3's corner bracket — turn it into a real badge */
+  content: "FP-2 ● CLASSIFIED" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 8px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 184, 0, 0.7) !important;
+  background: rgba(20, 8, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: rgba(255, 184, 0, 0.95) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.6) !important;
+  box-shadow: 0 0 8px rgba(255, 184, 0, 0.4), inset 0 0 4px rgba(255, 184, 0, 0.15) !important;
+  z-index: 50 !important;
+  animation: telemetry-tick 3s ease-in-out infinite !important;
+}
+
+/* Terminal/panel: [LIVE] red pulsing badge */
+.monaco-workbench .part.panel::after {
+  content: "● LIVE" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 68, 68, 0.8) !important;
+  background: rgba(20, 4, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: #FF4444 !important;
+  text-shadow: 0 0 4px rgba(255, 68, 68, 0.8) !important;
+  box-shadow: 0 0 10px rgba(255, 32, 32, 0.5) !important;
+  z-index: 50 !important;
+  animation: status-blink 1.6s ease-in-out infinite !important;
+}
+
+/* Auxiliary bar: [ACTIVE] amber badge */
+.monaco-workbench .part.auxiliarybar::before {
+  content: "● ACTIVE" !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 10px !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid rgba(255, 184, 0, 0.8) !important;
+  background: rgba(20, 8, 4, 0.9) !important;
+  padding: 2px 6px !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  color: #FFB800 !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.7) !important;
+  box-shadow: 0 0 10px rgba(255, 184, 0, 0.5) !important;
+  z-index: 50 !important;
+  animation: status-blink 2s ease-in-out infinite !important;
+}
+
+/* ============================================================
+   ANGULAR HUD FRAMES — replaces thin corner brackets with
+   proper Pacific-Rim-style notched frame corners on the
+   editor and major panels.
+   ============================================================ */
+.monaco-workbench .part.editor {
+  position: relative !important;
+}
+/* Top-left notched corner */
+.monaco-workbench .part.editor > .content::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-top: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-left: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-top-left-radius: 0 !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  background:
+    linear-gradient(135deg, rgba(255, 32, 32, 0.18) 0%, transparent 35%),
+    linear-gradient(135deg, transparent 0px, transparent 8px, rgba(255, 68, 68, 0.6) 8px, rgba(255, 68, 68, 0.6) 9px, transparent 9px) 0 0 / 100% 12px no-repeat !important;
+  box-shadow: -2px -2px 12px rgba(255, 32, 32, 0.35) !important;
+  clip-path: polygon(0 0, 100% 0, 100% 12px, 12px 12px, 12px 100%, 0 100%) !important;
+}
+/* Bottom-right notched corner */
+.monaco-workbench .part.editor > .content::after {
+  /* Re-purposed from v3 — becomes a corner HUD frame instead of the wheel */
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  left: auto !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-bottom: 2px solid rgba(255, 68, 68, 0.85) !important;
+  border-right: 2px solid rgba(255, 68, 68, 0.85) !important;
+  background: linear-gradient(315deg, rgba(255, 32, 32, 0.18) 0%, transparent 35%) !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-shadow: 2px 2px 12px rgba(255, 32, 32, 0.35) !important;
+  clip-path: polygon(0 100%, 100% 100%, 100% 0, 88% 0, 88% 88%, 0 88%) !important;
+  /* Override v4 wheel/animation since we moved wheel to ::after on workbench */
+  animation: none !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ============================================================
+   EDITOR SCAN LINE — a horizontal red beam drifts from top
+   to bottom of the editor every 8s. LOCCENT-style scanning.
+   ============================================================ */
+.monaco-workbench .part.editor > .content {
+  position: relative !important;
+}
+.monaco-editor::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 2px !important;
+  pointer-events: none !important;
+  z-index: 25 !important;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 68, 68, 0.05) 10%,
+    rgba(255, 68, 68, 0.6) 50%,
+    rgba(255, 68, 68, 0.05) 90%,
+    transparent 100%) !important;
+  box-shadow:
+    0 0 12px rgba(255, 32, 32, 0.55),
+    0 0 28px rgba(255, 32, 32, 0.25) !important;
+  animation: scan-line-drift 8s linear infinite !important;
+}
+
+/* ============================================================
+   PLASMA EXHAUST VENTS — at the very bottom of the workbench,
+   above the status bar. Three radial-gradient "vent glows"
+   pulse like the Pacific Rim image's bottom-edge energy lines.
+   ============================================================ */
+.monaco-workbench .part.statusbar {
+  position: relative !important;
+  overflow: visible !important;
+}
+.monaco-workbench .part.statusbar::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -32px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 32px !important;
+  pointer-events: none !important;
+  z-index: 20 !important;
+  background:
+    radial-gradient(ellipse 200px 30px at 22% 100%,  rgba(255, 32, 32, 0.55) 0%,  rgba(255, 32, 32, 0)   70%),
+    radial-gradient(ellipse 240px 35px at 50% 100%,  rgba(255, 184, 0, 0.45) 0%,  rgba(255, 184, 0, 0)   70%),
+    radial-gradient(ellipse 200px 30px at 78% 100%,  rgba(255, 32, 32, 0.55) 0%,  rgba(255, 32, 32, 0)   70%) !important;
+  transform-origin: center bottom !important;
+  animation: plasma-vent 3s ease-in-out infinite !important;
+  filter: blur(2px) !important;
+}
+
+/* ============================================================
+   STATUS BAR TELEMETRY — fake live race data on the right side.
+   Renders as a pseudo-element overlay so it never breaks
+   actual VSCode status items.
+   ============================================================ */
+.monaco-workbench .part.statusbar::after {
+  content: "ERS 87%  │  TIRE C3  │  DRS ENABLED  │  BAL +2  │  LAP 1:18.347" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 280px !important;
+  transform: translateY(-50%) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  color: rgba(255, 184, 0, 0.6) !important;
+  text-shadow: 0 0 4px rgba(255, 184, 0, 0.4) !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+  white-space: nowrap !important;
+  animation: telemetry-tick 4s ease-in-out infinite !important;
+}
+
+/* ============================================================
+   TITLE BAR — Scuderia branding strip on left side
+   ============================================================ */
+.monaco-workbench .part.titlebar {
+  position: relative !important;
+  overflow: visible !important;
+}
+.monaco-workbench .part.titlebar::before {
+  content: "▌SCUDERIA FERRARI  ::  SF-26  ::  HOT LAP" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 80px !important;
+  transform: translateY(-50%) !important;
+  font-family: "Menlo", "Consolas", monospace !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2.5px !important;
+  color: rgba(255, 32, 32, 0.85) !important;
+  text-shadow: 0 0 6px rgba(255, 32, 32, 0.7) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================
+   STEERING WHEEL — keep v4 placement BUT add a rotating halo
+   ring behind it for Conn-Pod presence. The halo uses a
+   second pseudo-element on the workbench (::after is taken
+   by the wheel itself, so we reuse it carefully).
+   ============================================================
+   Note: pseudo-element budget on .monaco-workbench is exhausted
+   (::before = stripes, ::after = wheel). To add the halo without
+   removing either, we attach it to the EDITOR pane wrapper.
+   ============================================================ */
+.monaco-workbench .editor-group-container {
+  position: relative !important;
+}
+.monaco-workbench .editor-group-container::after {
+  content: "" !important;
+  position: fixed !important;
+  bottom: 60px !important;
+  right: 60px !important;
+  width: 260px !important;
+  height: 260px !important;
+  border-radius: 50% !important;
+  border: 1px dashed rgba(255, 68, 68, 0.3) !important;
+  pointer-events: none !important;
+  z-index: 99998 !important;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255, 32, 32, 0) 0%,
+      rgba(255, 32, 32, 0.08) 25%,
+      rgba(255, 184, 0, 0.06) 50%,
+      rgba(255, 32, 32, 0.08) 75%,
+      rgba(255, 32, 32, 0) 100%) !important;
+  animation: halo-spin 24s linear infinite !important;
+  box-shadow:
+    0 0 30px rgba(255, 32, 32, 0.15),
+    inset 0 0 40px rgba(255, 32, 32, 0.1) !important;
+}
+
+@media (max-width: 1500px) {
+  .monaco-workbench .editor-group-container::after {
+    width: 200px !important; height: 200px !important;
+    bottom: 50px !important; right: 50px !important;
+  }
+}
+@media (max-width: 1000px) {
+  .monaco-workbench .editor-group-container::after {
+    width: 140px !important; height: 140px !important;
+    bottom: 40px !important; right: 40px !important;
+  }
+}
+
+/* ============================================================
+   GRID NOISE — extra-dense scanlines over the editor for
+   that "holographic projection" feel
+   ============================================================ */
+.monaco-editor::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 4 !important;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 32, 32, 0.012) 3px,
+      rgba(255, 32, 32, 0.012) 4px
+    ) !important;
+  mix-blend-mode: screen !important;
+}
+
+/* ============================================================
+   FERRARI SHIELD EMBLEM — small pulsing badge in the bottom-left
+   of the workbench (above status bar, where Pacific Rim has the
+   "FIST" emblem). Pure CSS, no SVG.
+   ============================================================ */
+.monaco-workbench .part.statusbar .left-items::before,
+.monaco-workbench .part.statusbar > .left-items::before {
+  content: "▼ SF" !important;
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 8px !important;
+  margin-bottom: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, #FFEE00 0%, #FFB800 60%, #1A0810 95%) !important;
+  border: 2px solid #1A0810 !important;
+  font-family: "Arial Black", sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  color: #FF1744 !important;
+  text-align: center !important;
+  line-height: 36px !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+  box-shadow:
+    0 0 14px rgba(255, 184, 0, 0.7),
+    0 0 30px rgba(255, 184, 0, 0.35),
+    inset 0 0 6px rgba(255, 23, 68, 0.4) !important;
+  animation: glow-breathe 3s ease-in-out infinite !important;
+  text-shadow: 0 0 4px rgba(255, 23, 68, 0.6) !important;
+}

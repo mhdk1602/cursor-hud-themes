@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140">
+  <defs>
+    <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1A0810" stop-opacity="0.95"/>
+      <stop offset="80%" stop-color="#0A0406" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.95"/>
+    </radialGradient>
+    <linearGradient id="sw" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#FF2020" stop-opacity="0"/>
+      <stop offset="60%" stop-color="#FF4444" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFEE00" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+  <circle cx="70" cy="70" r="65" fill="url(#rg)" stroke="#FF2020" stroke-width="1.5" opacity="0.95"/>
+  <circle cx="70" cy="70" r="50" fill="none" stroke="#FF4444" stroke-width="0.5" opacity="0.5"/>
+  <circle cx="70" cy="70" r="34" fill="none" stroke="#FF4444" stroke-width="0.5" opacity="0.4"/>
+  <circle cx="70" cy="70" r="18" fill="none" stroke="#FF4444" stroke-width="0.5" opacity="0.35"/>
+  <line x1="5" y1="70" x2="135" y2="70" stroke="#FF4444" stroke-width="0.4" opacity="0.35"/>
+  <line x1="70" y1="5" x2="70" y2="135" stroke="#FF4444" stroke-width="0.4" opacity="0.35"/>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 70 70" to="360 70 70" dur="4s" repeatCount="indefinite"/>
+    <path d="M 70 70 L 135 70 A 65 65 0 0 0 88 12 Z" fill="url(#sw)" opacity="0.55"/>
+  </g>
+  <circle cx="92" cy="48" r="2.5" fill="#FFEE00" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="42" cy="88" r="2.5" fill="#FF1744" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="92" r="2" fill="#00FF44" opacity="0.85">
+    <animate attributeName="opacity" values="0.85;0.4;0.85" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="55" cy="38" r="1.8" fill="#FF1744" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="70" cy="70" r="3" fill="#FF1744"/>
+  <circle cx="70" cy="70" r="6" fill="none" stroke="#FF1744" stroke-width="0.5" opacity="0.6"/>
+  <text x="70" y="13" text-anchor="middle" font-family="monospace" font-size="7" font-weight="900" fill="#FF4444">N</text>
+  <text x="70" y="135" text-anchor="middle" font-family="monospace" font-size="7" font-weight="900" fill="#FF4444" opacity="0.6">S</text>
+  <text x="9" y="73" text-anchor="middle" font-family="monospace" font-size="7" font-weight="900" fill="#FF4444" opacity="0.6">W</text>
+  <text x="131" y="73" text-anchor="middle" font-family="monospace" font-size="7" font-weight="900" fill="#FF4444" opacity="0.6">E</text>
+</svg>
